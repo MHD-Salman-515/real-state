@@ -1,0 +1,6 @@
+vnode_modules
+dist
+.env
+.env.local
+.vite
+.DS_Store

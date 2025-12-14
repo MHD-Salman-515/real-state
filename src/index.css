@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {س
+  /* الحاوية الأساسية */
+  .section { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+
+  /* أزرار */
+  .btn { @apply inline-flex items-center justify-center rounded-xl font-medium transition; }
+  .btn-primary { @apply btn bg-green text-white px-4 py-2 shadow-sm hover:bg-green-dark; }
+  .btn-ghost { @apply btn border border-borderSoft bg-white hover:bg-black/5 px-4 py-2; }
+  .btn-gold  { @apply btn bg-gold text-ink px-4 py-2 hover:shadow-soft; }
+
+  /* بطاقة عامة */
+  .card { @apply rounded-2xl bg-white border border-borderSoft shadow-soft; }
+
+  /* الإدخال */
+  .input {
+    @apply w-full rounded-xl bg-white border border-borderSoft px-3 py-2 text-ink
+           placeholder-ink/40 focus:outline-none focus:ring-2 focus:ring-goldSoft focus:border-transparent;
+  }
+  .select {
+    @apply input bg-[right_.75rem_center] bg-no-repeat pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='black'%3E%3Cpath d='M5 7l5 5 5-5'/%3E%3C/svg%3E");
+  }
+
+  /* شارة */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full border border-goldSoft bg-goldSoft/30 px-3 py-1 text-sm text-ink;
+  }
+
+  /* رأس الصفحة */
+  .page-header {
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-borderSoft bg-offwhite/60 py-4;
+  }
+}
+@layer utilities {
+  /* خلفية فاخرة غامقة */
+  .bg-luxury {
+    @apply bg-gradient-to-br from-slate-950 via-slate-900 to-black;
+  }
+
+  /* كرت زجاجي فخم */
+  .card-glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl;
+  }
+
+  /* زر ذهبي أساسي */
+  .btn-gold {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full
+           bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 font-semibold
+           shadow-lg shadow-amber-500/40
+           hover:shadow-amber-400/70 hover:-translate-y-0.5
+           transition duration-300;
+  }
+
+  /* زر شفاف بإطار ذهبي */
+  .btn-ghost-gold {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-full
+           border border-amber-400/70 text-amber-200
+           hover:bg-amber-400/10 hover:-translate-y-0.5
+           transition duration-300;
+  }
+
+  /* أنيميشن طفو */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+  .animate-float {
+    animation: float 7s ease-in-out infinite;
+  }
+
+  /* أنيميشن Glow للصناديق/الأزرار */
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px rgba(250, 204, 21, 0.0); }
+    50%      { box-shadow: 0 0 35px rgba(250, 204, 21, 0.8); }
+  }
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  /* دخول من تحت + Fade */
+  @keyframes slide-up-fade {
+    0%   { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-slide-up {
+    animation: slide-up-fade 0.9s ease-out forwards;
+  }
+}
+
+@layer utilities {
+  /* طفو ناعم للكروت / العناصر */
+  @keyframes float-soft {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+  .animate-float-soft {
+    animation: float-soft 6s ease-in-out infinite;
+  }
+
+  /* نبض خفيف للخلفيات الدائرية */
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1;   transform: scale(1.06); }
+  }
+  .animate-pulse-soft {
+    animation: pulse-soft 5s ease-in-out infinite;
+  }
+
+  /* دخول من الأسفل + Fade */
+  @keyframes rise-fade {
+    0%   { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-rise-fade {
+    animation: rise-fade 0.9s ease-out both;
+  }
+
+  /* حركة Pop للكروت على الهوفر */
+  .hover-card-pop {
+    @apply transition duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-gold/25;
+  }
+}
+/* حركة بطيئة للصورة الخلفية */
+@keyframes pan-slow {
+  0% {
+    transform: scale(1.1) translateX(0);
+  }
+  50% {
+    transform: scale(1.12) translateX(-2%);
+  }
+  100% {
+    transform: scale(1.1) translateX(0);
+  }
+}
+
+.bg-pan-slow {
+  animation: pan-slow 28s ease-in-out infinite alternate;
+}
+

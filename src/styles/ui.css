@@ -1,0 +1,23 @@
+@layer base {
+  .app-shell {
+    /* gutter عام آمن + هوامش مريحة */
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-top: 0;
+    padding-bottom: 0;
+    /* يخلي الخلفية العامة تمتد على كامل الشاشة */
+    min-height: 100vh;
+  }
+}
+
+/* إطار مركزي للموقع */
+@layer components {
+  .app-frame {
+    /* 
+      - w-full حتى ما ينقص العرض على الشاشات الصغيرة
+      - max-w أكبر شوي (مثلاً 1440px) ليبان فخم على الشاشات الكبيرة
+      - min-h-screen حتى الإطار يغطي طول الشاشة
+    */
+    @apply mx-auto w-full max-w-[1440px] min-h-screen bg-offwhite border-x border-borderSoft;
+  }
+}
