@@ -1,6 +1,4 @@
-vnode_modules
+node_modules
 dist
 .env
-.env.local
-.vite
-.DS_Store
+.env.*
