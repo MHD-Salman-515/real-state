@@ -4,6 +4,7 @@ import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import { useToast } from "../../components/ToastProvider.jsx";
 import api from "../../api/axios.js";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function CreateTicket() {
   const { id } = useParams(); // رقم العقار من الـ URL
@@ -41,31 +42,29 @@ export default function CreateTicket() {
         priority: form.priority,
       });
 
-      toast.success("تم إنشاء تذكرة الصيانة بنجاح 🎉");
+      notifyCrudSuccess("Maintenance ticket created");
       navigate("/client/tickets");
     } catch (err) {
       console.error(err);
-      toast.error("فشل إنشاء التذكرة، حاول مرة أخرى.");
+      notifyCrudError("Failed to create maintenance ticket");
     } finally {
       setLoading(false);
     }
   };
-  console.log("CreateTicket Mounted");
-
   return (
-    <section className="max-w-2xl mx-auto space-y-4 py-6">
+    <section className="relative z-10 max-w-3xl mx-auto px-4 lg:px-0 py-10 space-y-6">
       <PageHeader
         title="إنشاء تذكرة صيانة"
         subtitle="أخبرنا عن المشكلة في هذا العقار ليتم متابعتها من قبل الفريق الفني."
       />
 
-      <Card className="p-4 space-y-4">
+      <Card className="p-5 md:p-6 space-y-5">
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="block text-xs mb-1">رقم العقار</label>
             <input
               type="text"
-              className="input bg-slate-900/40"
+              className="input bg-slate-950/70 border-white/15 text-slate-100 [color-scheme:dark]"
               value={propertyId || ""}
               disabled
             />
@@ -75,7 +74,7 @@ export default function CreateTicket() {
             <label className="block text-xs mb-1">نوع العطل</label>
             <input
               name="category"
-              className="input"
+              className="input bg-slate-950/70 border-white/15 text-slate-100 placeholder-slate-500 focus:ring-white/30 focus:border-transparent"
               placeholder="مثال: تسريب مياه في الحمام"
               value={form.category}
               onChange={handleChange}
@@ -86,7 +85,7 @@ export default function CreateTicket() {
             <label className="block text-xs mb-1">الأولوية</label>
             <select
               name="priority"
-              className="input"
+              className="input bg-slate-950/70 border-white/15 text-slate-100 focus:ring-white/30 focus:border-transparent [color-scheme:dark]"
               value={form.priority}
               onChange={handleChange}
             >
@@ -100,7 +99,7 @@ export default function CreateTicket() {
             <label className="block text-xs mb-1">وصف المشكلة</label>
             <textarea
               name="description"
-              className="input min-h-[120px]"
+              className="input min-h-[120px] bg-slate-950/70 border-white/15 text-slate-100 placeholder-slate-500 focus:ring-white/30 focus:border-transparent resize-none"
               placeholder="اشرح المشكلة بتفاصيل واضحة ليسهل على الفني التحضير لها..."
               value={form.description}
               onChange={handleChange}
@@ -108,7 +107,7 @@ export default function CreateTicket() {
           </div>
 
           <div className="flex justify-end">
-            <button className="btn-primary" disabled={loading}>
+            <button className="btn-primary bg-white/10 text-black hover:bg-white/10 shadow-lg shadow-white/10" disabled={loading}>
               {loading ? "جاري الإرسال..." : "إرسال التذكرة"}
             </button>
           </div>

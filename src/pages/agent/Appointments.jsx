@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { useToast } from "../../components/ToastProvider";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function AgentLayout() {
   const toast = useToast();
@@ -69,7 +70,7 @@ export default function AgentLayout() {
 
     api.post("/properties", newProperty)
       .then(() => {
-        toast.success("تم إضافة العقار بنجاح");
+        notifyCrudSuccess("Property added successfully");
         loadProperties();
         setShowAddForm(false);
         setNewProperty({
@@ -80,7 +81,7 @@ export default function AgentLayout() {
           area: "",
         });
       })
-      .catch(() => toast.error("فشل إضافة العقار"));
+      .catch(() => notifyCrudError("Failed to add property"));
   };
 
   // ============================
@@ -89,10 +90,10 @@ export default function AgentLayout() {
   const removeProperty = (id) => {
     api.delete(`/properties/${id}`)
       .then(() => {
-        toast.info("تم حذف العقار");
+        notifyCrudSuccess("Property deleted");
         loadProperties();
       })
-      .catch(() => toast.error("فشل حذف العقار"));
+      .catch(() => notifyCrudError("Failed to delete property"));
   };
 
   // ============================
@@ -101,10 +102,10 @@ export default function AgentLayout() {
   const updateAppointment = (id, status) => {
     api.patch(`/appointments/${id}`, { status })
       .then(() => {
-        toast.success("تم تحديث حالة الموعد");
+        notifyCrudSuccess("Appointment status updated");
         loadAppointments();
       })
-      .catch(() => toast.error("فشل تحديث الموعد"));
+      .catch(() => notifyCrudError("Failed to update appointment"));
   };
 
   return (
@@ -126,10 +127,10 @@ export default function AgentLayout() {
               setShowAddForm(!showAddForm);
               setShowTrackList(false);
             }}
-            className="rounded-2xl border border-emerald-400/60 bg-emerald-500/15 px-4 py-3 shadow-md hover:bg-emerald-500/25"
+            className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-md hover:bg-white/10"
           >
             <div className="text-sm font-semibold">إضافة عقار للبيع</div>
-            <div className="text-xs text-emerald-100/80 mt-1">
+            <div className="text-xs text-white/90 mt-1">
               تسجيل عقار جديد وعرضه للمتابعة.
             </div>
           </button>
@@ -139,12 +140,12 @@ export default function AgentLayout() {
               setShowTrackList(!showTrackList);
               setShowAddForm(false);
             }}
-            className="rounded-2xl border border-cyan-400/60 bg-cyan-500/15 px-4 py-3 shadow-md hover:bg-cyan-500/25"
+            className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-md hover:bg-white/10"
           >
             <div className="text-sm font-semibold">
               متابعة حالة العقارات
             </div>
-            <div className="text-xs text-cyan-100/80 mt-1">
+            <div className="text-xs text-white/80 mt-1">
               عرض العقارات المرتبطة بالوكيل.
             </div>
           </button>
@@ -152,7 +153,7 @@ export default function AgentLayout() {
 
         {/* إضافة عقار */}
         {showAddForm && (
-          <section className="rounded-2xl border border-emerald-400/40 bg-black/40 p-5 space-y-4">
+          <section className="rounded-2xl border border-white/15 bg-black/40 p-5 space-y-4">
             <h2 className="text-lg font-semibold">إضافة عقار</h2>
 
             <form onSubmit={submitNewProperty} className="grid gap-3 md:grid-cols-2">
@@ -225,7 +226,7 @@ export default function AgentLayout() {
 
         {/* عرض العقارات */}
         {showTrackList && (
-          <section className="rounded-2xl border border-cyan-400/40 bg-black/40 p-5 space-y-4">
+          <section className="rounded-2xl border border-white/15 bg-black/40 p-5 space-y-4">
             <h2 className="text-lg font-semibold">عقارات الوكيل</h2>
 
             {properties.length === 0 ? (
@@ -280,7 +281,7 @@ export default function AgentLayout() {
 
                 <div className="flex gap-2">
                   <button
-                    className="btn-small bg-emerald-600"
+                    className="btn-small bg-white/10"
                     onClick={() => updateAppointment(a.id, "تم التأكيد")}
                   >
                     تأكيد

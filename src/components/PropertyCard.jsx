@@ -3,7 +3,7 @@ export default function PropertyCard({ data }) {
   return (
     <article
       className="card-glass overflow-hidden group hover:-translate-y-1 
-                 hover:shadow-xl hover:shadow-emerald-500/20 transition duration-300 rounded-2xl"
+                 hover:shadow-xl hover:shadow-white/10 transition duration-300 rounded-2xl"
     >
       {/* صورة / خلفية */}
       <div className="aspect-[16/10] bg-gradient-to-br from-slate-800 to-slate-900 
@@ -13,7 +13,7 @@ export default function PropertyCard({ data }) {
 
       {/* النص */}
       <div className="p-4">
-        <h3 className="font-semibold text-white group-hover:text-emerald-300 transition">
+        <h3 className="font-semibold text-white group-hover:text-white/90 transition">
           {data.title}
         </h3>
 
@@ -22,14 +22,14 @@ export default function PropertyCard({ data }) {
         </p>
 
         <div className="flex items-center justify-between mt-3">
-          <span className="font-bold text-emerald-300">
+          <span className="font-bold text-white/90">
             {Number(data.price).toLocaleString()} $
           </span>
 
           <a
             href={`/property/${data.id}`}
-            className="px-3 py-1 rounded-lg border border-emerald-400/70 
-                       text-emerald-200 hover:bg-emerald-500/10 transition text-xs"
+            className="px-3 py-1 rounded-lg border border-white/15 
+                       text-white/90 hover:bg-white/10 transition text-xs"
           >
             التفاصيل
           </a>

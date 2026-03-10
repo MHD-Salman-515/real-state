@@ -5,19 +5,16 @@ import Card from "../../components/Card";
 import Table from "../../components/Table";
 import { useToast } from "../../components/ToastProvider";
 
+const BUCKETS = ["0-30 days", "31-60 days", "61-90 days", "90+ days"];
+
 export default function ARAging() {
   const toast = useToast();
-  const [invoices, setInvoices] = useState([]);
   const [rows, setRows] = useState([]);
 
   const load = async () => {
     try {
       const res = await api.get("/invoices");
-      const unpaid = res.data.filter(
-        (i) => i.status === "PENDING" || i.status === "OVERDUE"
-      );
-      setInvoices(unpaid);
-
+      const unpaid = res.data.filter((i) => i.status === "PENDING" || i.status === "OVERDUE");
       const today = new Date();
 
       const enriched = unpaid.map((inv) => {
@@ -29,10 +26,10 @@ export default function ARAging() {
         }
 
         let bucket = "";
-        if (days <= 30) bucket = "0–30 يوم";
-        else if (days <= 60) bucket = "31–60 يوم";
-        else if (days <= 90) bucket = "61–90 يوم";
-        else bucket = "+90 يوم";
+        if (days <= 30) bucket = "0-30 days";
+        else if (days <= 60) bucket = "31-60 days";
+        else if (days <= 90) bucket = "61-90 days";
+        else bucket = "90+ days";
 
         return {
           ...inv,
@@ -43,7 +40,7 @@ export default function ARAging() {
 
       setRows(enriched);
     } catch (err) {
-      toast.error("فشل تحميل تقرير الذمم");
+      toast.error("Failed to load A/R aging report");
     }
   };
 
@@ -53,77 +50,55 @@ export default function ARAging() {
 
   const columns = [
     { key: "id", header: "#" },
-
-    {
-      key: "client",
-      header: "العميل",
-      render: (i) => i.client?.fullName || "—",
-    },
-
-    {
-      key: "property",
-      header: "العقار",
-      render: (i) => i.property?.title || "—",
-    },
-
-    {
-      key: "amount",
-      header: "المبلغ",
-      render: (i) => `${i.totalAmount.toFixed(2)} $`,
-    },
-
+    { key: "client", header: "Client", render: (i) => i.client?.fullName || "-" },
+    { key: "property", header: "Property", render: (i) => i.property?.title || "-" },
+    { key: "amount", header: "Amount", render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
     {
       key: "dueDate",
-      header: "تاريخ الاستحقاق",
-      render: (i) =>
-        i.dueDate ? new Date(i.dueDate).toLocaleDateString() : "—",
+      header: "Due Date",
+      render: (i) => (i.dueDate ? new Date(i.dueDate).toLocaleDateString() : "-"),
     },
-
     {
       key: "daysLate",
-      header: "أيام التأخير",
+      header: "Days Late",
       render: (i) => (
-        <span className={i.daysLate > 0 ? "text-red-400" : "text-yellow-300"}>
-          {i.daysLate}
-        </span>
+        <span className={i.daysLate > 0 ? "text-rose-300" : "text-white/80"}>{i.daysLate}</span>
       ),
     },
-
-    {
-      key: "bucket",
-      header: "تصنيف الذمم",
-    },
+    { key: "bucket", header: "Bucket" },
   ];
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-4">
       <PageHeader
-        title="تقرير الذمم (AR Aging)"
-        subtitle="تحليل الفواتير غير المدفوعة حسب فترات التأخير"
+        title="A/R Aging"
+        subtitle="Analyze unpaid invoices by aging buckets."
         actions={
           <button
             onClick={load}
-            className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold transition"
+            className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
           >
-            تحديث
+            Refresh
           </button>
         }
       />
 
-      <Card>
-        <Table
-          columns={columns}
-          rows={rows}
-          emptyText="لا توجد فواتير غير مدفوعة"
-        />
+      <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold text-white md:text-base">A/R Aging List</h3>
+          <p className="mt-1 text-xs text-slate-300">Open receivables and aging status by invoice.</p>
+        </div>
+        <Table columns={columns} rows={rows} emptyText="No unpaid invoices found" />
       </Card>
 
-      {/* ملخص الفئات */}
-      <div className="grid md:grid-cols-4 gap-4 mt-6">
-        {["0–30 يوم", "31–60 يوم", "61–90 يوم", "+90 يوم"].map((b) => (
-          <Card key={b} className="p-4 text-center">
-            <h3 className="text-white font-semibold">{b}</h3>
-            <p className="text-3xl text-green-300 mt-2">
+      <div className="grid gap-3 md:grid-cols-4">
+        {BUCKETS.map((b) => (
+          <Card
+            key={b}
+            className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-xl"
+          >
+            <h3 className="text-sm font-semibold text-white">{b}</h3>
+            <p className="mt-2 text-3xl font-semibold text-white/90">
               {rows.filter((r) => r.bucket === b).length}
             </p>
           </Card>

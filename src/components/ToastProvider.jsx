@@ -8,29 +8,75 @@ import {
   useRef,
   useState,
 } from "react";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const ToastCtx = createContext(null);
-const LS_KEY = "exs_notifications_history";
+const LS_PREFIX = "creos_notifications_";
+
+function buildStorageKey(user) {
+  const identity = user?.id ?? user?.email ?? user?.username;
+  if (!identity) return null;
+  return `${LS_PREFIX}${String(identity)}`;
+}
 
 export function ToastProvider({ children }) {
+  const { user } = useAuth();
   const [toasts, setToasts] = useState([]);
   const [history, setHistory] = useState([]);
   const idRef = useRef(1);
 
-  // تحميل السجل من التخزين المحلي
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (raw) setHistory(JSON.parse(raw));
-    } catch {}
-  }, []);
+  const storageKey = useMemo(
+    () => buildStorageKey(user),
+    [user?.id, user?.email, user?.username]
+  );
 
-  // حفظ السجل
+  // Load per-user history only when user identity is available.
   useEffect(() => {
+    setToasts([]);
+
+    if (!storageKey) {
+      setHistory([]);
+      return;
+    }
+
     try {
-      localStorage.setItem(LS_KEY, JSON.stringify(history));
+      const raw = localStorage.getItem(storageKey);
+      setHistory(raw ? JSON.parse(raw) : []);
+    } catch {
+      setHistory([]);
+    }
+  }, [storageKey]);
+
+  // Persist history to the active user key only.
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(history));
     } catch {}
-  }, [history]);
+  }, [history, storageKey]);
+
+  useEffect(() => {
+    function onNotifyAdd(e) {
+      if (!storageKey) return;
+      const d = e?.detail || {};
+      const ts = Number(d.time || d.createdAt || Date.now());
+      const item = {
+        id: idRef.current++,
+        message: d.message || d.text || "Notification",
+        type: d.type || "info",
+        title: d.title || "",
+        at: d.at || new Date(ts).toISOString(),
+        time: ts,
+        href: d.href || "",
+        hrefLabel: d.hrefLabel || "",
+        meta: d.meta,
+      };
+      setHistory((prev) => [item, ...prev]);
+    }
+
+    window.addEventListener("notify:add", onNotifyAdd);
+    return () => window.removeEventListener("notify:add", onNotifyAdd);
+  }, [storageKey]);
 
   const remove = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -41,13 +87,13 @@ export function ToastProvider({ children }) {
       const id = idRef.current++;
       const toast = {
         id,
-        message: typeof msg === "string" ? msg : "تم الإجراء",
+        message: typeof msg === "string" ? msg : "Done",
         type: opts.type || "info", // success | error | info | warning
         duration: opts.duration ?? 3000,
         at: new Date().toISOString(),
       };
       setToasts((prev) => [...prev, toast]);
-      setHistory((prev) => [{ ...toast }, ...prev]); // أحدث إشعار في الأعلى
+      setHistory((prev) => [{ ...toast }, ...prev]);
       setTimeout(() => remove(id), toast.duration);
     },
     [remove]
@@ -71,35 +117,34 @@ export function ToastProvider({ children }) {
 
   const typeBorder = (t) =>
     t === "success"
-      ? "border-emerald-400/50"
+      ? "border-white/15"
       : t === "error"
       ? "border-red-400/60"
       : t === "warning"
-      ? "border-amber-400/60"
-      : "border-cyan-300/40";
+      ? "border-white/15"
+      : "border-white/15";
 
   const typeDot = (t) =>
     t === "success"
-      ? "bg-emerald-400"
+      ? "bg-white/10"
       : t === "error"
       ? "bg-red-400"
       : t === "warning"
-      ? "bg-amber-300"
-      : "bg-cyan-300";
+      ? "bg-white/10"
+      : "bg-white/10";
 
   return (
     <ToastCtx.Provider value={api}>
       {children}
 
-      {/* Toaster العلوي العابر – ستايل غلاس دارك */}
-      <div className="fixed top-4 right-4 z-[9999] space-y-2 max-w-[360px]">
+      <div className="fixed top-4 right-4 z-[9999] max-w-[360px] space-y-2">
         {toasts.map((t) => (
           <div
             key={t.id}
             className={[
-              "min-w-[220px] px-3 py-2 rounded-2xl border shadow-lg",
+              "min-w-[220px] rounded-2xl border px-3 py-2 shadow-lg",
               "bg-[#020617]/90 backdrop-blur-xl",
-              "shadow-emerald-500/25",
+              "shadow-white/10",
               typeBorder(t.type),
             ].join(" ")}
           >
@@ -110,16 +155,14 @@ export function ToastProvider({ children }) {
                   typeDot(t.type),
                 ].join(" ")}
               />
-              <div className="flex-1 text-slate-100 text-sm">
-                {t.message}
-              </div>
+              <div className="flex-1 text-sm text-slate-100">{t.message}</div>
               <button
                 onClick={() => remove(t.id)}
-                className="text-slate-400 hover:text-slate-200 text-sm leading-none px-1"
-                aria-label="إغلاق"
-                title="إغلاق"
+                className="px-1 text-sm leading-none text-slate-400 hover:text-slate-200"
+                aria-label="Close"
+                title="Close"
               >
-                ×
+                x
               </button>
             </div>
           </div>

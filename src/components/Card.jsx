@@ -5,9 +5,9 @@ export default function Card({ children, className = "" }) {
       className={`
         p-4 rounded-2xl
         bg-black/40 backdrop-blur-xl
-        border border-emerald-300/20 
-        shadow-lg shadow-emerald-600/20
-        hover:shadow-emerald-400/30 hover:border-emerald-300/40
+        border border-white/15 
+        shadow-lg shadow-white/10
+        hover:shadow-white/10 hover:border-white/15
         transition duration-300
         ${className}
       `}

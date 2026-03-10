@@ -2,9 +2,9 @@
 export default function VisitCard({ v }) {
   const badge = {
     pending:
-      "bg-amber-500/10 text-amber-200 border-amber-300/50",
+      "bg-white/10 text-white/80 border-white/15",
     confirmed:
-      "bg-emerald-500/10 text-emerald-200 border-emerald-300/60",
+      "bg-white/10 text-white/90 border-white/15",
     done:
       "bg-slate-500/20 text-slate-200 border-slate-400/40",
     canceled:
@@ -15,7 +15,7 @@ export default function VisitCard({ v }) {
     <article
       className={
         "card-glass rounded-2xl border border-white/12 p-4 shadow-soft " +
-        "transition hover:-translate-y-1 hover:shadow-emerald-500/30"
+        "transition hover:-translate-y-1 hover:shadow-white/10"
       }
     >
       {/* ===== رأس البطاقة ===== */}
@@ -48,7 +48,7 @@ export default function VisitCard({ v }) {
 
         <div>
           <span className="text-slate-400">رقم التتبّع:</span>{" "}
-          <strong className="text-emerald-200 font-semibold">
+          <strong className="text-white/90 font-semibold">
             {v.tracking_code}
           </strong>
         </div>

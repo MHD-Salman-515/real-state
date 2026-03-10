@@ -4,20 +4,21 @@ import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
 import Table from "../../components/Table";
 import { useToast } from "../../components/ToastProvider";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
+
+const initialForm = {
+  clientId: "",
+  propertyId: "",
+  totalAmount: "",
+  tax: 0,
+  dueDate: "",
+};
 
 export default function SalesInvoices() {
   const toast = useToast();
   const [rows, setRows] = useState([]);
   const [showForm, setShowForm] = useState(false);
-
-  const [form, setForm] = useState({
-    clientId: "",
-    propertyId: "",
-    totalAmount: "",
-    tax: 0,
-    dueDate: "",
-  });
-
+  const [form, setForm] = useState(initialForm);
   const [clients, setClients] = useState([]);
   const [properties, setProperties] = useState([]);
 
@@ -33,7 +34,7 @@ export default function SalesInvoices() {
       const p = await api.get("/properties");
       setProperties(p.data);
     } catch (err) {
-      toast.error("فشل تحميل فواتير البيع");
+      toast.error("Failed to load sales invoices");
     }
   };
 
@@ -44,13 +45,8 @@ export default function SalesInvoices() {
   const createInvoice = (e) => {
     e.preventDefault();
 
-    if (
-      !form.clientId ||
-      !form.propertyId ||
-      !form.totalAmount ||
-      !form.dueDate
-    ) {
-      return toast.error("جميع الحقول مطلوبة");
+    if (!form.clientId || !form.propertyId || !form.totalAmount || !form.dueDate) {
+      return toast.error("All required fields must be filled");
     }
 
     api
@@ -63,65 +59,55 @@ export default function SalesInvoices() {
         dueDate: form.dueDate,
       })
       .then(() => {
-        toast.success("تم إنشاء فاتورة بيع");
-        setShowForm(false);
-        setForm({
-          clientId: "",
-          propertyId: "",
-          totalAmount: "",
-          tax: 0,
-          dueDate: "",
+        notifyCrudSuccess("Sales invoice created", "Operation successful", {
+          href: "/accountant/sales-invoices",
         });
+        setShowForm(false);
+        setForm(initialForm);
         load();
       })
-      .catch(() => toast.error("فشل إنشاء الفاتورة"));
+      .catch(() =>
+        notifyCrudError("Failed to create sales invoice", "Operation failed", {
+          href: "/accountant/sales-invoices",
+        })
+      );
   };
 
   const deleteInvoice = (id) => {
-    if (!confirm("هل تريد حذف هذه الفاتورة؟")) return;
+    if (!confirm("Delete this invoice?")) return;
     api
       .delete(`/invoices/${id}`)
       .then(() => {
-        toast.success("تم الحذف");
+        notifyCrudSuccess("Invoice deleted", "Operation successful", {
+          href: "/accountant/sales-invoices",
+        });
         load();
       })
-      .catch(() => toast.error("فشل الحذف"));
+      .catch(() =>
+        notifyCrudError("Failed to delete invoice", "Operation failed", {
+          href: "/accountant/sales-invoices",
+        })
+      );
   };
 
   const columns = [
     { key: "id", header: "#" },
-    {
-      key: "client",
-      header: "المشتري",
-      render: (i) => i.client?.fullName || "—",
-    },
-    {
-      key: "property",
-      header: "العقار",
-      render: (i) => i.property?.title || "—",
-    },
-    {
-      key: "amount",
-      header: "السعر النهائي",
-      render: (i) => `${i.totalAmount.toFixed(2)} $`,
-    },
-    {
-      key: "tax",
-      header: "الضريبة",
-      render: (i) => `${i.tax.toFixed(2)} $`,
-    },
+    { key: "client", header: "Client", render: (i) => i.client?.fullName || "-" },
+    { key: "property", header: "Property", render: (i) => i.property?.title || "-" },
+    { key: "amount", header: "Total", render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
+    { key: "tax", header: "Tax", render: (i) => `${Number(i.tax || 0).toFixed(2)} $` },
     {
       key: "status",
-      header: "الحالة",
+      header: "Status",
       render: (i) => (
         <span
-          className={
+          className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${
             i.status === "PAID"
-              ? "text-green-400"
+              ? "border-white/15 bg-white/10 text-white/90"
               : i.status === "OVERDUE"
-                ? "text-red-400"
-                : "text-yellow-400"
-          }
+                ? "border-rose-400/40 bg-rose-500/15 text-rose-200"
+                : "border-white/15 bg-white/10 text-white/80"
+          }`}
         >
           {i.status}
         </span>
@@ -129,140 +115,163 @@ export default function SalesInvoices() {
     },
     {
       key: "dueDate",
-      header: "تاريخ الاستحقاق",
-      render: (i) =>
-        i.dueDate ? new Date(i.dueDate).toLocaleDateString() : "—",
+      header: "Due Date",
+      render: (i) => (i.dueDate ? new Date(i.dueDate).toLocaleDateString() : "-"),
     },
     {
       key: "actions",
-      header: "تحكم",
+      header: "Actions",
       render: (i) => (
         <button
-          className="px-3 py-1 bg-red-600 text-white rounded"
+          className="inline-flex h-8 items-center justify-center rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 text-xs text-rose-200 transition hover:bg-rose-500/20"
           onClick={() => deleteInvoice(i.id)}
         >
-          حذف
+          Delete
         </button>
       ),
     },
   ];
 
+  const selectClass =
+    "mt-1 w-full appearance-none rounded-xl border border-white/10 bg-[#0b1220]/60 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-white/15 focus:ring-2 focus:ring-white/30";
+  const optionClass = "bg-[#050912] text-slate-100";
+
   return (
-    <section className="space-y-6">
+    <section className="space-y-4">
       <PageHeader
-        title="فواتير البيع"
-        subtitle="إدارة الفواتير الخاصة ببيع العقارات"
+        title="Sales Invoices"
+        subtitle="Manage property sales invoices and payment status."
         actions={
-          <button className="btn-primary" onClick={() => setShowForm(true)}>
-            + إضافة فاتورة بيع
+          <button
+            className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
+            onClick={() => setShowForm(true)}
+          >
+            + New Sales Invoice
           </button>
         }
       />
 
-      <Card>
-        <Table
-          columns={columns}
-          rows={rows}
-          emptyText="لا توجد فواتير بيع"
-        />
+      <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold text-white md:text-base">Sales Invoice Records</h3>
+          <p className="mt-1 text-xs text-slate-300">Create, review, and remove sales invoices.</p>
+        </div>
+        <Table columns={columns} rows={rows} emptyText="No sales invoices found" />
       </Card>
 
-      {showForm && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-6 rounded-lg w-[400px] space-y-4">
-            <h3 className="text-lg text-white font-semibold">
-              إنشاء فاتورة بيع
-            </h3>
+      {showForm ? (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#050912]/95 p-5 backdrop-blur-xl">
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 md:p-6 backdrop-blur-xl">
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+              <div className="relative flex items-start gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white/90">
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M4 7.5h16M7.5 4v7M16.5 4v7M6 20h12a2 2 0 0 0 2-2V8H4v10a2 2 0 0 0 2 2Z" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Create Sales Invoice</h3>
+                  <p className="mt-1 text-xs text-slate-300">Fill invoice details and save.</p>
+                </div>
+              </div>
+            </div>
 
-            <form onSubmit={createInvoice} className="space-y-3">
+            <form onSubmit={createInvoice} className="mt-4 space-y-3">
               <div>
-                <label className="text-xs text-slate-300">المشتري</label>
-                <select
-                  className="input"
-                  value={form.clientId}
-                  onChange={(e) =>
-                    setForm({ ...form, clientId: e.target.value })
-                  }
-                >
-                  <option value="">اختر المشتري…</option>
-                  {clients.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.fullName}
+                <label className="text-xs text-slate-300">Client</label>
+                <div className="relative">
+                  <select
+                    className={selectClass}
+                    value={form.clientId}
+                    onChange={(e) => setForm({ ...form, clientId: e.target.value })}
+                  >
+                    <option className={optionClass} value="">
+                      Select client...
                     </option>
-                  ))}
-                </select>
+                    {clients.map((c) => (
+                      <option className={optionClass} key={c.id} value={c.id}>
+                        {c.fullName}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-300">
+                    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="m5 7 5 5 5-5" />
+                    </svg>
+                  </span>
+                </div>
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">العقار</label>
-                <select
-                  className="input"
-                  value={form.propertyId}
-                  onChange={(e) =>
-                    setForm({ ...form, propertyId: e.target.value })
-                  }
-                >
-                  <option value="">اختر العقار…</option>
-                  {properties.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.title}
+                <label className="text-xs text-slate-300">Property</label>
+                <div className="relative">
+                  <select
+                    className={selectClass}
+                    value={form.propertyId}
+                    onChange={(e) => setForm({ ...form, propertyId: e.target.value })}
+                  >
+                    <option className={optionClass} value="">
+                      Select property...
                     </option>
-                  ))}
-                </select>
+                    {properties.map((p) => (
+                      <option className={optionClass} key={p.id} value={p.id}>
+                        {p.title}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-300">
+                    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="m5 7 5 5 5-5" />
+                    </svg>
+                  </span>
+                </div>
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">السعر النهائي</label>
+                <label className="text-xs text-slate-300">Total Amount</label>
                 <input
                   type="number"
-                  className="input"
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
                   value={form.totalAmount}
-                  onChange={(e) =>
-                    setForm({ ...form, totalAmount: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, totalAmount: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">الضريبة</label>
+                <label className="text-xs text-slate-300">Tax</label>
                 <input
                   type="number"
-                  className="input"
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
                   value={form.tax}
-                  onChange={(e) =>
-                    setForm({ ...form, tax: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, tax: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">
-                  تاريخ الاستحقاق
-                </label>
+                <label className="text-xs text-slate-300">Due Date</label>
                 <input
                   type="date"
-                  className="input"
+                  className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
                   value={form.dueDate}
-                  onChange={(e) =>
-                    setForm({ ...form, dueDate: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
                 />
               </div>
 
-              <button className="btn-primary w-full mt-2">
-                حفظ الفاتورة
+              <button className="w-full rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10">
+                Save Invoice
               </button>
             </form>
 
             <button
-              className="w-full py-2 bg-red-500/70 rounded mt-2"
+              className="mt-3 w-full rounded-xl border border-white/20 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10"
               onClick={() => setShowForm(false)}
             >
-              إغلاق
+              Close
             </button>
           </div>
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

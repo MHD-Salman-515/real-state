@@ -1,8 +1,12 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useToast } from "../../components/ToastProvider.jsx";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
+import { buildApiUrl } from "../../api/axios";
+import { useNotifications } from "@/components/notifications/useNotifications";
 
 export default function Appointments() {
   const toast = useToast();
+  const { notify } = useNotifications();
   const [rows, setRows] = useState([]);
   const [cancelledCount, setCancelledCount] = useState(0);
   const cancelTimersRef = useRef({}); // { [id]: timeoutId }
@@ -11,7 +15,7 @@ export default function Appointments() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("http://localhost:3000/appointments");
+        const res = await fetch(buildApiUrl("/appointments"));
         const data = await res.json();
 
         if (!Array.isArray(data)) {
@@ -73,16 +77,13 @@ export default function Appointments() {
       // 2) حذف من الـ backend
       (async () => {
         try {
-          const res = await fetch(
-            `http://localhost:3000/appointments/${id}`,
-            {
-              method: "DELETE",
-            }
-          );
+          const res = await fetch(buildApiUrl(`/appointments/${id}`), {
+            method: "DELETE",
+          });
 
           if (!res.ok) {
             console.error("Delete failed, status:", res.status);
-            toast.error("فشل حذف الموعد من الخادم، حاول لاحقًا");
+            notifyCrudError("Failed to delete appointment");
             // بما إنو فشل، رجّع الكرت (اختياري):
             setRows((prev) =>
               prev.map((r) =>
@@ -100,14 +101,19 @@ export default function Appointments() {
 
           // 3) زيادة عدّاد الملغاة + حذف من الـ state
           setCancelledCount((c) => c + 1);
-          toast.error(`تم إلغاء الموعد رقم ${id}`);
+          notifyCrudSuccess(`Appointment cancelled (${id})`);
+          notify({
+            type: "system",
+            title: "Visit cancelled",
+            message: "Your visit appointment was cancelled.",
+          });
 
           setTimeout(() => {
             setRows((prev) => prev.filter((r) => r.id !== id));
           }, 400);
         } catch (err) {
           console.error(err);
-          toast.error("خطأ في الاتصال بالخادم أثناء الحذف");
+          notifyCrudError("Failed to delete appointment");
         }
       })();
 
@@ -179,12 +185,12 @@ export default function Appointments() {
       case "pending":
         return {
           label: "قيد المعالجة",
-          cls: "bg-amber-500/10 text-amber-200 border-amber-300",
+          cls: "bg-white/10 text-white/80 border-white/15",
         };
       case "confirmed":
         return {
           label: "مؤكد",
-          cls: "bg-emerald-500/10 text-emerald-200 border-emerald-300",
+          cls: "bg-white/10 text-white/90 border-white/15",
         };
       case "done":
         return {
@@ -223,7 +229,7 @@ export default function Appointments() {
         {/* الهيدر + إحصائيات بسيطة */}
         <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-black bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-black bg-gradient-to-r from-white/20 to-white/10 bg-clip-text text-transparent">
               مواعيدي
             </h1>
             <p className="text-slate-300 text-sm mt-1">
@@ -234,7 +240,7 @@ export default function Appointments() {
             <span className="px-3 py-1 rounded-full bg-slate-900/60 border border-slate-600/60">
               الإجمالي: {stats.total}
             </span>
-            <span className="px-3 py-1 rounded-full bg-emerald-900/40 border border-emerald-500/60">
+            <span className="px-3 py-1 rounded-full bg-white/10 border border-white/15">
               القادمة: {stats.upcoming}
             </span>
             <span className="px-3 py-1 rounded-full bg-red-900/40 border border-red-500/60">
@@ -258,7 +264,7 @@ export default function Appointments() {
                 transform transition-all duration-500 
                 ${r.removing ? "opacity-0 translate-y-2 scale-95" : "opacity-100"}`}
               >
-                <h3 className="font-semibold text-emerald-200">
+                <h3 className="font-semibold text-white/90">
                   موعد #{r.id}
                 </h3>
 

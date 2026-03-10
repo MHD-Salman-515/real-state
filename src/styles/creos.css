@@ -1,0 +1,40 @@
+:root {
+  --creos-bg: #000000;
+  --creos-surface: #000000;
+  --creos-text: #ffffff;
+  --creos-muted: #b3b3b3;
+  --creos-accent: #ffffff;
+
+  --creos-surface-rgb: 0 0 0;
+  --creos-accent-rgb: 255 255 255;
+  --creos-text-rgb: 255 255 255;
+}
+
+.creos-theme {
+  background-color: var(--creos-bg);
+  color: var(--creos-text);
+}
+
+.creos-surface {
+  background-color: var(--creos-surface);
+}
+
+.creos-text {
+  color: var(--creos-text);
+}
+
+.creos-muted {
+  color: var(--creos-muted);
+}
+
+.creos-accent {
+  color: var(--creos-accent);
+}
+
+.creos-accent-bg {
+  background-color: var(--creos-accent);
+}
+
+.creos-accent-border {
+  border-color: rgb(var(--creos-accent-rgb) / 0.4);
+}

@@ -1,10 +1,10 @@
 // src/components/StatusDot.jsx
 export default function StatusDot({ color = "gray", label }) {
   const map = {
-    green:  "bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.6)]",
-    yellow: "bg-yellow-400 shadow-[0_0_6px_rgba(234,179,8,0.6)]",
+    green:  "bg-white/10 shadow-[0_0_6px_rgba(16,185,129,0.6)]",
+    yellow: "bg-white/10 shadow-[0_0_6px_rgba(255,255,255,0.35)]",
     red:    "bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.6)]",
-    blue:   "bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.6)]",
+    blue:   "bg-white/10 shadow-[0_0_6px_rgba(34,211,238,0.6)]",
     gray:   "bg-gray-400 shadow-[0_0_5px_rgba(156,163,175,0.5)]",
   };
 

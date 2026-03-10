@@ -12,18 +12,16 @@ export default function CostAllocation() {
   const load = async () => {
     try {
       const res = await api.get("/invoices");
-
-      // نحصل على فواتير الخدمة فقط
       const serviceInvoices = res.data
         .filter((i) => i.type === "SERVICE")
         .map((i) => ({
           ...i,
-          expenses: i.expenses ?? [] // 👈 أهم سطر: ضمان وجود مصاريف
+          expenses: i.expenses ?? [],
         }));
 
       setRows(serviceInvoices);
     } catch (err) {
-      toast.error("فشل تحميل بيانات تخصيص التكاليف");
+      toast.error("Failed to load cost allocation data");
     }
   };
 
@@ -33,46 +31,26 @@ export default function CostAllocation() {
 
   const columns = [
     { key: "id", header: "#" },
-
-    {
-      key: "property",
-      header: "العقار",
-      render: (i) => i.property?.title || "—",
-    },
-
-    {
-      key: "client",
-      header: "العميل",
-      render: (i) => i.client?.fullName || "—",
-    },
-
-    {
-      key: "expenses",
-      header: "عدد المصاريف",
-      render: (i) => (i.expenses ?? []).length,
-    },
-
+    { key: "property", header: "Property", render: (i) => i.property?.title || "-" },
+    { key: "client", header: "Client", render: (i) => i.client?.fullName || "-" },
+    { key: "expenses", header: "Expense Count", render: (i) => (i.expenses ?? []).length },
     {
       key: "total",
-      header: "إجمالي المصاريف",
-      render: (i) =>
-        (i.expenses ?? [])
-          .reduce((sum, ex) => sum + ex.amount, 0)
-          .toFixed(2) + " $",
+      header: "Total Expenses",
+      render: (i) => (i.expenses ?? []).reduce((sum, ex) => sum + ex.amount, 0).toFixed(2) + " $",
     },
-
     {
       key: "status",
-      header: "الحالة",
+      header: "Status",
       render: (i) => (
         <span
-          className={
+          className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${
             i.status === "PAID"
-              ? "text-green-400"
+              ? "border-white/15 bg-white/10 text-white/90"
               : i.status === "OVERDUE"
-                ? "text-red-400"
-                : "text-yellow-400"
-          }
+                ? "border-rose-400/40 bg-rose-500/15 text-rose-200"
+                : "border-white/15 bg-white/10 text-white/80"
+          }`}
         >
           {i.status}
         </span>
@@ -81,64 +59,71 @@ export default function CostAllocation() {
   ];
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-4">
       <PageHeader
-        title="تخصيص التكاليف (تلقائي)"
-        subtitle="تم ربط تكاليف الصيانة تلقائياً بالفواتير. هذا الجدول للعرض فقط."
-        
+        title="Cost Allocation"
+        subtitle="Service invoices automatically linked to maintenance expenses."
         actions={
           <button
             onClick={load}
-            className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold transition"
+            className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
           >
-            تحديث
+            Refresh
           </button>
         }
       />
 
-      <Card>
-        <Table
-          columns={columns}
-          rows={rows}
-          emptyText="لا توجد فواتير خدمة مرتبطة بمصاريف"
-        />
+      <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <div className="mb-3">
+          <h3 className="text-sm font-semibold text-white md:text-base">Service Invoice Allocation</h3>
+          <p className="mt-1 text-xs text-slate-300">Summary view of expense distribution per service invoice.</p>
+        </div>
+        <Table columns={columns} rows={rows} emptyText="No service invoices linked to expenses" />
       </Card>
 
-      {/* تفاصيل المصاريف لكل فاتورة */}
-      <div className="space-y-4 mt-6">
+      <div className="space-y-4">
         {rows.map((invoice) => (
-          <Card key={invoice.id} className="p-4 space-y-2">
-            <h3 className="text-lg text-white font-semibold">
-              فاتورة خدمة رقم #{invoice.id}
-            </h3>
+          <Card
+            key={invoice.id}
+            className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl"
+          >
+            <h3 className="text-base font-semibold text-white">Service Invoice #{invoice.id}</h3>
 
             {(invoice.expenses ?? []).length === 0 ? (
-              <p className="text-gray-400 text-sm">لا توجد مصاريف مرتبطة</p>
+              <p className="mt-2 text-sm text-slate-400">No linked expenses.</p>
             ) : (
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-gray-700 text-gray-300">
-                    <th className="py-2">الوصف</th>
-                    <th className="py-2">المبلغ</th>
-                    <th className="py-2">المورد</th>
-                    <th className="py-2">التاريخ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(invoice.expenses ?? []).map((ex) => (
-                    <tr key={ex.id} className="border-b border-gray-800">
-                      <td className="py-2">{ex.description}</td>
-                      <td className="py-2">{ex.amount.toFixed(2)} $</td>
-                      <td className="py-2">
-                        {ex.contractor?.fullName || "—"}
-                      </td>
-                      <td className="py-2">
-                        {new Date(ex.expenseDate).toLocaleDateString()}
-                      </td>
+              <div className="mt-3 overflow-x-auto rounded-2xl border border-white/10">
+                <table className="min-w-[900px] text-sm leading-5 text-slate-100">
+                  <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
+                    <tr className="border-b border-white/10">
+                      <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+                        Description
+                      </th>
+                      <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+                        Amount
+                      </th>
+                      <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+                        Supplier
+                      </th>
+                      <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+                        Date
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {(invoice.expenses ?? []).map((ex) => (
+                      <tr key={ex.id} className="transition-colors even:bg-white/[0.02] hover:bg-white/5">
+                        <td className="px-4 py-3 align-middle">{ex.description}</td>
+                        <td className="px-4 py-3 align-middle">{Number(ex.amount || 0).toFixed(2)} $</td>
+                        <td className="px-4 py-3 align-middle">{ex.contractor?.fullName || "-"}</td>
+                        <td className="whitespace-nowrap px-4 py-3 align-middle">
+                          {ex.expenseDate ? new Date(ex.expenseDate).toLocaleDateString() : "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </Card>
         ))}

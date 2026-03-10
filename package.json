@@ -7,11 +7,23 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed:properties": "ts-node scripts/seed-properties.ts",
+    "props:images:regen": "ts-node scripts/regenerate-property-images.ts",
+    "props:seed": "node scripts/generate-and-import-properties.mjs 3000",
+    "seed:props": "node scripts/generate-properties-seed.mjs 8000",
+    "dev:5174": "vite --host 127.0.0.1 --port 5174 --strictPort",
+    "port:free:fe": "kill -9 $(lsof -ti:5173,5174,5175,5176,5177) 2>/dev/null || true",
+    "dev:clean": "npm run port:free:fe && npm run dev:5174"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "axios": "^1.13.2",
+    "canvas-confetti": "^1.9.4",
+    "class-variance-authority": "^0.7.1",
     "framer-motion": "^12.23.24",
+    "gsap": "^3.14.2",
+    "lucide-react": "^0.577.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.5"
@@ -30,6 +42,7 @@
     "globals": "^16.4.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "ts-node": "^10.9.2",
     "vite": "^7.1.7"
   }
 }

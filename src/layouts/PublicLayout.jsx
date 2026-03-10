@@ -1,29 +1,39 @@
 // src/layouts/PublicLayout.jsx
-import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useToast } from "../components/ToastProvider.jsx";
+import { Outlet, Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import Logo from "../components/brand/Logo.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
+import { getRoleLandingPath } from "../utils/roleLanding.js";
 
-// 🖼️ صور الخلفية لصفحات /auth (login / register / ..)
 const AUTH_BG_IMAGES = [
   "https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1600&q=80",
   "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1600&q=80",
   "https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1600&q=80",
 ];
 
+const PUBLIC_NAV_ITEMS = [
+  // ✅ IMPORTANT: removed `end: true` so Home does not behave differently across "/" vs "/home"
+  { label: "Home", to: "/home" },
+  { label: "Properties", to: "/properties" },
+  { label: "Services", to: "/services" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
+
 export default function PublicLayout() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
-  const toast = useToast();
-  const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [brandMenuOpen, setBrandMenuOpen] = useState(false);
+
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, token, logout } = useAuth();
+  const isAuthenticated = Boolean(user || token);
 
-  // ✅ هل نحن في صفحة من صفحات الـ auth ؟ (login / register / إلخ)
+  const brandMenuRef = useRef(null);
+
   const isAuthPage = location.pathname.startsWith("/auth");
-
-  // 🔁 صورة الخلفية لصفحات auth
   const [authBgImage, setAuthBgImage] = useState(AUTH_BG_IMAGES[0]);
 
-  // اختيار صورة عشوائية في كل مرة ندخل صفحة من /auth
   useEffect(() => {
     if (isAuthPage) {
       const idx = Math.floor(Math.random() * AUTH_BG_IMAGES.length);
@@ -31,368 +41,288 @@ export default function PublicLayout() {
     }
   }, [isAuthPage, location.pathname]);
 
-  // 🔔 حالة الإشعارات (تبدأ بدمي داتا + تتحدث من باقي اللوحات عبر notify:add)
-  const [notifications, setNotifications] = useState([
-    { id: "pub-1", text: "تم تأكيد موعد المعاينة لعقار #101" },
-    { id: "pub-2", text: "تمت إضافة عرض جديد في دمشق" },
-    { id: "pub-3", text: "عقار من مفضلتك تم تخفيض سعره" },
-  ]);
+  // Header classes: always transparent (no scroll-based glass effect)
+  const defaultHeaderClass = "sticky top-0 z-50 w-full transition-all duration-300 bg-transparent";
 
-  const unreadCount = notifications.length;
-
-  // ✅ استقبال إشعارات عامة من باقي اللوحات
   useEffect(() => {
-    function onAdd(e) {
-      const p = e.detail || {};
-      const item = {
-        id: `pub-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        text: p.text || p.title || "إشعار جديد من النظام العقاري",
-        scope: p.scope || p.from || "system",
-        createdAt: new Date().toLocaleString("ar-SY"),
-      };
-      setNotifications((prev) => [item, ...prev]);
-    }
+    if (mobileMenuOpen) setMobileMenuOpen(false);
+  }, [location.pathname]);
 
-    window.addEventListener("notify:add", onAdd);
-    return () => window.removeEventListener("notify:add", onAdd);
+  useEffect(() => {
+    if (brandMenuOpen) setBrandMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    function onMouseDown(e) {
+      if (brandMenuRef.current && !brandMenuRef.current.contains(e.target)) {
+        setBrandMenuOpen(false);
+      }
+    }
+    function onKeyDown(e) {
+      if (e.key === "Escape") setBrandMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
-  const handleNotifClick = () => {
-    setNotifOpen((v) => !v);
-    if (!notifOpen) toast.info("عرض آخر الإشعارات");
-  };
+  const desktopNavClass = ({ isActive }) =>
+    `relative px-1 py-2 text-sm tracking-wide transition ${
+      isActive
+        ? "text-white after:absolute after:-bottom-0.5 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-white/10"
+        : "text-slate-200/90 hover:text-white"
+    }`;
 
-  const clearNotifications = () => {
-    setNotifications([]);
-    toast.info("تم مسح جميع الإشعارات");
-  };
+  const mobileNavClass = ({ isActive }) =>
+    `rounded-lg px-3 py-2 text-sm transition ${
+      isActive ? "bg-white/10 text-white/90" : "text-slate-200 hover:bg-white/10 hover:text-white"
+    }`;
 
   const handleLogout = () => {
-    toast.success("تم تسجيل الخروج");
-    try {
-      localStorage.removeItem("me");
-    } catch { }
-    setDrawerOpen(false);
-    navigate("/login");
+    logout();
+    setMobileMenuOpen(false);
+    setBrandMenuOpen(false);
+    navigate("/", { replace: true });
+  };
+
+  const handleLogoNavigate = () => {
+    setBrandMenuOpen(false);
+    navigate(getRoleLandingPath(user), { replace: false });
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0F14] text-white relative overflow-hidden">
-      {/* 🔥 خلفية خاصة لصفحات /auth (صورة + تدرّج) */}
+    <div className="creos-theme relative min-h-screen overflow-x-hidden bg-[var(--creos-bg)] text-[var(--creos-text)]">
       {isAuthPage && (
         <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden">
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110 will-change-transform bg-pan-slow"
-            style={{
-              backgroundImage: `url('${authBgImage}')`,
-            }}
+            className="absolute inset-0 scale-110 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url('${authBgImage}')` }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/75 to-black/95" />
         </div>
       )}
 
-      {/* 🔁 خلفيات PublicLayout العادية → فقط لغير صفحات auth */}
       {!isAuthPage && (
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-20 -left-20 h-60 w-60 rounded-full bg-emerald-500/20 blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl animate-pulse" />
-        </div>
-      )}
+        <header className="hidden">
+          <div className="flex h-20 w-full items-center justify-between px-4">
+            <div className="group relative flex min-w-0 items-center gap-3" ref={brandMenuRef}>
+              <button
+                type="button"
+                onClick={handleLogoNavigate}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-transparent transition hover:border-white/15 hover:bg-white/10"
+                aria-label="Go to dashboard home"
+              >
+                <Logo className="h-5 w-5 text-white/90" />
+              </button>
 
-      {/* ===== Header (مخفي في صفحات auth) ===== */}
-      {!isAuthPage && (
-        <header className="relative z-20 w-full border-b border-white/10 bg-black/20 backdrop-blur-lg">
-          <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-400 shadow-lg shadow-emerald-500/40 flex items-center justify-center group-hover:scale-110 transition">
-                <span className="text-black font-black text-xl">R</span>
-              </div>
+              <button
+                type="button"
+                onClick={() => setBrandMenuOpen((v) => !v)}
+                className="min-w-0 rounded-lg px-1 py-1 text-left leading-tight focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40"
+                aria-haspopup="menu"
+                aria-expanded={brandMenuOpen}
+                aria-controls="creos-menu"
+                id="creos-menu-button"
+              >
+                <span className="block text-base font-semibold tracking-[0.18em] text-white">CREOS</span>
+                <span className="hidden text-[10px] text-slate-300/90 sm:block">
+                  Centralized Real Estate Operations System
+                </span>
+              </button>
 
-              <div className="leading-tight">
-                <div className="text-xs uppercase text-emerald-300 tracking-wide">
-                  Luxury Real Estate
+              {brandMenuOpen ? (
+                <div
+                  id="creos-menu"
+                  role="menu"
+                  aria-labelledby="creos-menu-button"
+                  className="absolute left-0 top-full z-[80] mt-2 w-64 rounded-2xl border border-white/10 bg-[#050912]/95 p-2 backdrop-blur-xl"
+                >
+                  <div className="border-b border-white/10 px-3 py-2">
+                    <p className="truncate text-sm font-medium text-slate-100">
+                      {user?.fullName ||
+                        user?.name ||
+                        (user?.email ? String(user.email).split("@")[0] : "User")}
+                    </p>
+                    <p className="text-xs uppercase tracking-wide text-slate-400">{user?.role || "guest"}</p>
+                  </div>
+
+                  <Link
+                    to="/client/profile"
+                    onClick={() => setBrandMenuOpen(false)}
+                    role="menuitem"
+                    className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90 focus:outline-none focus-visible:bg-white/10"
+                  >
+                    Profile Settings
+                  </Link>
+
+                  <Link
+                    to="/client/favorites"
+                    onClick={() => setBrandMenuOpen(false)}
+                    role="menuitem"
+                    className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90 focus:outline-none focus-visible:bg-white/10"
+                  >
+                    Favorites
+                  </Link>
+
+                  <Link
+                    to="/client/appointments"
+                    onClick={() => setBrandMenuOpen(false)}
+                    role="menuitem"
+                    className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90 focus:outline-none focus-visible:bg-white/10"
+                  >
+                    Appointments
+                  </Link>
+
+                  {isAuthenticated ? (
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      role="menuitem"
+                      className="mt-1 block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
+                    >
+                      Log out
+                    </button>
+                  ) : (
+                    <Link
+                      to="/auth/login"
+                      onClick={() => setBrandMenuOpen(false)}
+                      role="menuitem"
+                      className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
+                    >
+                      Log in
+                    </Link>
+                  )}
                 </div>
-                <div className="font-bold text-lg group-hover:text-cyan-300 transition">
-                  RealState Properties
-                </div>
-              </div>
-            </Link>
+              ) : null}
+            </div>
 
-            <div className="flex items-center gap-3">
-              {/* ===== Notification Button ===== */}
-              <div className="relative">
+            <nav className="hidden items-center gap-7 md:flex">
+              {PUBLIC_NAV_ITEMS.map((item) => (
+                <NavLink key={item.label} to={item.to} className={desktopNavClass}>
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+
+            <div className="hidden items-center gap-4 md:flex">
+              {isAuthenticated ? (
                 <button
                   type="button"
-                  onClick={handleNotifClick}
-                  aria-label="إشعارات النظام"
-                  className="
-                    relative h-10 w-10 md:h-11 md:w-11 flex items-center justify-center
-                    rounded-3xl border border-emerald-300/40
-                    bg-white/5 bg-gradient-to-br from-emerald-400/20 via-[#060B10] to-cyan-400/25
-                    backdrop-blur-2xl
-                    shadow-[0_0_25px_rgba(16,185,129,0.35)]
-                    transition
-                    hover:-translate-y-0.5 hover:scale-105
-                    hover:shadow-[0_0_40px_rgba(34,211,238,0.55)]
-                    active:scale-95
-                  "
+                  onClick={handleLogout}
+                  className="text-sm text-slate-200/90 transition hover:text-white"
                 >
-                  <span className="absolute -inset-[2px] rounded-[1.75rem] bg-gradient-to-br from-emerald-400/40 via-transparent to-cyan-400/40 opacity-70 blur-md pointer-events-none" />
-                  <span className="absolute inset-1 rounded-[1.5rem] bg-black/30 border border-emerald-200/20" />
-                  <span className="relative text-lg md:text-xl text-emerald-50 drop-shadow-[0_0_8px_rgba(16,185,129,0.9)]">
-                    🔔
-                  </span>
-
-                  {unreadCount > 0 && (
-                    <>
-                      <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-1 rounded-full bg-gradient-to-r from-amber-300 to-rose-300 text-[10px] font-bold text-black flex items-center justify-center shadow-md shadow-amber-300/60">
-                        {unreadCount > 9 ? "9+" : unreadCount}
-                      </span>
-                      <span className="absolute -top-1 -right-1 inline-flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70" />
-                      </span>
-                    </>
-                  )}
+                  Log out
                 </button>
+              ) : (
+                <NavLink
+                  to="/auth/login"
+                  end
+                  className={({ isActive }) =>
+                    `text-sm transition ${isActive ? "text-white" : "text-slate-200/90 hover:text-white"}`
+                  }
+                >
+                  Login
+                </NavLink>
+              )}
 
-                {notifOpen && (
-                  <div
-                    className="
-                      absolute right-0 mt-3 w-80 max-w-sm
-                      rounded-3xl border border-emerald-400/30
-                      bg-gradient-to-b from-[#050911]/95 via-[#020409]/98 to-[#020308]/98
-                      shadow-2xl shadow-emerald-500/40 backdrop-blur-2xl z-30
-                      origin-top-right
-                    "
-                    style={{ transformOrigin: "top right" }}
-                  >
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 border border-emerald-300/40 text-xs">
-                          🏙️
-                        </span>
-                        <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-emerald-200 tracking-wide">
-                            إشعارات النظام العقاري
-                          </span>
-                          <span className="text-[10px] text-slate-400">
-                            متابعة أحدث التحديثات على المواعيد والعقارات والعروض
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {notifications.length > 0 && (
-                          <button
-                            className="text-[11px] text-rose-300 hover:text-rose-200 transition"
-                            type="button"
-                            onClick={clearNotifications}
-                          >
-                            مسح الكل
-                          </button>
-                        )}
-                        <button
-                          className="text-[11px] text-slate-400 hover:text-emerald-300 transition"
-                          type="button"
-                          onClick={() => setNotifOpen(false)}
-                        >
-                          إغلاق
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="max-h-64 overflow-y-auto py-1.5">
-                      {notifications.length === 0 ? (
-                        <div className="px-4 py-4 text-xs text-slate-400 text-center">
-                          لا توجد إشعارات حالياً.
-                        </div>
-                      ) : (
-                        notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            className="
-                              px-4 py-2.5 text-[13px] text-slate-100
-                              border-b border-white/5 last:border-b-0
-                              hover:bg-white/5 cursor-default
-                              flex flex-col gap-0.5
-                            "
-                          >
-                            <span>{n.text}</span>
-                            {n.createdAt && (
-                              <span className="text-[10px] text-slate-400">
-                                {n.createdAt}
-                              </span>
-                            )}
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* ===== Drawer Toggle ===== */}
-              <button
-                onClick={() => setDrawerOpen(true)}
-                className="h-10 w-10 flex items-center justify-center rounded-xl border border-white/20 bg-white/10 backdrop-blur-md hover:bg:white/20 hover:scale-110 transition shadow-lg shadow-emerald-500/20"
+              <Link
+                to="/properties"
+                className="inline-flex items-center rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/10"
               >
-                ☰
-              </button>
-            </div>
-          </div>
-        </header>
-      )}
-
-      {/* ===== Content ===== */}
-      <main className="relative z-10 flex-1">
-        <Outlet context={{ drawerOpen, setDrawerOpen }} />
-      </main>
-
-      {/* ===== Drawer ===== */}
-      {!isAuthPage && drawerOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setDrawerOpen(false)}
-          />
-
-          <aside className="fixed inset-y-0 right-0 w-80 bg-slate-950/95 border-l border-white/15 z-50 p-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <div className="text-xs text-emerald-300 uppercase tracking-wide">
-                  لوحة الوصول السريع
-                </div>
-                <div className="font-semibold text-sm">ضيف النظام</div>
-              </div>
-              <button
-                className="h-8 w-8 rounded-full bg-white/5 border border-white/20 flex items-center justify-center text-sm hover:bg-white/10"
-                onClick={() => setDrawerOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-3 text-sm">
-              <div className="text-[11px] uppercase tracking-wide text-slate-400">
-                حسابي
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Link
-                  to="/client/appointments"
-                  className="btn-ghost-gold justify-start"
-                  onClick={() => {
-                    toast.info("فتح صفحة مواعيدي");
-                    setDrawerOpen(false);
-                  }}
-                >
-                  مواعيدي
-                </Link>
-
-                <Link
-                  to="/client/favorites"
-                  className="btn-ghost-gold justify-start"
-                  onClick={() => {
-                    toast.info("فتح المفضلة");
-                    setDrawerOpen(false);
-                  }}
-                >
-                  مفضلتي
-                </Link>
-                
-                  <Link
-                    to="/client/tickets"
-                    className="btn-ghost-gold justify-start"
-                  >
-                    تذاكر الصيانة الخاصة بي
-                  </Link>
-                
-                <Link
-                  to="/client/profile"
-                  className="btn-ghost-gold justify-start"
-                  onClick={() => {
-                    toast.info("فتح الملف الشخصي");
-                    setDrawerOpen(false);
-                  }}
-                >
-                  الملف الشخصي
-                </Link>
-
-                <Link
-                  to="/search"
-                  className="btn-ghost-gold justify-start"
-                  onClick={() => {
-                    toast.info("بحث جديد");
-                    setDrawerOpen(false);
-                  }}
-                >
-                  بحث جديد
-                </Link>
-              </div>
-            </div>
-
-            <div className="space-y-3 text-sm">
-              <div className="text-[11px] uppercase tracking-wide text-slate-400">
-                النظام
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Link
-                  to="/search"
-                  className="card-glass px-3 py-2 flex items-center justify-between text-xs"
-                  onClick={() => {
-                    toast.info("فتح البحث المتقدم");
-                    setDrawerOpen(false);
-                  }}
-                >
-                  <span>البحث المتقدم</span>
-                  <span className="text-emerald-300">⟶</span>
-                </Link>
-
-                <Link
-                  to="/client/book-visit"
-                  className="card-glass px-3 py-2 flex items-center justify-between text-xs"
-                  onClick={() => {
-                    toast.info("فتح حجز معاينة");
-                    setDrawerOpen(false);
-                  }}
-                >
-                  <span>حجز معاينة</span>
-                  <span className="text-emerald-300">⟶</span>
-                </Link>
-
-                <Link
-                  to="/client/appointments"
-                  className="card-glass px-3 py-2 flex items-center justify-between text-xs"
-                  onClick={() => {
-                    toast.info("فتح سجل المواعيد");
-                    setDrawerOpen(false);
-                  }}
-                >
-                  <span>سجل المواعيد</span>
-                  <span className="text-emerald-300">⟶</span>
-                </Link>
-              </div>
+                Explore Properties
+              </Link>
             </div>
 
             <button
               type="button"
-              onClick={handleLogout}
-              className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl border border-red-500/70 
-                        bg-red-500/10 px-3 py-2 text-sm font-medium text-red-300
-                        hover:bg-red-500/20 hover:text-red-100 hover:shadow-lg hover:shadow-red-500/40
-                        transition transform hover:-translate-y-0.5"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label="Open menu"
+              aria-expanded={mobileMenuOpen}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-transparent text-white transition hover:bg-white/10 md:hidden"
             >
-              <span className="text-lg">⎋</span>
-              <span>تسجيل الخروج</span>
+              <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
             </button>
+          </div>
 
-            <div className="mt-auto text-[11px] text-slate-500 border-t border-white/10 pt-3">
-              دخول سريع لإدارة حسابك وعقاراتك من مكان واحد.
-            </div>
-          </aside>
-        </>
+          <div
+            className={`fixed inset-0 z-[60] md:hidden transition-opacity duration-300 ${
+              mobileMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+            }`}
+          >
+            <div className="fixed inset-0 bg-black/50" onClick={() => setMobileMenuOpen(false)} />
+            <aside
+              className={`fixed right-0 top-0 h-full w-[85%] max-w-sm border-l border-white/10 bg-[#050912]/95 backdrop-blur transition-transform duration-300 ${
+                mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+              }`}
+            >
+              <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
+                <div className="text-sm font-semibold text-white">Menu</div>
+                <button
+                  type="button"
+                  aria-label="Close menu"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-black/30 text-white transition hover:bg-white/10"
+                >
+                  X
+                </button>
+              </div>
+
+              <nav className="flex flex-col gap-1 px-4 py-4">
+                {PUBLIC_NAV_ITEMS.map((item) => (
+                  <NavLink
+                    key={item.label}
+                    to={item.to}
+                    className={mobileNavClass}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+
+                {isAuthenticated ? (
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="rounded-lg px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10 hover:text-white"
+                  >
+                    Log out
+                  </button>
+                ) : (
+                  <NavLink
+                    to="/auth/login"
+                    end
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `rounded-lg px-3 py-2 text-sm transition ${
+                        isActive ? "bg-white/10 text-white/90" : "text-slate-200 hover:bg-white/10 hover:text-white"
+                      }`
+                    }
+                  >
+                    Login
+                  </NavLink>
+                )}
+
+                <Link
+                  to="/properties"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-2 inline-flex items-center justify-center rounded-lg bg-white/10 px-3 py-2 text-sm font-semibold text-black transition hover:bg-white/10"
+                >
+                  Explore Properties
+                </Link>
+              </nav>
+            </aside>
+          </div>
+        </header>
       )}
+
+      <main className="relative z-10 flex-1">
+        <Outlet />
+      </main>
     </div>
   );
 }

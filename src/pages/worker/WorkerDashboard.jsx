@@ -4,6 +4,7 @@ import Card from "../../components/Card.jsx";
 import Table from "../../components/Table.jsx";
 import StatusDot from "../../components/StatusDot.jsx";
 import api from "../../api/axios";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function WorkerDashboard() {
   const [tickets, setTickets] = useState([]);
@@ -49,9 +50,19 @@ export default function WorkerDashboard() {
   // تغيير حالة التذكرة
   // ===========================
   const updateStatus = (ticketId, status) => {
-    api.put(`/tickets/${ticketId}/status/${status}`).then(() => {
-      api.get("/tickets/assigned-to/me").then((res) => setTickets(res.data));
-    });
+    api
+      .put(`/tickets/${ticketId}/status/${status}`)
+      .then(() => {
+        notifyCrudSuccess(`Ticket #${ticketId} status updated`, "Operation successful", {
+          href: "/worker",
+        });
+        api.get("/tickets/assigned-to/me").then((res) => setTickets(res.data));
+      })
+      .catch(() =>
+        notifyCrudError(`Failed to update ticket #${ticketId}`, "Operation failed", {
+          href: "/worker",
+        })
+      );
   };
 
   // ===========================
@@ -65,10 +76,18 @@ export default function WorkerDashboard() {
         action: `${form.maintType} — ${form.description} — ${form.amount || 0} $`,
       })
       .then(() => {
+        notifyCrudSuccess(`Maintenance log added for ticket #${form.ticketId}`, "Operation successful", {
+          href: "/worker",
+        });
         loadLogs(form.ticketId);
         setShowForm(false);
         setForm({ ticketId: "", description: "", maintType: "", amount: "" });
-      });
+      })
+      .catch(() =>
+        notifyCrudError("Failed to add maintenance log", "Operation failed", {
+          href: "/worker",
+        })
+      );
   };
 
   const ticketColumns = [
@@ -113,19 +132,19 @@ export default function WorkerDashboard() {
         <div className="flex gap-2">
           <button
             onClick={() => updateStatus(r.id, "IN_PROGRESS")}
-            className="text-yellow-300 text-xs"
+            className="text-white/80 text-xs"
           >
             بدء
           </button>
           <button
             onClick={() => updateStatus(r.id, "COMPLETED")}
-            className="text-green-300 text-xs"
+            className="text-white/80 text-xs"
           >
             إنهاء
           </button>
           <button
             onClick={() => loadLogs(r.id)}
-            className="text-cyan-300 text-xs"
+            className="text-white/80 text-xs"
           >
             السجلات
           </button>
@@ -134,7 +153,7 @@ export default function WorkerDashboard() {
               setShowForm(true);
               setForm((prev) => ({ ...prev, ticketId: r.id }));
             }}
-            className="text-emerald-300 text-xs"
+            className="text-white/90 text-xs"
           >
             + صيانة
           </button>

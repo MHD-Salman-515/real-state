@@ -2,23 +2,88 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {س
+:root {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 0%;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 0%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 12%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 10%;
+  --muted-foreground: 0 0% 70%;
+  --accent: 0 0% 100%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 85% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --ring: 0 0% 100%;
+
+  --creos-bg: #000000;
+  --creos-surface: #000000;
+  --creos-text: #ffffff;
+  --creos-muted: #b3b3b3;
+  --creos-accent: #ffffff;
+  --creos-surface-rgb: 0 0 0;
+  --creos-accent-rgb: 255 255 255;
+  --creos-text-rgb: 255 255 255;
+}
+
+html,
+body {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+#root {
+  min-height: 100vh;
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.bubbles,
+.bubble,
+.particles,
+.particle,
+.orbs,
+.orb,
+.blobs,
+.blob,
+.animated-bg,
+.background-animation,
+.floating-bg {
+  display: none !important;
+}
+
+body::before,
+body::after,
+#root::before,
+#root::after {
+  content: none !important;
+  display: none !important;
+}
+
+@layer components {
   /* الحاوية الأساسية */
   .section { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
 
   /* أزرار */
   .btn { @apply inline-flex items-center justify-center rounded-xl font-medium transition; }
-  .btn-primary { @apply btn bg-green text-white px-4 py-2 shadow-sm hover:bg-green-dark; }
-  .btn-ghost { @apply btn border border-borderSoft bg-white hover:bg-black/5 px-4 py-2; }
-  .btn-gold  { @apply btn bg-gold text-ink px-4 py-2 hover:shadow-soft; }
+  .btn-primary { @apply btn bg-white/10 text-white px-4 py-2 shadow-sm hover:bg-white/20; }
+  .btn-ghost { @apply btn border border-white/15 bg-black/60 hover:bg-white/10 px-4 py-2 text-white; }
+  .btn-gold  { @apply btn bg-white/10 text-white px-4 py-2 hover:bg-white/20; }
 
   /* بطاقة عامة */
-  .card { @apply rounded-2xl bg-white border border-borderSoft shadow-soft; }
+  .card { @apply rounded-2xl bg-black/60 border border-white/15 shadow-soft text-white; }
 
   /* الإدخال */
   .input {
-    @apply w-full rounded-xl bg-white border border-borderSoft px-3 py-2 text-ink
-           placeholder-ink/40 focus:outline-none focus:ring-2 focus:ring-goldSoft focus:border-transparent;
+    @apply w-full rounded-xl bg-black/60 border border-white/15 px-3 py-2 text-white
+           placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent;
   }
   .select {
     @apply input bg-[right_.75rem_center] bg-no-repeat pr-10;
@@ -27,12 +92,12 @@
 
   /* شارة */
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full border border-goldSoft bg-goldSoft/30 px-3 py-1 text-sm text-ink;
+    @apply inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm text-white;
   }
 
   /* رأس الصفحة */
   .page-header {
-    @apply flex flex-wrap items-center justify-between gap-3 border-b border-borderSoft bg-offwhite/60 py-4;
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-black/50 py-4;
   }
 }
 @layer utilities {
@@ -46,20 +111,20 @@
     @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl;
   }
 
-  /* زر ذهبي أساسي */
+  /* زر أساسي */
   .btn-gold {
     @apply inline-flex items-center justify-center px-6 py-3 rounded-full
-           bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 font-semibold
-           shadow-lg shadow-amber-500/40
-           hover:shadow-amber-400/70 hover:-translate-y-0.5
+           bg-white/10 text-white font-semibold border border-white/15
+           shadow-lg shadow-black/40
+           hover:bg-white/20 hover:-translate-y-0.5
            transition duration-300;
   }
 
-  /* زر شفاف بإطار ذهبي */
+  /* زر شفاف بإطار أبيض */
   .btn-ghost-gold {
     @apply inline-flex items-center justify-center px-6 py-3 rounded-full
-           border border-amber-400/70 text-amber-200
-           hover:bg-amber-400/10 hover:-translate-y-0.5
+           border border-white/20 text-white/85
+           hover:bg-white/10 hover:-translate-y-0.5
            transition duration-300;
   }
 
@@ -74,8 +139,8 @@
 
   /* أنيميشن Glow للصناديق/الأزرار */
   @keyframes glow {
-    0%, 100% { box-shadow: 0 0 10px rgba(250, 204, 21, 0.0); }
-    50%      { box-shadow: 0 0 35px rgba(250, 204, 21, 0.8); }
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0); }
+    50%      { box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
   }
   .animate-glow {
     animation: glow 3s ease-in-out infinite;
@@ -121,7 +186,7 @@
 
   /* حركة Pop للكروت على الهوفر */
   .hover-card-pop {
-    @apply transition duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-gold/25;
+    @apply transition duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-white/10;
   }
 }
 /* حركة بطيئة للصورة الخلفية */
@@ -141,3 +206,9 @@
   animation: pan-slow 28s ease-in-out infinite alternate;
 }
 
+.lab-bg::before {
+  overflow: hidden;
+  max-width: 100vw;
+  max-height: 100vh;
+  box-sizing: border-box;
+}

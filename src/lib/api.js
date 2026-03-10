@@ -1,131 +1,4 @@
-// // src/lib/api.js
-// import {
-//   // client
-//   dummyListProperties,
-//   dummyGetProperty,
-//   dummyToggleFavorite,
-//   dummyCreateVisit,
-//   dummyListAppointments,
-//   // owner
-//   dummyOwnerListProperties,
-//   dummyOwnerGetProperty,
-//   dummyOwnerUpsertProperty,
-//   dummyOwnerDeleteProperty,
-//   dummyOwnerListAppointments,
-//   dummyOwnerUpdateAppointmentStatus,
-// } from "./dummy";
-// import api from "../api/axios";
-
-// const USE_DUMMY = import.meta.env.VITE_USE_DUMMY === "1";
-// const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-
-// // دالة عامة لطلبات fetch
-// const nodeFetch = async (path, opt = {}) => {
-//   const r = await fetch(BASE + path, {
-//     headers: { "Content-Type": "application/json", ...(opt.headers || {}) },
-//     ...opt,
-//   });
-//   if (!r.ok) {
-//     const err = await r.json().catch(() => ({ message: "حدث خطأ في الاتصال" }));
-//     throw err;
-//   }
-//   return r.json();
-// };
-
-// /* ===========================
-//    🏠 Client APIs
-//    =========================== */
-// export const listProperties = async (q = {}) => {
-//   if (USE_DUMMY) return dummyListProperties(q);
-//   const url = new URL(BASE + "/properties");
-//   Object.entries(q).forEach(([k, v]) => v && url.searchParams.set(k, v));
-//   const r = await fetch(url);
-//   return r.ok ? r.json() : [];
-// };
-
-// export const getProperty = async (id) => {
-//   if (USE_DUMMY) return dummyGetProperty(id);
-//   return nodeFetch(`/properties/${id}`);
-// };
-
-// export const toggleFavorite = async (propertyId) => {
-//   if (USE_DUMMY) return dummyToggleFavorite(propertyId);
-//   return nodeFetch(`/favorites/${propertyId}`, { method: "POST" });
-// };
-
-// export const createVisit = async (payload) => {
-//   if (USE_DUMMY) return dummyCreateVisit(payload);
-//   return nodeFetch(`/visits`, {
-//     method: "POST",
-//     body: JSON.stringify(payload),
-//   });
-// };
-
-// export const listAppointments = async () => {
-//   if (USE_DUMMY) return dummyListAppointments();
-//   const r = await fetch(`${BASE}/visits?mine=1`);
-//   return r.ok ? r.json() : [];
-// };
-
-// /* ===========================
-//    🧑‍💼 Owner APIs
-//    =========================== */
-// export const ownerListProperties = async () => {
-//   if (USE_DUMMY) return dummyOwnerListProperties();
-//   return nodeFetch(`/owner/properties`);
-// };
-
-
-
-// export const ownerGetProperty = async (id) => {
-//   if (USE_DUMMY) return dummyOwnerGetProperty(id);
-//   return nodeFetch(`/owner/properties/${id}`);
-// };
-
-// export const ownerUpsertProperty = async (id, payload) => {
-//   if (USE_DUMMY) return dummyOwnerUpsertProperty(id, payload);
-//   const method = id ? "PUT" : "POST";
-//   const path = id ? `/owner/properties/${id}` : `/owner/properties`;
-//   return nodeFetch(path, { method, body: JSON.stringify(payload) });
-// };
-
-// export const ownerDeleteProperty = async (id) => {
-//   if (USE_DUMMY) return dummyOwnerDeleteProperty(id);
-//   return nodeFetch(`/owner/properties/${id}`, { method: "DELETE" });
-// };
-
-// // export const ownerListAppointments = async () => {
-// //   if (USE_DUMMY) return dummyOwnerListAppointments();
-// //   return nodeFetch(`/owner/appointments`);
-// // };
-
-
-
-// // 🟩 جلب مواعيد المالك من الباك
-// export async function ownerListAppointments(ownerId) {
-//   const res = await api.get("/appointments");
-//   const arr = Array.isArray(res.data) ? res.data : [];
-
-//   // فلترة المواعيد حسب المالك
-//   return arr.filter((a) => a.ownerId === ownerId);
-// }
-
-
-// // export const ownerUpdateAppointmentStatus = async (id, status) => {
-// //   if (USE_DUMMY) return dummyOwnerUpdateAppointmentStatus(id, status);
-// //   return nodeFetch(`/owner/appointments/${id}`, {
-// //     method: "PATCH",
-// //     body: JSON.stringify({ status }),
-// //   });
-// // };
-
-// export async function ownerUpdateAppointmentStatus(id, status) {
-//   return api.put(`/appointments/${id}`, { status });
-// }
-
-
-
-import api from "../api/axios";
+ import api from "../api/axios";
 
 /* ==========================================
    🟦 AUTH — تسجيل / دخول / معلومات المستخدم
@@ -137,7 +10,12 @@ export const register = async (data) => {
 };
 
 export const login = async (data) => {
-  const res = await api.post("/auth/login", data);
+  const email = String(data?.email || "").trim();
+  const password = String(data?.password || "");
+  if (!email || password.length < 1) {
+    throw new Error("Email and password are required");
+  }
+  const res = await api.post("/auth/login", { email, password });
   return res.data;
 };
 

@@ -64,7 +64,7 @@ export default function Tickets() {
             render: (r) => (
                 <Link
                     to={`/client/tickets/${r.id}`}
-                    className="text-xs text-cyan-300 hover:underline"
+                    className="text-xs text-white/80 hover:underline"
                 >
                     عرض التفاصيل
                 </Link>

@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
-
-const API = "http://localhost:3000";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
+import { buildApiUrl } from "../api/axios";
 
 const LS_TOKEN = "auth_token_v1";
 const LS_USER = "auth_user_v1";
@@ -12,9 +11,6 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // ---------------------------
-  // Load auth from localStorage
-  // ---------------------------
   useEffect(() => {
     try {
       const t = localStorage.getItem(LS_TOKEN);
@@ -27,58 +23,77 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Failed to load auth:", err);
     } finally {
-      setAuthLoading(false); // ← أهم شيء
+      setAuthLoading(false);
     }
   }, []);
 
-  // ---------------------------
-  // Save login/register result
-  // ---------------------------
-  const saveAuth = (token, user) => {
-    setToken(token);
-    setUser(user);
+  const saveAuth = useCallback((nextToken, nextUser) => {
+    setToken(nextToken);
+    setUser(nextUser);
 
-    localStorage.setItem(LS_TOKEN, token);
-    localStorage.setItem(LS_USER, JSON.stringify(user));
-  };
+    localStorage.setItem(LS_TOKEN, nextToken);
+    localStorage.setItem(LS_USER, JSON.stringify(nextUser));
+  }, []);
 
-  // ---------------------------
-  // Register
-  // ---------------------------
-  const register = async (payload) => {
-    const res = await fetch(`${API}/auth/register`, {
+  const hydrateAuth = useCallback((nextToken, nextUser) => {
+    saveAuth(nextToken, nextUser);
+  }, []);
+
+  const updateUser = useCallback((patch) => {
+    setUser((prev) => {
+      const next = { ...(prev || {}), ...(patch || {}) };
+      try {
+        localStorage.setItem(LS_USER, JSON.stringify(next));
+      } catch {
+        // Keep runtime auth state even if storage is unavailable.
+      }
+      return next;
+    });
+  }, []);
+
+  const register = useCallback(async (payload) => {
+    const res = await fetch(buildApiUrl("/api/auth/register"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
-    if (!res.ok) throw new Error("فشل إنشاء الحساب");
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data?.message || "فشل إنشاء الحساب");
+    }
 
-    const data = await res.json();
-    saveAuth(data.token, data.user);
-    return data.user;
-  };
+    const accessToken = data.token || data.accessToken;
+    if (accessToken && data.user) {
+      saveAuth(accessToken, data.user);
+    }
 
-  // ---------------------------
-  // Login
-  // ---------------------------
-  const login = async (payload) => {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) throw new Error("بيانات تسجيل الدخول غير صحيحة");
-
-    const data = await res.json();
-    saveAuth(data.token, data.user);
     return data;
-  };
+  }, [saveAuth]);
 
-  // ---------------------------
-  // Logout
-  // ---------------------------
+  const login = useCallback(async (payload) => {
+    const email = String(payload?.email || "").trim();
+    const password = String(payload?.password || "");
+    if (!email || password.length < 1) {
+      throw new Error("Email and password are required");
+    }
+
+    const res = await fetch(buildApiUrl("/auth/login"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data?.message || "بيانات تسجيل الدخول غير صحيحة");
+
+    if (data.token && data.user) {
+      saveAuth(data.token, data.user);
+    }
+
+    return data;
+  }, [saveAuth]);
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -87,9 +102,6 @@ export function AuthProvider({ children }) {
     localStorage.removeItem(LS_USER);
   };
 
-  // ---------------------------
-  // Context value
-  // ---------------------------
   const value = useMemo(
     () => ({
       user,
@@ -98,14 +110,15 @@ export function AuthProvider({ children }) {
       login,
       logout,
       register,
+      updateUser,
+      hydrateAuth,
     }),
-    [user, token, authLoading]
+    [user, token, authLoading, login, register, updateUser, hydrateAuth]
   );
 
   return (
     <AuthContext.Provider value={value}>
       {!authLoading && children}
-      {/* يمنع عرض صفحات فاضية */}
     </AuthContext.Provider>
   );
 }

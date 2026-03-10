@@ -1,7 +1,9 @@
-// src/pages/admin/Maintenance.jsx
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
+import PageHeader from "../../components/PageHeader.jsx";
+import Card from "../../components/Card.jsx";
 import api from "../../api/axios";
 import { useToast } from "../../components/ToastProvider";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function AdminMaintenance() {
   const toast = useToast();
@@ -10,11 +12,9 @@ export default function AdminMaintenance() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
 
-  // بيانات الفنيين والموردين
   const [workers, setWorkers] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
 
-  // إدارة النوافذ
   const [showWorkerModal, setShowWorkerModal] = useState(false);
   const [showSupplierModal, setShowSupplierModal] = useState(false);
 
@@ -22,17 +22,11 @@ export default function AdminMaintenance() {
   const [selectedWorker, setSelectedWorker] = useState(null);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
 
-  // 🔹 كلاس موحّد للـ <select>
   const selectClass =
-    "w-full px-3 py-2 rounded-xl " +
-    "bg-emerald-900/20 text-emerald-200 " +
-    "border border-emerald-400/40 " +
-    "focus:outline-none focus:ring-2 focus:ring-emerald-400/60 " +
-    "transition";
+    "w-full rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-white/90 " +
+    "transition focus:outline-none focus:ring-2 focus:ring-white/30";
+  const optionClass = "bg-slate-900 text-white/90";
 
-  const optionClass = "bg-slate-900 text-emerald-100";
-
-  // 🔹 تحميل التذاكر
   const load = async () => {
     try {
       setLoading(true);
@@ -40,7 +34,7 @@ export default function AdminMaintenance() {
       setTickets(res.data);
     } catch (err) {
       console.error("Load tickets error:", err.response?.data || err.message);
-      toast.error("تعذّر تحميل التذاكر");
+      toast.error("Failed to load tickets");
     } finally {
       setLoading(false);
     }
@@ -50,38 +44,40 @@ export default function AdminMaintenance() {
     load();
   }, []);
 
-  // 🔹 فلترة حسب الحالة
-  const filtered = tickets.filter((t) =>
-    filter === "ALL" ? true : t.status === filter
-  );
+  const filtered = tickets.filter((t) => (filter === "ALL" ? true : t.status === filter));
 
-  // 🔹 تغيير الحالة
   const updateStatus = async (id, status) => {
     try {
       await api.put(`/tickets/${id}/status/${status}`);
-      toast.success("تم تحديث الحالة");
+      notifyCrudSuccess("Ticket status updated", "Operation successful", {
+        href: "/admin/maintenance",
+      });
       await load();
     } catch (err) {
       console.error("Update status error:", err.response?.data || err.message);
-      toast.error("فشل تحديث الحالة");
+      notifyCrudError("Failed to update ticket status", "Operation failed", {
+        href: "/admin/maintenance",
+      });
     }
   };
 
-  // 🔹 حذف التذكرة
   const deleteTicket = async (id) => {
-    if (!confirm("هل تريد حذف التذكرة؟")) return;
+    if (!confirm("Do you want to delete this ticket?")) return;
 
     try {
       await api.delete(`/tickets/${id}`);
-      toast.success("تم الحذف");
+      notifyCrudSuccess("Ticket deleted", "Operation successful", {
+        href: "/admin/maintenance",
+      });
       await load();
     } catch (err) {
       console.error("Delete ticket error:", err.response?.data || err.message);
-      toast.error("فشل الحذف (تحقق من السيرفر / القيود في قاعدة البيانات)");
+      notifyCrudError("Failed to delete ticket", "Operation failed", {
+        href: "/admin/maintenance",
+      });
     }
   };
 
-  // 🔹 فتح نافذة تعيين فني
   const openAssignWorker = async (ticket) => {
     try {
       setCurrentTicket(ticket);
@@ -91,11 +87,10 @@ export default function AdminMaintenance() {
       setShowWorkerModal(true);
     } catch (err) {
       console.error("Load workers error:", err.response?.data || err.message);
-      toast.error("فشل تحميل قائمة الفنيين");
+      toast.error("Failed to load workers");
     }
   };
 
-  // 🔹 فتح نافذة تعيين مورد
   const openAssignSupplier = async (ticket) => {
     try {
       setCurrentTicket(ticket);
@@ -105,265 +100,236 @@ export default function AdminMaintenance() {
       setShowSupplierModal(true);
     } catch (err) {
       console.error("Load suppliers error:", err.response?.data || err.message);
-      toast.error("فشل تحميل قائمة الموردين");
+      toast.error("Failed to load suppliers");
     }
   };
 
-  // 🔹 تنفيذ تعيين الفني
   const assignWorker = async () => {
     if (!currentTicket || !selectedWorker) {
-      return toast.error("اختر فنيًا أولًا");
+      return toast.error("Select a worker first");
     }
 
     try {
-      await api.put(
-        `/tickets/${currentTicket.id}/assign-worker/${selectedWorker}`
-      );
-      toast.success("تم تعيين الفني");
+      await api.put(`/tickets/${currentTicket.id}/assign-worker/${selectedWorker}`);
+      notifyCrudSuccess("Worker assigned to ticket", "Operation successful", {
+        href: "/admin/maintenance",
+      });
       setShowWorkerModal(false);
       setSelectedWorker(null);
       setCurrentTicket(null);
       await load();
     } catch (err) {
       console.error("Assign worker error:", err.response?.data || err.message);
-      toast.error("فشل تعيين الفني (تحقق من السيرفر)");
+      notifyCrudError("Failed to assign worker", "Operation failed", {
+        href: "/admin/maintenance",
+      });
     }
   };
 
-  // 🔹 تنفيذ تعيين المورد
   const assignSupplier = async () => {
     if (!currentTicket || !selectedSupplier) {
-      return toast.error("اختر موردًا أولًا");
+      return toast.error("Select a supplier first");
     }
 
     try {
-      await api.put(
-        `/tickets/${currentTicket.id}/assign-supplier/${selectedSupplier}`
-      );
-      toast.success("تم تعيين المورد");
+      await api.put(`/tickets/${currentTicket.id}/assign-supplier/${selectedSupplier}`);
+      notifyCrudSuccess("Supplier assigned to ticket", "Operation successful", {
+        href: "/admin/maintenance",
+      });
       setShowSupplierModal(false);
       setSelectedSupplier(null);
       setCurrentTicket(null);
       await load();
     } catch (err) {
-      console.error(
-        "Assign supplier error:",
-        err.response?.data || err.message
-      );
-      toast.error("فشل تعيين المورد (تحقق من السيرفر)");
+      console.error("Assign supplier error:", err.response?.data || err.message);
+      notifyCrudError("Failed to assign supplier", "Operation failed", {
+        href: "/admin/maintenance",
+      });
     }
   };
 
-  if (loading) return <div className="text-white">جاري التحميل…</div>;
-
   return (
     <section className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold text-white">
-          الصيانة — إدارة التذاكر الفنية
-        </h1>
-        <p className="text-sm text-slate-300">
-          تعيين الفنيين والموردين، تحديث الحالة، ومتابعة التذاكر.
-        </p>
-      </header>
+      <PageHeader
+        title="Maintenance Tickets"
+        subtitle="Manage ticket status and assignment workflow."
+      />
 
-      {/* الفلترة */}
-      <div className="flex gap-3">
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className={selectClass}
-        >
-          <option className={optionClass} value="ALL">
-            كل الحالات
-          </option>
-          <option className={optionClass} value="OPEN">
-            قيد المراجعة
-          </option>
-          <option className={optionClass} value="IN_PROGRESS">
-            قيد التنفيذ
-          </option>
-          <option className={optionClass} value="COMPLETED">
-            مكتمل
-          </option>
-          <option className={optionClass} value="CANCELLED">
-            ملغى
-          </option>
-        </select>
-      </div>
+      <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold text-white md:text-base">Tickets</h2>
+            <p className="mt-1 text-xs text-slate-300">Update status, assign teams, and maintain service records.</p>
+          </div>
+        </div>
 
-      {/* الجدول */}
-      <div className="overflow-x-auto rounded-xl bg-white/5 border border-white/10 p-4">
-        <table className="w-full text-sm text-white">
-          <thead className="text-slate-300 border-b border-white/10">
-            <tr>
-              <th className="p-2">#</th>
-              <th className="p-2">العقار</th>
-              <th className="p-2">العميل</th>
-              <th className="p-2">الفني</th>
-              <th className="p-2">المورد</th>
-              <th className="p-2">الحالة</th>
-              <th className="p-2">تاريخ الإنشاء</th>
-              <th className="p-2">تحكم</th>
-            </tr>
-          </thead>
+        <div className="mb-3 rounded-xl border border-white/10 bg-black/25 p-3">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-300">Status</label>
+              <select value={filter} onChange={(e) => setFilter(e.target.value)} className={selectClass}>
+                <option className={optionClass} value="ALL">All</option>
+                <option className={optionClass} value="OPEN">Open</option>
+                <option className={optionClass} value="IN_PROGRESS">In Progress</option>
+                <option className={optionClass} value="COMPLETED">Completed</option>
+                <option className={optionClass} value="CANCELLED">Cancelled</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={load}
+              className="self-start rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90 md:self-auto"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
 
-          <tbody>
-            {filtered.map((t) => (
-              <tr key={t.id} className="border-b border-white/5">
-                <td className="p-2">{t.id}</td>
-                <td className="p-2">{t.property?.title || "—"}</td>
-                <td className="p-2">{t.client?.fullName || "—"}</td>
-                <td className="p-2">{t.worker?.fullName || "—"}</td>
-                <td className="p-2">{t.supplier?.fullName || "—"}</td>
-
-                <td className="p-2">
-                  <select
-                    value={t.status}
-                    onChange={(e) => updateStatus(t.id, e.target.value)}
-                    className={selectClass}
-                  >
-                    <option className={optionClass} value="OPEN">
-                      قيد المراجعة
-                    </option>
-                    <option className={optionClass} value="IN_PROGRESS">
-                      قيد التنفيذ
-                    </option>
-                    <option className={optionClass} value="COMPLETED">
-                      مكتمل
-                    </option>
-                    <option className={optionClass} value="CANCELLED">
-                      ملغى
-                    </option>
-                  </select>
-                </td>
-
-                <td className="p-2">
-                  {t.createdAt
-                    ? new Date(t.createdAt).toLocaleDateString("ar-EG")
-                    : "—"}
-                </td>
-
-                <td className="p-2 flex flex-wrap gap-2">
-                  {/* زر تعيين فني */}
-                  <button
-                    className="px-3 py-1 bg-blue-600 rounded text-sm"
-                    onClick={() => openAssignWorker(t)}
-                  >
-                    تعيين فني
-                  </button>
-
-                  {/* زر تعيين مورد */}
-                  <button
-                    className="px-3 py-1 bg-purple-600 rounded text-sm"
-                    onClick={() => openAssignSupplier(t)}
-                  >
-                    تعيين مورد
-                  </button>
-
-                  {/* زر حذف */}
-                  <button
-                    className="px-3 py-1 bg-red-500 rounded text-sm"
-                    onClick={() => deleteTicket(t.id)}
-                  >
-                    حذف
-                  </button>
-                </td>
+        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+          <table className="min-w-[1120px] text-sm leading-5 text-slate-100">
+            <thead className="sticky top-0 z-10 border-b border-white/10 bg-black/40 backdrop-blur-xl">
+              <tr>
+                <th className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300 tabular-nums">ID</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Property</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Client</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Worker</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Supplier</th>
+                <th className="w-[160px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Status</th>
+                <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Created</th>
+                <th className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] uppercase tracking-wide text-slate-300">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="p-4">
+                    <div className="animate-pulse space-y-2">
+                      <div className="h-10 rounded-lg bg-white/10" />
+                      <div className="h-10 rounded-lg bg-white/10" />
+                      <div className="h-10 rounded-lg bg-white/10" />
+                    </div>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="p-6 text-center text-slate-400">No tickets found</td>
+                </tr>
+              ) : (
+                filtered.map((t) => (
+                  <tr key={t.id} className="transition-colors even:bg-white/[0.02] hover:bg-white/5">
+                    <td className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle tabular-nums">{t.id}</td>
+                    <td className="max-w-[220px] truncate px-4 py-3 align-middle" title={t.property?.title || "â€”"}>{t.property?.title || "â€”"}</td>
+                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.client?.fullName || "â€”"}>{t.client?.fullName || "â€”"}</td>
+                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.worker?.fullName || "â€”"}>{t.worker?.fullName || "â€”"}</td>
+                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.supplier?.fullName || "â€”"}>{t.supplier?.fullName || "â€”"}</td>
+                    <td className="w-[160px] whitespace-nowrap px-4 py-3 align-middle">
+                      <select value={t.status} onChange={(e) => updateStatus(t.id, e.target.value)} className={selectClass}>
+                        <option className={optionClass} value="OPEN">Open</option>
+                        <option className={optionClass} value="IN_PROGRESS">In Progress</option>
+                        <option className={optionClass} value="COMPLETED">Completed</option>
+                        <option className={optionClass} value="CANCELLED">Cancelled</option>
+                      </select>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 align-middle">{t.createdAt ? new Date(t.createdAt).toLocaleDateString("ar-EG") : "â€”"}</td>
+                    <td className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center">
+                      <div className="flex flex-wrap items-center justify-center gap-2">
+                        <button className="rounded-lg border border-blue-400/40 bg-blue-500/10 px-3 py-1 text-xs text-blue-200 transition hover:bg-blue-500/20" onClick={() => openAssignWorker(t)}>
+                          Assign Worker
+                        </button>
+                        <button className="rounded-lg border border-violet-400/40 bg-violet-500/10 px-3 py-1 text-xs text-violet-200 transition hover:bg-violet-500/20" onClick={() => openAssignSupplier(t)}>
+                          Assign Supplier
+                        </button>
+                        <button className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-1 text-xs text-red-300 transition hover:bg-red-500/20" onClick={() => deleteTicket(t.id)}>
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
 
-        {filtered.length === 0 && (
-          <p className="text-center text-slate-400 mt-4">لا توجد تذاكر</p>
-        )}
-      </div>
+      {showWorkerModal ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#050912]/95 p-5 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-white">Assign Worker</h3>
+              <button
+                className="rounded-lg border border-white/15 px-2 py-1 text-xs text-slate-300 transition hover:bg-white/10"
+                onClick={() => {
+                  setShowWorkerModal(false);
+                  setSelectedWorker(null);
+                  setCurrentTicket(null);
+                }}
+              >
+                Close
+              </button>
+            </div>
 
-      {/* نافذة تعيين فني */}
-      {showWorkerModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-5 rounded-lg w-[350px] space-y-4">
-            <h3 className="text-lg font-bold text-white">تعيين فني</h3>
+            <div className="max-h-64 overflow-y-auto">
+              <select
+                className={selectClass}
+                value={selectedWorker ?? ""}
+                onChange={(e) => setSelectedWorker(e.target.value ? Number(e.target.value) : null)}
+              >
+                <option className={optionClass} value="">Select worker...</option>
+                {workers.map((w) => (
+                  <option key={w.id} className={optionClass} value={w.id}>
+                    {w.fullName}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            <select
-              className={selectClass}
-              value={selectedWorker ?? ""}
-              onChange={(e) =>
-                setSelectedWorker(
-                  e.target.value ? Number(e.target.value) : null
-                )
-              }
-            >
-              <option className={optionClass} value="">
-                اختر الفني…
-              </option>
-              {workers.map((w) => (
-                <option key={w.id} className={optionClass} value={w.id}>
-                  {w.fullName}
-                </option>
-              ))}
-            </select>
-
-            <button className="btn-primary w-full" onClick={assignWorker}>
-              حفظ
-            </button>
-
-            <button
-              className="w-full py-2 text-center bg-red-500/70 rounded mt-2"
-              onClick={() => {
-                setShowWorkerModal(false);
-                setSelectedWorker(null);
-                setCurrentTicket(null);
-              }}
-            >
-              إغلاق
+            <button className="mt-4 w-full rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-black transition hover:bg-white/10" onClick={assignWorker}>
+              Save
             </button>
           </div>
         </div>
-      )}
+      ) : null}
 
-      {/* نافذة تعيين مورد */}
-      {showSupplierModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-5 rounded-lg w-[350px] space-y-4">
-            <h3 className="text-lg font-bold text-white">تعيين مورد</h3>
+      {showSupplierModal ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#050912]/95 p-5 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-white">Assign Supplier</h3>
+              <button
+                className="rounded-lg border border-white/15 px-2 py-1 text-xs text-slate-300 transition hover:bg-white/10"
+                onClick={() => {
+                  setShowSupplierModal(false);
+                  setSelectedSupplier(null);
+                  setCurrentTicket(null);
+                }}
+              >
+                Close
+              </button>
+            </div>
 
-            <select
-              className={selectClass}
-              value={selectedSupplier ?? ""}
-              onChange={(e) =>
-                setSelectedSupplier(
-                  e.target.value ? Number(e.target.value) : null
-                )
-              }
-            >
-              <option className={optionClass} value="">
-                اختر المورد…
-              </option>
-              {suppliers.map((s) => (
-                <option key={s.id} className={optionClass} value={s.id}>
-                  {s.fullName}
-                </option>
-              ))}
-            </select>
+            <div className="max-h-64 overflow-y-auto">
+              <select
+                className={selectClass}
+                value={selectedSupplier ?? ""}
+                onChange={(e) => setSelectedSupplier(e.target.value ? Number(e.target.value) : null)}
+              >
+                <option className={optionClass} value="">Select supplier...</option>
+                {suppliers.map((s) => (
+                  <option key={s.id} className={optionClass} value={s.id}>
+                    {s.fullName}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            <button className="btn-primary w-full" onClick={assignSupplier}>
-              حفظ
-            </button>
-
-            <button
-              className="w-full py-2 text-center bg-red-500/70 rounded mt-2"
-              onClick={() => {
-                setShowSupplierModal(false);
-                setSelectedSupplier(null);
-                setCurrentTicket(null);
-              }}
-            >
-              إغلاق
+            <button className="mt-4 w-full rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-black transition hover:bg-white/10" onClick={assignSupplier}>
+              Save
             </button>
           </div>
         </div>
-      )}
+      ) : null}
     </section>
   );
 }
+

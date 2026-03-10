@@ -64,7 +64,7 @@ export default function AgentLinkOps() {
   const TabButton = ({ id, label }) => (
     <button
       className={`px-4 py-2 rounded-xl text-sm ${tab === id
-          ? "bg-emerald-600 text-white"
+          ? "bg-white/10 text-white"
           : "bg-white/10 text-slate-300 hover:bg-white/20"
         }`}
       onClick={() => setTab(id)}
@@ -104,7 +104,7 @@ export default function AgentLinkOps() {
                   <div className="font-semibold">{p.title}</div>
                   <div className="text-slate-400 text-xs">ID: {p.id}</div>
                 </div>
-                <div className="text-emerald-300 text-sm">{p.city}</div>
+                <div className="text-white/90 text-sm">{p.city}</div>
               </div>
             ))}
 
@@ -132,7 +132,7 @@ export default function AgentLinkOps() {
                     {a.date} — {a.time}
                   </div>
                 </div>
-                <div className="text-cyan-300">{a.status}</div>
+                <div className="text-white/80">{a.status}</div>
               </div>
             ))}
 
@@ -184,7 +184,7 @@ export default function AgentLinkOps() {
                   </div>
                 </div>
 
-                <div className="text-yellow-300 text-sm">
+                <div className="text-white/80 text-sm">
                   {t.priority}
                 </div>
               </div>

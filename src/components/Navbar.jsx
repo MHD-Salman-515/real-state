@@ -1,12 +1,24 @@
+import { useEffect, useState } from "react";
+
 export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <header 
-      className="
-        sticky top-0 z-40 
-        bg-black/20 backdrop-blur-xl 
-        border-b border-white/10
-        shadow-md shadow-emerald-500/10
-      "
+      className={
+        "sticky top-0 z-40 " +
+        "backdrop-blur-md transition-colors duration-300 " +
+        (scrolled
+          ? "bg-slate-950/80 border-b border-white/10 shadow-sm shadow-black/30"
+          : "bg-black/10 border-b border-white/5")
+      }
     >
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
 
@@ -15,8 +27,8 @@ export default function Navbar() {
           <div
             className="
               h-10 w-10 rounded-2xl 
-              bg-gradient-to-br from-emerald-400 to-cyan-400 
-              shadow-lg shadow-emerald-500/40 
+              bg-gradient-to-br from-white/20 to-white/10 
+              shadow-lg shadow-white/10 
               flex items-center justify-center 
               group-hover:scale-110 transition
             "
@@ -25,21 +37,21 @@ export default function Navbar() {
           </div>
 
           <div className="leading-tight">
-            <div className="text-xs uppercase text-emerald-300 tracking-wide">
+            <div className="text-xs uppercase text-white/90 tracking-wide">
               Luxury Real Estate
             </div>
-            <div className="font-bold text-lg group-hover:text-cyan-300 transition">
+            <div className="font-bold text-lg group-hover:text-white/80 transition">
               RealEstate
             </div>
           </div>
         </div>
 
         {/* ===== الروابط ===== */}
-        <nav className="flex items-center gap-6 text-sm">
+        <nav className="flex items-center gap-6 text-sm drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
           <a
             href="/"
             className="
-              text-slate-200 hover:text-emerald-300 
+              text-slate-200 hover:text-white/90 
               transition font-medium
             "
           >
@@ -49,7 +61,7 @@ export default function Navbar() {
           <a
             href="/search"
             className="
-              text-slate-200 hover:text-emerald-300 
+              text-slate-200 hover:text-white/90 
               transition font-medium
             "
           >
@@ -61,9 +73,9 @@ export default function Navbar() {
             href="/auth/login"
             className="
               px-4 py-2 rounded-xl
-              bg-gradient-to-r from-emerald-500 to-cyan-500
+              bg-gradient-to-r from-white/20 to-white/10
               text-black font-semibold 
-              shadow-lg shadow-emerald-500/30
+              shadow-lg shadow-white/10
               hover:scale-105 transition
             "
           >

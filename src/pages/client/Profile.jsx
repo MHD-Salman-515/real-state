@@ -1,142 +1,177 @@
-// src/pages/client/Profile.jsx
+﻿// src/pages/client/Profile.jsx
 import { useEffect, useState } from "react";
-import { useToast } from "../../components/ToastProvider.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
+import { buildApiUrl } from "../../api/axios";
+import { useNotifications } from "@/components/notifications/useNotifications";
+
+function sanitizePhoneInput(value) {
+  const source = String(value || "").replace(/\s+/g, " ").trimStart();
+  const keepPlus = source.startsWith("+");
+  const core = source.replace(/[^\d\s+]/g, "").replace(/\+/g, "");
+  const compact = core.replace(/\s{2,}/g, " ").trim();
+  return keepPlus ? `+${compact}` : compact;
+}
 
 export default function Profile() {
-  const toast = useToast();
+  const { updateUser } = useAuth();
+  const { notify } = useNotifications();
   const [me, setMe] = useState({ fullName: "", phone: "" });
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
-    // تحميل بيانات المستخدم من localStorage
     const raw = localStorage.getItem("auth_user_v1");
-    if (raw) {
+    if (!raw) return;
+    try {
       const u = JSON.parse(raw);
-      setUserId(u.id); // ضرورية لـ PATCH /users/:id
-
+      setUserId(u.id);
       setMe({
         fullName: u.fullName || "",
         phone: u.phone || "",
       });
+    } catch {
+      // Keep defaults if storage payload is invalid.
     }
   }, []);
 
   const save = async () => {
-    if (!me.fullName.trim()) {
-      return toast.warning("أدخل الاسم الكامل");
+    setSaveError("");
+
+    const fullName = String(me.fullName || "").trim();
+    const phone = sanitizePhoneInput(me.phone);
+
+    if (!fullName) {
+      setSaveError("Please enter your full name.");
+      return;
     }
 
     if (!userId) {
-      return toast.error("حدث خطأ: لم يتم العثور على رقم المستخدم");
+      setSaveError("Unable to detect your user account id.");
+      return;
     }
 
     try {
       setLoading(true);
 
       const token = localStorage.getItem("auth_token_v1");
-      if (!token) {
-        toast.error("يجب تسجيل الدخول أولاً");
-        return;
+      if (!token) throw new Error("You need to be logged in.");
+
+      const res = await fetch(buildApiUrl(`/users/${userId}`), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          fullName,
+          phone,
+        }),
+      });
+
+      if (!res.ok) {
+        let message = "Failed to save profile.";
+        try {
+          const payload = await res.json();
+          message = payload?.message || payload?.error || message;
+        } catch {
+          // Keep fallback message.
+        }
+        throw new Error(message);
       }
-
-      // 🔥 إرسال التعديل إلى الباك باستخدام /users/:id
-     const res = await fetch(`http://localhost:3000/users/${userId}`, {
-  method: "PUT", // 👈 كانت PATCH
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-  body: JSON.stringify({
-    fullName: me.fullName,
-    phone: me.phone,
-  }),
-});
-
-      if (!res.ok) throw new Error("Server Error");
 
       const updated = await res.json();
 
-      // 🔁 تحديث نسخة اليوزر في localStorage
-      localStorage.setItem("auth_user_v1", JSON.stringify(updated));
+      const rawUser = localStorage.getItem("auth_user_v1");
+      const currentUser = rawUser ? JSON.parse(rawUser) : {};
+      const mergedUser = {
+        ...currentUser,
+        ...updated,
+        fullName: updated?.fullName ?? fullName,
+        phone: updated?.phone ?? phone,
+      };
 
-      toast.success("تم حفظ الملف الشخصي بنجاح ✔️");
+      localStorage.setItem("auth_user_v1", JSON.stringify(mergedUser));
+      updateUser(mergedUser);
+      setMe({ fullName: mergedUser.fullName || "", phone: mergedUser.phone || "" });
 
-      // إشعار في الجرس
-      try {
-        window.dispatchEvent(
-          new CustomEvent("notify:add", {
-            detail: {
-              text: `تم تحديث بيانات المستخدم: ${me.fullName}`,
-            },
-          })
-        );
-      } catch {}
-
+      notifyCrudSuccess("Your profile info was saved.", "Profile updated", {
+        href: "/client/profile",
+      });
+      notify({
+        type: "system",
+        title: "Profile updated",
+        message: "Your changes were saved successfully.",
+      });
     } catch (err) {
-      toast.error("فشل تحديث الملف الشخصي");
+      const message = err?.message || "Failed to save profile.";
+      setSaveError(message);
+      notifyCrudError(message, "Profile update failed", { href: "/client/profile" });
     } finally {
       setLoading(false);
     }
   };
 
   const reset = () => {
+    setSaveError("");
     setMe({ fullName: "", phone: "" });
-    toast.info("تمت إعادة ضبط الحقول");
   };
 
   const inputCls =
     "w-full rounded-xl bg-slate-950/70 border border-white/15 " +
     "px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 " +
-    "focus:outline-none focus:ring-2 focus:ring-emerald-500/70 focus:border-transparent";
+    "focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent";
 
   return (
     <section className="relative z-10 max-w-3xl mx-auto px-4 lg:px-0 py-10">
       <div className="card-glass border border-white/15 rounded-2xl p-5 md:p-6 shadow-soft space-y-5">
-
         <div className="space-y-2">
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight">
-            الملف الشخصي
-          </h1>
-          <p className="text-sm text-slate-300">
-            حدّث بياناتك الأساسية لسهولة التواصل مع الوسطاء وربط المواعيد.
-          </p>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight">Profile</h1>
+          <p className="text-sm text-slate-300">Update your contact information and profile details.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4 md:gap-5">
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">
-              الاسم الكامل
-            </label>
+            <label className="block text-xs text-slate-400 mb-1.5">Full name</label>
             <input
               className={inputCls}
-              placeholder="مثال: محمد الأمين السلمان"
+              placeholder="Example: Alex Morgan"
               value={me.fullName}
-              onChange={(e) => setMe({ ...me, fullName: e.target.value })}
+              onChange={(e) => setMe((prev) => ({ ...prev, fullName: e.target.value }))}
             />
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">
-              رقم الهاتف
-            </label>
+            <label className="block text-xs text-slate-400 mb-1.5">Phone</label>
             <input
               className={inputCls}
-              placeholder="مثال: +963 9xx xxx xxx"
+              placeholder="Example: +1 555 123 4567"
               value={me.phone}
-              onChange={(e) => setMe({ ...me, phone: e.target.value })}
+              onChange={(e) =>
+                setMe((prev) => ({
+                  ...prev,
+                  phone: sanitizePhoneInput(e.target.value),
+                }))
+              }
             />
           </div>
         </div>
+
+        {saveError ? (
+          <div className="rounded-xl border border-rose-400/35 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+            {saveError}
+          </div>
+        ) : null}
 
         <div className="flex flex-wrap items-center gap-3 pt-1">
           <button
             type="button"
             onClick={save}
             disabled={loading}
-            className="px-5 py-2.5 rounded-xl bg-emerald-500 text-sm font-semibold text-black shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 transition disabled:opacity-50"
+            className="px-5 py-2.5 rounded-xl bg-white/10 text-sm font-semibold text-black shadow-lg shadow-white/10 hover:bg-white/10 transition disabled:opacity-50"
           >
-            {loading ? "جاري الحفظ..." : "حفظ البيانات"}
+            {loading ? "Saving..." : "Save"}
           </button>
 
           <button
@@ -144,13 +179,11 @@ export default function Profile() {
             onClick={reset}
             className="px-4 py-2.5 rounded-xl border border-slate-500/60 text-sm text-slate-200 hover:bg-white/5 transition"
           >
-            إعادة ضبط
+            Reset
           </button>
 
           {(me.fullName || me.phone) && (
-            <span className="text-[11px] text-slate-400">
-              يتم حفظ بياناتك على السيرفر.
-            </span>
+            <span className="text-[11px] text-slate-400">Your profile is saved to the server.</span>
           )}
         </div>
       </div>

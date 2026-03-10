@@ -2,19 +2,18 @@
 import { useEffect, useMemo, useState } from "react";
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
-import Table from "../../components/Table.jsx";
 import api from "../../api/axios";
 
 function getBucketLabel(key) {
   switch (key) {
     case "0_30":
-      return "0 – 30 يوم";
+      return "0-30 days";
     case "31_60":
-      return "31 – 60 يوم";
+      return "31-60 days";
     case "61_90":
-      return "61 – 90 يوم";
+      return "61-90 days";
     case "90_plus":
-      return "+90 يوم";
+      return "90+ days";
     default:
       return key;
   }
@@ -31,12 +30,11 @@ export default function ARAging() {
     try {
       const res = await api.get("/invoices");
       const data = Array.isArray(res.data) ? res.data : [];
-      // نحتاج فقط الفواتير غير المدفوعة
       const pending = data.filter((inv) => inv.status !== "PAID");
       setInvoices(pending);
     } catch (err) {
       console.error(err);
-      setError("فشل في تحميل بيانات المتأخرات");
+      setError("Failed to load aging data");
     } finally {
       setLoading(false);
     }
@@ -55,13 +53,10 @@ export default function ARAging() {
       "90_plus": { count: 0, amount: 0 },
     };
 
-
     for (const inv of invoices) {
       const amount = Number(inv.totalAmount || 0);
       const baseDate = inv.dueDate ? new Date(inv.dueDate) : new Date(inv.issueDate);
-      const diffDays = Math.floor(
-        (today.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
+      const diffDays = Math.floor((today.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
 
       let key;
       if (diffDays <= 30) key = "0_30";
@@ -87,65 +82,104 @@ export default function ARAging() {
     [buckets]
   );
 
-  const totalAmount = bucketRows.reduce(
-    (sum, b) => sum + b.amount,
-    0
-  );
+  const totalAmount = bucketRows.reduce((sum, b) => sum + b.amount, 0);
 
-  const columns = [
-    { key: "label", header: "الفترة الزمنية" },
-    { key: "count", header: "عدد الفواتير" },
-    {
-      key: "amount",
-      header: "إجمالي المتأخرات",
-      render: (row) =>
-        row.amount.toLocaleString("en-US", {
-          maximumFractionDigits: 0,
-        }) + "$",
-    },
-  ];
+  const formatMoney = (value) =>
+    value.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }) + "$";
 
   return (
     <section className="space-y-4">
       <PageHeader
-        title="تقرير المتأخرات (A/R Aging)"
-        subtitle="متابعة الذمم المدينة حسب الفترات الزمنية لمساعدة الإدارة والمحاسب على التحصيل."
+        title="A/R Aging"
+        subtitle="Track overdue receivables by aging buckets."
       />
 
-      <Card className="bg-slate-900/60 border-white/10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-slate-100">
-            توزيع المتأخرات حسب الفترات
-          </h2>
-          {loading && (
-            <span className="text-[11px] text-slate-400">
-              جارٍ التحميل…
-            </span>
-          )}
+      {loading ? (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Card key={i} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+              <div className="h-3 w-20 animate-pulse rounded bg-white/10" />
+              <div className="mt-3 h-7 w-28 animate-pulse rounded bg-white/10" />
+              <div className="mt-2 h-3 w-16 animate-pulse rounded bg-white/10" />
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          {bucketRows.map((row) => (
+            <Card
+              key={row.bucket}
+              className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15 hover:bg-white/10"
+            >
+              <p className="text-xs text-slate-300">{row.label}</p>
+              <p className="mt-2 text-2xl font-semibold text-white/90">{formatMoney(row.amount)}</p>
+              <p className="mt-1 text-xs text-slate-400">{row.count} invoices</p>
+            </Card>
+          ))}
+
+          <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15">
+            <p className="text-xs text-white/80">Total Overdue</p>
+            <p className="mt-2 text-2xl font-semibold text-white/80">
+              {totalAmount.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}{" "}
+              $
+            </p>
+            <p className="mt-1 text-xs text-white/80">Across all aging buckets</p>
+          </Card>
+        </div>
+      )}
+
+      <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+        <div className="border-b border-white/10 px-4 py-3 md:px-5">
+          <h2 className="text-sm font-semibold text-white md:text-base">Aging Summary</h2>
+          <p className="mt-1 text-xs text-slate-300 md:text-sm">Outstanding receivables grouped by overdue period.</p>
         </div>
 
-        {error && (
-          <div className="text-xs text-red-300 mb-2">{error}</div>
+        {error ? (
+          <div className="p-4">
+            <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">{error}</div>
+          </div>
+        ) : loading ? (
+          <div className="p-4">
+            <div className="space-y-2 animate-pulse">
+              <div className="h-10 rounded-xl bg-white/10" />
+              <div className="h-10 rounded-xl bg-white/10" />
+              <div className="h-10 rounded-xl bg-white/10" />
+              <div className="h-10 rounded-xl bg-white/10" />
+            </div>
+          </div>
+        ) : invoices.length === 0 ? (
+          <div className="p-8 text-center">
+            <h3 className="text-lg font-semibold text-white">No overdue invoices</h3>
+            <p className="mt-2 text-sm text-slate-300">All invoices are paid or there is no receivable data yet.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-[900px] text-sm leading-5 text-slate-100">
+              <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
+                <tr className="border-b border-white/10">
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Bucket</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Count</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {bucketRows.map((row) => (
+                  <tr key={row.bucket} className="transition-colors even:bg-white/[0.02] hover:bg-white/5">
+                    <td className="px-4 py-3 align-middle">{row.label}</td>
+                    <td className="whitespace-nowrap px-4 py-3 align-middle tabular-nums">{row.count}</td>
+                    <td className="whitespace-nowrap px-4 py-3 align-middle font-semibold text-white/80">{formatMoney(row.amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-
-        <Table columns={columns} rows={bucketRows} />
-
-        <div className="mt-4 text-sm text-slate-200 flex justify-between">
-          <span>إجمالي المتأخرات الكلي:</span>
-          <span className="font-semibold text-amber-200">
-            {totalAmount.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}{" "}
-            $
-          </span>
-        </div>
-
-        <p className="mt-3 text-[11px] text-slate-400">
-          الحساب مبني على الفواتير غير المدفوعة حسب تاريخ الاستحقاق
-          (dueDate). إذا لم يكن هناك تاريخ استحقاق، يتم استخدام تاريخ إصدار
-          الفاتورة.
-        </p>
       </Card>
     </section>
   );

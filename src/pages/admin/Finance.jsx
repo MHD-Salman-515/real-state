@@ -2,8 +2,16 @@
 import { useEffect, useMemo, useState } from "react";
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
-import Table from "../../components/Table.jsx";
 import api from "../../api/axios";
+
+function KpiSkeleton() {
+  return (
+    <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+      <div className="h-3 w-24 animate-pulse rounded bg-white/10" />
+      <div className="mt-3 h-8 w-32 animate-pulse rounded bg-white/10" />
+    </Card>
+  );
+}
 
 export default function AdminFinance() {
   const [invoices, setInvoices] = useState([]);
@@ -18,7 +26,7 @@ export default function AdminFinance() {
       setInvoices(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
-      setError("فشل في تحميل الفواتير المالية");
+      setError("Failed to load finance invoices");
     } finally {
       setLoading(false);
     }
@@ -36,7 +44,6 @@ export default function AdminFinance() {
     let totalTax = 0;
 
     const byType = {};
-
     const today = new Date();
 
     for (const inv of invoices) {
@@ -58,8 +65,6 @@ export default function AdminFinance() {
         totalPaid += amount;
       } else {
         totalPending += amount;
-
-        // نحدد هل متأخرة بناءً على dueDate
         if (inv.dueDate) {
           const due = new Date(inv.dueDate);
           if (due < today) {
@@ -84,106 +89,130 @@ export default function AdminFinance() {
       type,
       label:
         type === "RENT"
-          ? "إيجار"
+          ? "Rent"
           : type === "SALE"
-            ? "بيع"
+            ? "Sale"
             : type === "SERVICE"
-              ? "خدمة"
+              ? "Service"
               : type,
       count: info.count,
       amount: info.amount,
     }));
   }, [stats.byType]);
 
-  const columns = [
-    { key: "label", header: "نوع الفاتورة" },
-    { key: "count", header: "عدد الفواتير" },
-    {
-      key: "amount",
-      header: "إجمالي المبلغ",
-      render: (row) =>
-        row.amount.toLocaleString("en-US", {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        }) + "$",
-    },
-  ];
+  const hasRows = typeRows.length > 0;
 
   return (
     <section className="space-y-4">
       <PageHeader
-        title="المالية / التقارير المالية"
-        subtitle="لوحة سريعة لمراقبة المبيعات، الإيجارات، والمبالغ المستحقة."
+        title="Finance & Reports"
+        subtitle="Invoices summary, cash flow insights, and distribution."
       />
 
-      {/* كروت مختصرة للملخص المالي */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-        <Card className="bg-emerald-500/10 border-emerald-400/30">
-          <div className="text-xs text-emerald-200 mb-1">إجمالي الفواتير</div>
-          <div className="text-lg font-semibold text-emerald-100">
-            {stats.totalAmount.toLocaleString("en-US", {
-              maximumFractionDigits: 0,
-            })}{" "}
-            $
+      {error ? (
+        <Card className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 backdrop-blur-xl">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-red-200">{error}</p>
+            <button
+              type="button"
+              onClick={loadInvoices}
+              className="inline-flex items-center justify-center rounded-xl border border-red-300/40 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-100 transition duration-200 hover:bg-red-500/20"
+            >
+              Retry
+            </button>
           </div>
         </Card>
+      ) : null}
 
-        <Card className="bg-sky-500/10 border-sky-400/30">
-          <div className="text-xs text-sky-200 mb-1">المحصل (PAID)</div>
-          <div className="text-lg font-semibold text-sky-100">
-            {stats.totalPaid.toLocaleString("en-US", {
-              maximumFractionDigits: 0,
-            })}{" "}
-            $
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {loading ? (
+          <>
+            <KpiSkeleton />
+            <KpiSkeleton />
+            <KpiSkeleton />
+            <KpiSkeleton />
+          </>
+        ) : (
+          <>
+            <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15 hover:bg-white/10">
+              <p className="text-xs text-white/90">Total Invoices</p>
+              <p className="mt-2 text-2xl font-semibold text-white/90">
+                {stats.totalAmount.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
+              </p>
+            </Card>
 
-        <Card className="bg-amber-500/10 border-amber-400/30">
-          <div className="text-xs text-amber-200 mb-1">
-            غير محصل / قيد الانتظار
-          </div>
-          <div className="text-lg font-semibold text-amber-100">
-            {stats.totalPending.toLocaleString("en-US", {
-              maximumFractionDigits: 0,
-            })}{" "}
-            $
-          </div>
-        </Card>
+            <Card className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15 hover:bg-white/10">
+              <p className="text-xs text-slate-300">Paid</p>
+              <p className="mt-2 text-2xl font-semibold text-white">
+                {stats.totalPaid.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
+              </p>
+            </Card>
 
-        <Card className="bg-red-500/10 border-red-400/30">
-          <div className="text-xs text-red-200 mb-1">متأخرات (Overdue)</div>
-          <div className="text-lg font-semibold text-red-100">
-            {stats.totalOverdue.toLocaleString("en-US", {
-              maximumFractionDigits: 0,
-            })}{" "}
-            $
-          </div>
-        </Card>
+            <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15 hover:bg-white/10">
+              <p className="text-xs text-white/80">Pending</p>
+              <p className="mt-2 text-2xl font-semibold text-white/80">
+                {stats.totalPending.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
+              </p>
+            </Card>
+
+            <Card className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 backdrop-blur-xl transition duration-200 hover:border-red-300/50 hover:bg-red-500/15">
+              <p className="text-xs text-red-200">Overdue</p>
+              <p className="mt-2 text-2xl font-semibold text-red-100">
+                {stats.totalOverdue.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
+              </p>
+            </Card>
+          </>
+        )}
       </div>
 
-      {/* جدول حسب نوع الفاتورة */}
-      <Card className="bg-slate-900/60 border-white/10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-slate-100">
-            توزيع الإيرادات حسب نوع الفاتورة
-          </h2>
-          {loading && (
-            <span className="text-[11px] text-slate-400">
-              جاري التحميل…
-            </span>
-          )}
+      <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+        <div className="border-b border-white/10 px-4 py-3 md:px-5">
+          <h2 className="text-sm font-semibold text-white md:text-base">Revenue Distribution</h2>
+          <p className="mt-1 text-xs text-slate-300 md:text-sm">Distribution by invoice type and amount share.</p>
         </div>
 
-        {error && (
-          <div className="text-xs text-red-300 mb-2">{error}</div>
+        {loading ? (
+          <div className="p-4">
+            <div className="space-y-2 animate-pulse">
+              <div className="h-10 rounded-xl bg-white/10" />
+              <div className="h-10 rounded-xl bg-white/10" />
+              <div className="h-10 rounded-xl bg-white/10" />
+              <div className="h-10 rounded-xl bg-white/10" />
+            </div>
+          </div>
+        ) : !hasRows ? (
+          <div className="p-8 text-center">
+            <h3 className="text-lg font-semibold text-white">No finance records yet</h3>
+            <p className="mt-2 text-sm text-slate-300">There are no invoice distributions to display.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-[900px] text-sm leading-5 text-slate-100">
+              <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
+                <tr className="border-b border-white/10">
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Invoice Type</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Count</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Total Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {typeRows.map((row) => (
+                  <tr key={row.type} className="transition-colors even:bg-white/[0.02] hover:bg-white/5">
+                    <td className="px-4 py-3 align-middle">{row.label}</td>
+                    <td className="whitespace-nowrap px-4 py-3 align-middle tabular-nums">{row.count}</td>
+                    <td className="whitespace-nowrap px-4 py-3 align-middle font-semibold text-white/90">
+                      {row.amount.toLocaleString("en-US", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                      $
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
-
-        <Table columns={columns} rows={typeRows} />
-
-        <p className="mt-3 text-[11px] text-slate-400">
-          البيانات محسوبة مباشرة من جدول الفواتير الحالي. لاحقاً فيكِ تربطيها
-          مع مصاريف/تكاليف لعرض صافي الربح.
-        </p>
       </Card>
     </section>
   );

@@ -14,16 +14,14 @@ export default function Income() {
       const res = await api.get("/invoices");
       setInvoices(res.data);
 
-      // جلب جميع الدفعات لكل فاتورة
       const paymentList = [];
       for (const inv of res.data) {
         const p = await api.get(`/payments/invoice/${inv.id}`);
         paymentList.push(...p.data);
       }
       setPayments(paymentList);
-
     } catch (err) {
-      toast.error("فشل تحميل بيانات الدخل");
+      toast.error("Failed to load income data");
     }
   };
 
@@ -31,81 +29,61 @@ export default function Income() {
     loadData();
   }, []);
 
-  // -----------------------------
-  // حسابات الدخل
-  // -----------------------------
-
   const totalPayments = payments.reduce((s, p) => s + p.amount, 0);
-
   const rentIncome = invoices
     .filter((i) => i.type === "RENT" && i.status === "PAID")
     .reduce((s, i) => s + i.totalAmount, 0);
-
   const salesIncome = invoices
     .filter((i) => i.type === "SALE" && i.status === "PAID")
     .reduce((s, i) => s + i.totalAmount, 0);
-
   const serviceIncome = invoices
     .filter((i) => i.type === "SERVICE" && i.status === "PAID")
     .reduce((s, i) => s + i.totalAmount, 0);
-
-  const unpaidInvoices = invoices.filter(
-    (i) => i.status === "PENDING" || i.status === "OVERDUE"
-  ).length;
-
-  const overdueInvoices = invoices.filter(
-    (i) => i.status === "OVERDUE"
-  ).length;
+  const unpaidInvoices = invoices.filter((i) => i.status === "PENDING" || i.status === "OVERDUE").length;
+  const overdueInvoices = invoices.filter((i) => i.status === "OVERDUE").length;
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-4">
       <PageHeader
-        title="تقرير الدخل"
-        subtitle="عرض ملخص الدخل من جميع أنواع الفواتير"
-        
+        title="Income"
+        subtitle="Summary of collected income across invoice types."
         actions={
           <button
             onClick={loadData}
-            className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold transition"
+            className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
           >
-            تحديث
+            Refresh
           </button>
         }
       />
 
-      {/* البطائق الأربعة الرئيسية */}
-      <div className="grid md:grid-cols-4 gap-4">
-        <Card className="p-4 text-center">
-          <h3 className="text-lg font-semibold text-white">الدخل الكلي</h3>
-          <p className="text-2xl text-green-400 mt-2">{totalPayments.toFixed(2)} $</p>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl">
+          <p className="text-xs text-white/90">Total Income</p>
+          <p className="mt-2 text-2xl font-semibold text-white/90">{totalPayments.toFixed(2)} $</p>
         </Card>
-
-        <Card className="p-4 text-center">
-          <h3 className="text-lg font-semibold text-white">إيجارات</h3>
-          <p className="text-2xl text-blue-400 mt-2">{rentIncome.toFixed(2)} $</p>
+        <Card className="rounded-2xl border border-sky-400/30 bg-sky-500/10 p-4 backdrop-blur-xl">
+          <p className="text-xs text-sky-200">Rent</p>
+          <p className="mt-2 text-2xl font-semibold text-sky-100">{rentIncome.toFixed(2)} $</p>
         </Card>
-
-        <Card className="p-4 text-center">
-          <h3 className="text-lg font-semibold text-white">مبيعات</h3>
-          <p className="text-2xl text-purple-400 mt-2">{salesIncome.toFixed(2)} $</p>
+        <Card className="rounded-2xl border border-indigo-400/30 bg-indigo-500/10 p-4 backdrop-blur-xl">
+          <p className="text-xs text-indigo-200">Sales</p>
+          <p className="mt-2 text-2xl font-semibold text-indigo-100">{salesIncome.toFixed(2)} $</p>
         </Card>
-
-        <Card className="p-4 text-center">
-          <h3 className="text-lg font-semibold text-white">صيانة</h3>
-          <p className="text-2xl text-yellow-400 mt-2">{serviceIncome.toFixed(2)} $</p>
+        <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl">
+          <p className="text-xs text-white/80">Service</p>
+          <p className="mt-2 text-2xl font-semibold text-white/80">{serviceIncome.toFixed(2)} $</p>
         </Card>
       </div>
 
-      {/* ملخص الحالات */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card className="p-4 text-center">
-          <h3 className="text-lg font-semibold text-white">فواتير غير مدفوعة</h3>
-          <p className="text-3xl text-red-400">{unpaidInvoices}</p>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-xl">
+          <h3 className="text-base font-semibold text-white">Unpaid Invoices</h3>
+          <p className="mt-2 text-3xl font-semibold text-rose-300">{unpaidInvoices}</p>
         </Card>
-
-        <Card className="p-4 text-center">
-          <h3 className="text-lg font-semibold text-white">فواتير متأخرة</h3>
-          <p className="text-3xl text-orange-400">{overdueInvoices}</p>
+        <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-xl">
+          <h3 className="text-base font-semibold text-white">Overdue Invoices</h3>
+          <p className="mt-2 text-3xl font-semibold text-white/80">{overdueInvoices}</p>
         </Card>
       </div>
     </section>

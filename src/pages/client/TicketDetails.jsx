@@ -63,7 +63,7 @@ export default function TicketDetails() {
                 extra={
                     <Link
                         to="/client/tickets"
-                        className="text-xs text-cyan-300 hover:underline"
+                        className="text-xs text-white/80 hover:underline"
                     >
                         ← العودة لقائمة التذاكر
                     </Link>
@@ -112,7 +112,7 @@ export default function TicketDetails() {
                         {logs.map((log) => (
                             <li key={log.id} className="flex gap-3">
                                 <div className="mt-1">
-                                    <span className="block w-2 h-2 rounded-full bg-cyan-300" />
+                                    <span className="block w-2 h-2 rounded-full bg-white/10" />
                                 </div>
                                 <div className="flex-1 space-y-1">
                                     <div className="flex flex-wrap justify-between gap-2 text-xs text-slate-300">

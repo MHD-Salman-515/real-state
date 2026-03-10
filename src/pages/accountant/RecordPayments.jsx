@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import api from "../../api/axios";
+import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function RecordPayments() {
   const [invoices, setInvoices] = useState([]);
@@ -9,7 +10,6 @@ export default function RecordPayments() {
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // تحميل الفواتير
   const loadInvoices = async () => {
     const res = await api.get("/invoices");
     setInvoices(res.data);
@@ -23,12 +23,12 @@ export default function RecordPayments() {
     e.preventDefault();
 
     if (!selectedInvoice) {
-      alert("يجب اختيار فاتورة أولاً");
+      alert("Please select an invoice first");
       return;
     }
 
     if (!amount || Number(amount) <= 0) {
-      alert("أدخل مبلغ صالح");
+      alert("Please enter a valid amount");
       return;
     }
 
@@ -40,14 +40,18 @@ export default function RecordPayments() {
         amount: Number(amount),
       });
 
-      alert("تم تسجيل الدفعة بنجاح ✔");
+      notifyCrudSuccess("Payment recorded successfully", "Operation successful", {
+        href: "/accountant/record-payments",
+      });
 
       setAmount("");
       setSelectedInvoice(null);
       await loadInvoices();
     } catch (err) {
       console.error(err);
-      alert("حدث خطأ أثناء تسجيل الدفعة");
+      notifyCrudError("Failed to record payment", "Operation failed", {
+        href: "/accountant/record-payments",
+      });
     } finally {
       setLoading(false);
     }
@@ -55,37 +59,34 @@ export default function RecordPayments() {
 
   return (
     <section className="space-y-4">
-      <PageHeader title="تسجيل دفعة" subtitle="تسديد الفواتير وتحديث حالتها." />
+      <PageHeader title="Record Payments" subtitle="Settle invoices and update balances." />
 
-      <Card className="p-5 space-y-4">
+      <Card className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
         <form onSubmit={submitPayment} className="space-y-4">
-
-          {/* اختيار الفاتورة */}
           <div>
-            <label className="text-sm text-slate-300">اختر الفاتورة</label>
+            <label className="text-sm text-slate-300">Invoice</label>
             <select
-              className="w-full mt-1 bg-slate-900/60 border border-white/10 rounded-lg px-3 py-2"
+              className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
               value={selectedInvoice?.id || ""}
               onChange={(e) => {
                 const inv = invoices.find((x) => x.id === Number(e.target.value));
                 setSelectedInvoice(inv || null);
               }}
             >
-              <option value="">-- اختر --</option>
+              <option value="">-- Select invoice --</option>
               {invoices.map((inv) => (
                 <option key={inv.id} value={inv.id}>
-                  #{inv.id} — {inv.type} — {inv.totalAmount}$
+                  #{inv.id} - {inv.type} - {inv.totalAmount}$
                 </option>
               ))}
             </select>
           </div>
 
-          {/* مبلغ الدفع */}
           <div>
-            <label className="text-sm text-slate-300">المبلغ</label>
+            <label className="text-sm text-slate-300">Amount</label>
             <input
               type="number"
-              className="w-full mt-1 bg-slate-900/60 border border-white/10 rounded-lg px-3 py-2"
+              className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               min="1"
@@ -95,9 +96,9 @@ export default function RecordPayments() {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 rounded-lg bg-emerald-500 text-black font-medium hover:bg-emerald-400 disabled:opacity-50"
+            className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "جارٍ الحفظ..." : "تسجيل الدفعة"}
+            {loading ? "Saving..." : "Record Payment"}
           </button>
         </form>
       </Card>
