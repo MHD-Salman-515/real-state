@@ -1,6 +1,6 @@
-import { API_BASE_URL, buildApiUrl } from "../api/axios";
+import { API_BASE, buildApiUrl } from "../api/axios";
 
-export const API_BASE = API_BASE_URL;
+export { API_BASE };
 
 type PostJSONOptions = {
   headers?: Record<string, string>;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../../api/axios";
+import api, { AUTH_ME_PATH } from "../../api/axios";
 import Card from "../../components/Card";
 import PageHeader from "../../components/PageHeader";
 import { useToast } from "../../components/ToastProvider";
@@ -19,7 +19,7 @@ export default function AgentLinkOps() {
   //  تحميل بيانات المستخدم
   // ============================
   useEffect(() => {
-    api.get("/auth/me").then((res) => setUser(res.data));
+    api.get(AUTH_ME_PATH).then((res) => setUser(res.data));
   }, []);
 
   // ============================

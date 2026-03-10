@@ -1,10 +1,78 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { buildApiUrl } from "../api/axios";
+import api, {
+  AUTH_LOGIN_PATH,
+  AUTH_ME_PATH,
+  AUTH_REGISTER_PATH,
+  extractApiErrorMessage,
+  getStoredAccessToken,
+} from "../api/axios";
 
 const LS_TOKEN = "auth_token_v1";
 const LS_USER = "auth_user_v1";
 
 const AuthContext = createContext(null);
+
+function decodeJwtPayload(token) {
+  try {
+    const parts = String(token || "").split(".");
+    if (parts.length < 2) return null;
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+}
+
+function getString(source, keys) {
+  if (!source || typeof source !== "object") return "";
+  for (const key of keys) {
+    const value = source[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+    if (typeof value === "number") return String(value);
+  }
+  return "";
+}
+
+function extractAccessToken(payload) {
+  const root = payload && typeof payload === "object" ? payload : {};
+  const nested = root.data && typeof root.data === "object" ? root.data : {};
+  const tokens = root.tokens && typeof root.tokens === "object" ? root.tokens : {};
+
+  return (
+    getString(root, ["token", "accessToken", "access_token", "jwt"]) ||
+    getString(nested, ["token", "accessToken", "access_token", "jwt"]) ||
+    getString(tokens, ["accessToken", "access_token", "token"]) ||
+    ""
+  );
+}
+
+function normalizeUser(rawUser, token) {
+  const source = rawUser && typeof rawUser === "object" ? rawUser : {};
+  const payload = token ? decodeJwtPayload(token) : null;
+  const role = (
+    getString(source, ["role", "userRole"]) ||
+    getString(payload, ["role", "userRole"]) ||
+    "client"
+  ).toLowerCase();
+  const id =
+    getString(source, ["id", "_id", "userId", "user_id", "sub"]) ||
+    getString(payload, ["sub", "id", "userId", "user_id"]);
+  const fullName =
+    getString(source, ["fullName", "full_name", "name"]) ||
+    getString(payload, ["fullName", "full_name", "name"]);
+
+  return {
+    ...source,
+    id: source.id ?? source._id ?? source.userId ?? source.user_id ?? payload?.sub ?? id,
+    sub: source.sub ?? source.id ?? source._id ?? source.userId ?? source.user_id ?? payload?.sub ?? id,
+    role,
+    fullName: source.fullName ?? source.full_name ?? source.name ?? fullName,
+    full_name: source.full_name ?? source.fullName ?? source.name ?? fullName,
+    email: source.email ?? payload?.email ?? "",
+    phone: source.phone ?? "",
+  };
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -12,27 +80,56 @@ export function AuthProvider({ children }) {
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const t = localStorage.getItem(LS_TOKEN);
-      const u = localStorage.getItem(LS_USER);
+    let cancelled = false;
 
-      if (t && u) {
+    const bootstrapAuth = async () => {
+      try {
+        const t = getStoredAccessToken();
+        const u = localStorage.getItem(LS_USER);
+
+        if (!t) return;
+
         setToken(t);
-        setUser(JSON.parse(u));
+
+        if (u) {
+          setUser(normalizeUser(JSON.parse(u), t));
+          return;
+        }
+
+        const profileResponse = await api.get(AUTH_ME_PATH, {
+          headers: {
+            Authorization: `Bearer ${t}`,
+          },
+        });
+        if (cancelled) return;
+
+        const nextUser = normalizeUser(profileResponse.data, t);
+        setUser(nextUser);
+        localStorage.setItem(LS_TOKEN, t);
+        localStorage.setItem(LS_USER, JSON.stringify(nextUser));
+      } catch (err) {
+        console.error("Failed to load auth:", err);
+      } finally {
+        if (!cancelled) {
+          setAuthLoading(false);
+        }
       }
-    } catch (err) {
-      console.error("Failed to load auth:", err);
-    } finally {
-      setAuthLoading(false);
-    }
+    };
+
+    bootstrapAuth();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const saveAuth = useCallback((nextToken, nextUser) => {
+    const normalizedUser = normalizeUser(nextUser, nextToken);
     setToken(nextToken);
-    setUser(nextUser);
+    setUser(normalizedUser);
 
     localStorage.setItem(LS_TOKEN, nextToken);
-    localStorage.setItem(LS_USER, JSON.stringify(nextUser));
+    localStorage.setItem(LS_USER, JSON.stringify(normalizedUser));
   }, []);
 
   const hydrateAuth = useCallback((nextToken, nextUser) => {
@@ -52,23 +149,24 @@ export function AuthProvider({ children }) {
   }, []);
 
   const register = useCallback(async (payload) => {
-    const res = await fetch(buildApiUrl("/api/auth/register"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const { data } = await api.post(AUTH_REGISTER_PATH, payload);
+      const accessToken = extractAccessToken(data);
+      const nextUser = data?.user || data?.data?.user || null;
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      throw new Error(data?.message || "فشل إنشاء الحساب");
+      if (accessToken && nextUser) {
+        saveAuth(accessToken, nextUser);
+      }
+
+      return {
+        ...data,
+        token: accessToken || data?.token || data?.accessToken,
+        accessToken: accessToken || data?.accessToken || data?.token,
+        user: nextUser ? normalizeUser(nextUser, accessToken) : nextUser,
+      };
+    } catch (error) {
+      throw new Error(extractApiErrorMessage(error, "فشل إنشاء الحساب"));
     }
-
-    const accessToken = data.token || data.accessToken;
-    if (accessToken && data.user) {
-      saveAuth(accessToken, data.user);
-    }
-
-    return data;
   }, [saveAuth]);
 
   const login = useCallback(async (payload) => {
@@ -78,20 +176,39 @@ export function AuthProvider({ children }) {
       throw new Error("Email and password are required");
     }
 
-    const res = await fetch(buildApiUrl("/auth/login"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const { data } = await api.post(AUTH_LOGIN_PATH, { email, password });
+      const accessToken = extractAccessToken(data);
+      let nextUser = data?.user || data?.data?.user || null;
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data?.message || "بيانات تسجيل الدخول غير صحيحة");
+      if (!accessToken) {
+        throw new Error("Authentication token was not returned by the backend.");
+      }
 
-    if (data.token && data.user) {
-      saveAuth(data.token, data.user);
+      if (!nextUser) {
+        const profileResponse = await api.get(AUTH_ME_PATH, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        nextUser = profileResponse.data;
+      }
+
+      if (!nextUser) {
+        throw new Error("Signed in, but the user profile could not be loaded.");
+      }
+
+      saveAuth(accessToken, nextUser);
+
+      return {
+        ...data,
+        token: accessToken,
+        accessToken,
+        user: normalizeUser(nextUser, accessToken),
+      };
+    } catch (error) {
+      throw new Error(extractApiErrorMessage(error, "بيانات تسجيل الدخول غير صحيحة"));
     }
-
-    return data;
   }, [saveAuth]);
 
   const logout = () => {
@@ -100,6 +217,11 @@ export function AuthProvider({ children }) {
 
     localStorage.removeItem(LS_TOKEN);
     localStorage.removeItem(LS_USER);
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token");
+    sessionStorage.removeItem(LS_TOKEN);
+    sessionStorage.removeItem("access_token");
+    sessionStorage.removeItem("token");
   };
 
   const value = useMemo(

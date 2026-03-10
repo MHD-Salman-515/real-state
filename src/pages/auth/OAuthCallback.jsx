@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { API_BASE } from "../../lib/api.ts";
+import api, { AUTH_ME_PATH, extractApiErrorMessage } from "../../api/axios";
 
 function roleDestination(role) {
   const normalized = String(role || "client").toLowerCase();
@@ -33,19 +33,19 @@ export default function OAuthCallback() {
       }
 
       try {
-        const res = await fetch(`${API_BASE}/auth/me`, {
+        const res = await api.get(AUTH_ME_PATH, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const user = await res.json().catch(() => null);
+        const user = res.data;
 
-        if (!res.ok || !user) {
+        if (!user) {
           throw new Error("Unable to load user profile.");
         }
 
         hydrateAuth(token, user);
         nav(roleDestination(user.role), { replace: true });
       } catch (err) {
-        setError(err?.message || "OAuth login failed.");
+        setError(extractApiErrorMessage(err, "OAuth login failed."));
       }
     };
 

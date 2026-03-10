@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
-import { buildApiUrl } from "../../api/axios";
+import api, { extractApiErrorMessage } from "../../api/axios";
 import { useNotifications } from "@/components/notifications/useNotifications";
 
 function sanitizePhoneInput(value) {
@@ -54,34 +54,10 @@ export default function Profile() {
 
     try {
       setLoading(true);
-
-      const token = localStorage.getItem("auth_token_v1");
-      if (!token) throw new Error("You need to be logged in.");
-
-      const res = await fetch(buildApiUrl(`/users/${userId}`), {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          fullName,
-          phone,
-        }),
+      const { data: updated } = await api.put(`/users/${userId}`, {
+        fullName,
+        phone,
       });
-
-      if (!res.ok) {
-        let message = "Failed to save profile.";
-        try {
-          const payload = await res.json();
-          message = payload?.message || payload?.error || message;
-        } catch {
-          // Keep fallback message.
-        }
-        throw new Error(message);
-      }
-
-      const updated = await res.json();
 
       const rawUser = localStorage.getItem("auth_user_v1");
       const currentUser = rawUser ? JSON.parse(rawUser) : {};
@@ -105,7 +81,7 @@ export default function Profile() {
         message: "Your changes were saved successfully.",
       });
     } catch (err) {
-      const message = err?.message || "Failed to save profile.";
+      const message = extractApiErrorMessage(err, "Failed to save profile.");
       setSaveError(message);
       notifyCrudError(message, "Profile update failed", { href: "/client/profile" });
     } finally {

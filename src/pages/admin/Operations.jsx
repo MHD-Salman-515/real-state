@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { buildApiUrl } from "@/api/axios";
+import api, { extractApiErrorMessage } from "@/api/axios";
 import { useNotifications } from "@/components/notifications/useNotifications";
 
 function isToday(ts) {
@@ -21,22 +21,17 @@ export default function AdminOperations() {
   const [submitting, setSubmitting] = useState(false);
   const [filter, setFilter] = useState("today");
 
-  const authHeader = () => {
-    const token = localStorage.getItem("auth_token_v1");
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  };
-
   const loadQueue = async () => {
     setLoading(true);
     try {
-      const res = await fetch(buildApiUrl("/api/ops/properties/queue"), {
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader(),
-        },
-      });
-      const data = await res.json();
+      const { data } = await api.get("/api/ops/properties/queue");
       setQueue(Array.isArray(data) ? data : []);
+    } catch (err) {
+      notify({
+        type: "system",
+        title: "Operations load failed",
+        message: extractApiErrorMessage(err, "Could not load operations queue."),
+      });
     } finally {
       setLoading(false);
     }
@@ -57,25 +52,18 @@ export default function AdminOperations() {
     if (!Number.isFinite(id) || id <= 0) return;
     setSubmitting(true);
     try {
-      const res = await fetch(buildApiUrl(`/api/ops/properties/${id}/regen-images`), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader(),
-        },
-      });
-      if (!res.ok) throw new Error("Failed");
+      await api.post(`/api/ops/properties/${id}/regen-images`);
       notify({
         type: "system",
         title: "Image regeneration complete",
         message: `Property #${id} images were regenerated successfully.`,
       });
       await loadQueue();
-    } catch {
+    } catch (err) {
       notify({
         type: "system",
         title: "Image regeneration failed",
-        message: "Could not regenerate images for this property.",
+        message: extractApiErrorMessage(err, "Could not regenerate images for this property."),
       });
     } finally {
       setSubmitting(false);

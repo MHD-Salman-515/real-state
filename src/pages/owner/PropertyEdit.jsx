@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getProperty } from "../../lib/api";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
-import { buildApiUrl, resolveApiAssetUrl } from "../../api/axios";
+import api, { resolveApiAssetUrl, extractApiErrorMessage } from "../../api/axios";
 
 const empty = {
   title: "",
@@ -98,16 +98,11 @@ export default function OwnerPropertyEdit() {
       }
 
       const method = id ? "PUT" : "POST";
-      const url = id
-        ? buildApiUrl(`/properties/${id}`)
-        : buildApiUrl("/properties");
-
-      await fetch(url, {
+      const url = id ? `/properties/${id}` : "/properties";
+      await api.request({
+        url,
         method,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token_v1")}`,
-        },
-        body: fd,
+        data: fd,
       });
 
       setMsg("تم الحفظ بنجاح.");
@@ -120,8 +115,8 @@ export default function OwnerPropertyEdit() {
       );
       setTimeout(() => nav("/owner/properties"), 600);
     } catch (err) {
-      console.error(err);
-      setMsg("خطأ أثناء الحفظ");
+      const message = extractApiErrorMessage(err, "خطأ أثناء الحفظ");
+      setMsg(message);
       notifyCrudError("Failed to save property", "Operation failed", {
         href: id ? `/owner/properties/${id}/edit` : "/owner/properties",
       });

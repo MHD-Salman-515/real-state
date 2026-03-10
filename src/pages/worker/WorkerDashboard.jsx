@@ -3,7 +3,7 @@ import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import Table from "../../components/Table.jsx";
 import StatusDot from "../../components/StatusDot.jsx";
-import api from "../../api/axios";
+import api, { AUTH_ME_PATH } from "../../api/axios";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function WorkerDashboard() {
@@ -24,7 +24,7 @@ export default function WorkerDashboard() {
   // جلب بيانات المستخدم
   // ===========================
   useEffect(() => {
-    api.get("/auth/me").then((res) => setUser(res.data));
+    api.get(AUTH_ME_PATH).then((res) => setUser(res.data));
   }, []);
 
   // ===========================

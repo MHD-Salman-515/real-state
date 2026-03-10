@@ -13,11 +13,7 @@ export default function SupplierInvoices() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await api.get("/expenses/supplier", {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("auth_token_v1"),
-          },
-        });
+        const res = await api.get("/expenses/supplier");
 
         setData(res.data);
       } catch (err) {

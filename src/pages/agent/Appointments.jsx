@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../api/axios";
+import api, { AUTH_ME_PATH } from "../../api/axios";
 import { useToast } from "../../components/ToastProvider";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
@@ -29,7 +29,7 @@ export default function AgentLayout() {
   // 1) جلب بيانات المستخدم الحالي
   // ============================
   useEffect(() => {
-    api.get("/auth/me")
+    api.get(AUTH_ME_PATH)
       .then((res) => setUser(res.data))
       .catch(() => toast.error("لم يتم التحقق من المستخدم"));
   }, []);

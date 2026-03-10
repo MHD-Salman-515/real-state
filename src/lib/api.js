@@ -1,11 +1,11 @@
- import api from "../api/axios";
+ import api, { AUTH_LOGIN_PATH, AUTH_ME_PATH, AUTH_REGISTER_PATH } from "../api/axios";
 
 /* ==========================================
    🟦 AUTH — تسجيل / دخول / معلومات المستخدم
    ========================================== */
 
 export const register = async (data) => {
-  const res = await api.post("/auth/register", data);
+  const res = await api.post(AUTH_REGISTER_PATH, data);
   return res.data;
 };
 
@@ -15,12 +15,12 @@ export const login = async (data) => {
   if (!email || password.length < 1) {
     throw new Error("Email and password are required");
   }
-  const res = await api.post("/auth/login", { email, password });
+  const res = await api.post(AUTH_LOGIN_PATH, { email, password });
   return res.data;
 };
 
 export const me = async () => {
-  const res = await api.get("/auth/me");
+  const res = await api.get(AUTH_ME_PATH);
   return res.data;
 };
 
