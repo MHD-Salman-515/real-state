@@ -8,6 +8,7 @@ import { getRoleLandingPath } from "../utils/roleLanding.js";
 
 const NAV_ITEMS = [
   { to: "/admin/appointments", label: "Appointments" },
+  { to: "/admin/properties", label: "Properties" },
   { to: "/admin/maintenance", label: "Maintenance" },
   { to: "/admin/users", label: "Users" },
   { to: "/admin/commissions", label: "Commissions" },
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
 const PAGE_TITLES = {
   "/admin": "Admin Dashboard",
   "/admin/appointments": "Appointments",
+  "/admin/properties": "Properties",
   "/admin/maintenance": "Maintenance",
   "/admin/users": "Users",
   "/admin/commissions": "Commissions",

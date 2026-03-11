@@ -60,6 +60,7 @@ import WorkerDashboard from "./pages/worker/WorkerDashboard.jsx";
 // ===== Admin (non-lazy) =====
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import AdminAppointments from "./pages/admin/Appointments.jsx";
+import AdminProperties from "./pages/admin/Properties.jsx";
 import AdminMaintenance from "./pages/admin/Maintenance.jsx";
 import AdminUsers from "./pages/admin/Users.jsx";
 import AdminCommissions from "./pages/admin/Commissions.jsx";
@@ -189,6 +190,7 @@ export default function App() {
                     <Route path="/admin" element={<AdminLayout />}>
                       <Route index element={<Navigate to="appointments" replace />} />
                       <Route path="appointments" element={<AdminAppointments />} />
+                      <Route path="properties" element={<AdminProperties />} />
                       <Route path="maintenance" element={<AdminMaintenance />} />
                       <Route path="users" element={<AdminUsers />} />
                       <Route path="commissions" element={<AdminCommissions />} />
