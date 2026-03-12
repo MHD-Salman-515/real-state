@@ -164,10 +164,6 @@ export function useOwnerChatUi(initialSessionId?: string) {
     await ownerChatApi.patchSessionContext(activeSessionId, payload);
   }, [activeSessionId]);
 
-  const applyPrice = useCallback(async (payload: Record<string, unknown>) => {
-    return ownerChatApi.applyPriceAction({ sessionId: activeSessionId, ...payload });
-  }, [activeSessionId]);
-
   useEffect(() => {
     loadSessions();
   }, [loadSessions]);
@@ -200,6 +196,5 @@ export function useOwnerChatUi(initialSessionId?: string) {
     archiveActive,
     deleteSession,
     patchContext,
-    applyPrice,
   };
 }

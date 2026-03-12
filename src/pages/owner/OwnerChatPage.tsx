@@ -31,7 +31,6 @@ export default function OwnerChatPage() {
     sendMessage,
     archiveActive,
     patchContext,
-    applyPrice,
     deleteSession,
   } = useOwnerChatUi(sessionIdFromRoute);
 
@@ -92,15 +91,6 @@ export default function OwnerChatPage() {
       toast.success("Context patched.");
     } catch (err: any) {
       toast.error(err?.response?.data?.message || err?.message || "Patch context failed.");
-    }
-  };
-
-  const onApplyPrice = async () => {
-    try {
-      await applyPrice({ source: "chat-action-bar" });
-      toast.success("Apply price action sent.");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Apply price failed.");
     }
   };
 
@@ -192,7 +182,7 @@ export default function OwnerChatPage() {
             </div>
           </div>
 
-          <ChatActionBar onArchive={onArchive} onPatchContext={onPatchContext} onApplyPrice={onApplyPrice} busy={sending} />
+          <ChatActionBar onArchive={onArchive} onPatchContext={onPatchContext} busy={sending} />
 
           <div className="min-h-[380px] max-h-[52vh] overflow-y-auto">
             <ChatMessageList messages={messages} loading={loadingMessages || sending} />
