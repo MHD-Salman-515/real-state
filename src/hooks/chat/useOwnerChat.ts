@@ -8,6 +8,7 @@ import {
 } from "@/services/chatService";
 
 export function useOwnerChat(initialSessionId?: string) {
+  const backendOfflineError = "تعذر الاتصال بالخادم. تأكد من تشغيل الباك.";
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(initialSessionId || null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -92,7 +93,10 @@ export function useOwnerChat(initialSessionId?: string) {
       setError("");
 
       try {
+        console.debug("[OwnerChat] CHAT_REQUEST_START", { sessionId: targetSessionId, message: text });
         const result = await sendOwnerChatMessage(targetSessionId, text);
+        console.debug("[OwnerChat] CHAT_REQUEST_SUCCESS", { sessionId: targetSessionId });
+        console.debug("[OwnerChat] CHAT_RESPONSE_SOURCE=backend_only", { sessionId: targetSessionId });
 
         // Use backend data as source of truth when possible.
         if (result.messages.length) {
@@ -106,8 +110,12 @@ export function useOwnerChat(initialSessionId?: string) {
         // Refresh to preserve tool/system ordering and server timestamps.
         await loadMessages(result.sessionId || targetSessionId);
       } catch (err: any) {
+        console.error("[OwnerChat] CHAT_REQUEST_FAILED", {
+          sessionId: targetSessionId,
+          error: err?.response?.data || err?.message || err,
+        });
         setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
-        setError(err?.response?.data?.message || err?.message || "Could not send message.");
+        setError(err?.response?.data?.message || backendOfflineError);
       } finally {
         setSending(false);
       }

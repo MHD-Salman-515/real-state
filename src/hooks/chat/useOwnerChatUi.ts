@@ -36,6 +36,7 @@ function mapMessage(raw: any, sessionId?: string): ChatMessage {
 }
 
 export function useOwnerChatUi(initialSessionId?: string) {
+  const backendOfflineError = "تعذر الاتصال بالخادم. تأكد من تشغيل الباك.";
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(initialSessionId || null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -122,25 +123,25 @@ export function useOwnerChatUi(initialSessionId?: string) {
     const optimistic = mapMessage({ role: "user", content, createdAt: new Date().toISOString() }, sid);
     setMessages((prev) => [...prev, optimistic]);
     setSending(true);
+    setError("");
 
     try {
-      console.debug("[OwnerChat] CHAT_MESSAGE_SENT", { sessionId: sid, message: content });
+      console.debug("[OwnerChat] CHAT_REQUEST_START", { sessionId: sid, message: content });
       const data = await ownerChatApi.sendMessage(sid, { message: content, content });
-      console.debug("[OwnerChat] CHAT_RESPONSE_RECEIVED", { sessionId: sid, data });
+      console.debug("[OwnerChat] CHAT_REQUEST_SUCCESS", { sessionId: sid });
+      console.debug("[OwnerChat] CHAT_RESPONSE_SOURCE=backend_only", { sessionId: sid });
       const maybeMessages = asArray(data);
       if (maybeMessages.length) {
         const parsed = maybeMessages.map((m) => mapMessage(m, sid)).filter((m) => m.content);
         setMessages((prev) => [...prev.filter((m) => m.id !== optimistic.id), ...parsed.filter((m) => m.role !== "user")]);
-      } else if (data?.reply || data?.message) {
-        setMessages((prev) => [
-          ...prev.filter((m) => m.id !== optimistic.id),
-          mapMessage({ role: "assistant", content: data.reply || data.message }, sid),
-        ]);
+      } else {
+        setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
       }
       await loadMessages(sid);
     } catch (err: any) {
+      console.error("[OwnerChat] CHAT_REQUEST_FAILED", { sessionId: sid, error: err?.response?.data || err?.message || err });
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
-      setError(err?.response?.data?.message || err?.message || "Failed to send message.");
+      setError(err?.response?.data?.message || backendOfflineError);
     } finally {
       setSending(false);
     }

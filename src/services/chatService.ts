@@ -184,19 +184,7 @@ export async function sendOwnerChatMessage(sessionId: string, prompt: string): P
 
   const obj = (data || {}) as Record<string, unknown>;
   const responseSessionId = String(obj.sessionId ?? obj.session?.id ?? sessionId);
-
-  let messages = mapMessagesPayload(data, responseSessionId);
-  if (!messages.length && typeof obj.reply === "string") {
-    messages = [
-      {
-        id: `assistant-${Date.now()}`,
-        sessionId: responseSessionId,
-        role: "assistant",
-        content: String(obj.reply),
-        createdAt: new Date().toISOString(),
-      },
-    ];
-  }
+  const messages = mapMessagesPayload(data, responseSessionId);
 
   return {
     sessionId: responseSessionId,
