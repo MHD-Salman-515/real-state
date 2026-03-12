@@ -5,8 +5,10 @@ export const ownerChatApi = {
     api.post("/owner/chat/sessions", payload).then((r) => r.data),
   listSessions: () => api.get("/owner/chat/sessions").then((r) => r.data),
   getSessionMessages: (id: string | number) => api.get(`/owner/chat/sessions/${id}/messages`).then((r) => r.data),
-  sendMessage: (id: string | number, payload: Record<string, unknown>) =>
-    api.post(`/owner/chat/sessions/${id}/message`, payload).then((r) => r.data),
+  sendMessage: (id: string | number, payload: Record<string, unknown>) => {
+    console.debug("[OwnerChat] CHAT_API_ENDPOINT", `/owner/chat/sessions/${id}/message`);
+    return api.post(`/owner/chat/sessions/${id}/message`, payload).then((r) => r.data);
+  },
   applyPriceAction: (payload: Record<string, unknown>) =>
     api.post("/owner/chat/actions/apply-price", payload).then((r) => r.data),
   patchSessionContext: (id: string | number, payload: Record<string, unknown>) =>

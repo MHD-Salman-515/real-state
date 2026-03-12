@@ -2,9 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ChatMessage, ChatSession } from "@/types/chat";
 import {
   createOwnerChatSession,
-  extractTextFromInsight,
-  fetchOwnerMarketInsight,
-  isMarketPricingPrompt,
   listOwnerChatMessages,
   listOwnerChatSessions,
   sendOwnerChatMessage,
@@ -108,21 +105,6 @@ export function useOwnerChat(initialSessionId?: string) {
 
         // Refresh to preserve tool/system ordering and server timestamps.
         await loadMessages(result.sessionId || targetSessionId);
-
-        if (isMarketPricingPrompt(text)) {
-          const insight = await fetchOwnerMarketInsight(result.sessionId || targetSessionId, text);
-          if (insight) {
-            const insightMessage: ChatMessage = {
-              id: `market-${Date.now()}`,
-              sessionId: result.sessionId || targetSessionId,
-              role: "tool",
-              content: extractTextFromInsight(insight.data),
-              createdAt: new Date().toISOString(),
-              meta: { source: insight.source },
-            };
-            setMessages((prev) => [...prev, insightMessage]);
-          }
-        }
       } catch (err: any) {
         setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
         setError(err?.response?.data?.message || err?.message || "Could not send message.");

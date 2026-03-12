@@ -124,7 +124,9 @@ export function useOwnerChatUi(initialSessionId?: string) {
     setSending(true);
 
     try {
+      console.debug("[OwnerChat] CHAT_MESSAGE_SENT", { sessionId: sid, message: content });
       const data = await ownerChatApi.sendMessage(sid, { message: content, content });
+      console.debug("[OwnerChat] CHAT_RESPONSE_RECEIVED", { sessionId: sid, data });
       const maybeMessages = asArray(data);
       if (maybeMessages.length) {
         const parsed = maybeMessages.map((m) => mapMessage(m, sid)).filter((m) => m.content);
