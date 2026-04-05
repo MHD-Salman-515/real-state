@@ -84,12 +84,14 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token =
-    localStorage.getItem("access_token") ||
-    localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
+
+  config.headers = config.headers || {};
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization;
   }
 
   return config;
@@ -139,6 +141,7 @@ api.interceptors.response.use(
         }
 
         localStorage.setItem("access_token", newAccessToken);
+        api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
 
         originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -147,8 +150,8 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.log("REFRESH FAILED (CREOS)");
 
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("token");
+        localStorage.clear();
+        delete api.defaults.headers.common.Authorization;
 
         window.location.href = "/login";
 
