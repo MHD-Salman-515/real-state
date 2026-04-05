@@ -6,12 +6,15 @@ function normalizeApiBase(input) {
 }
 
 export const API_BASE = normalizeApiBase(
-  import.meta.env.VITE_API_BASE || import.meta.env.VITE_API_URL
+  import.meta.env.VITE_API_BASE ||
+    import.meta.env.VITE_API_URL ||
+    "https://real-state-backend-yc23.onrender.com"
 );
 export const API_BASE_URL = API_BASE;
 export const AUTH_LOGIN_PATH = "/api/auth/login";
 export const AUTH_REGISTER_PATH = "/api/auth/register";
 export const AUTH_ME_PATH = "/api/auth/me";
+export const AUTH_REFRESH_PATH = "/api/auth/refresh";
 
 export const API_ORIGIN = (() => {
   try {
@@ -77,11 +80,13 @@ function formatErrorUrl(config) {
 
 export const api = axios.create({
   baseURL: API_BASE,
-  withCredentials: false,
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
-  const token = getStoredAccessToken();
+  const token =
+    localStorage.getItem("access_token") ||
+    localStorage.getItem("token");
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -92,12 +97,51 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const status = error?.response?.status ?? "NETWORK";
     const method = String(error?.config?.method || "GET").toUpperCase();
     const url = formatErrorUrl(error?.config);
     const message = extractApiErrorMessage(error, "Request failed.");
+    const originalRequest = error?.config;
+
     console.error(`[api] ${method} ${url} -> ${status}: ${message}`);
+
+    if (status === 401 && originalRequest && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        console.log("TRY REFRESH (CREOS)");
+
+        const res = await axios.post(
+          buildApiUrl(AUTH_REFRESH_PATH),
+          {},
+          { withCredentials: true }
+        );
+
+        const newAccessToken = res?.data?.accessToken;
+
+        if (!newAccessToken) {
+          throw new Error("Refresh endpoint did not return an access token.");
+        }
+
+        localStorage.setItem("access_token", newAccessToken);
+
+        originalRequest.headers = originalRequest.headers || {};
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.log("REFRESH FAILED (CREOS)");
+
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("token");
+
+        window.location.href = "/login";
+
+        return Promise.reject(refreshError);
+      }
+    }
+
     return Promise.reject(error);
   },
 );
