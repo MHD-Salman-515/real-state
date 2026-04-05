@@ -94,6 +94,8 @@ api.interceptors.request.use((config) => {
     delete config.headers.Authorization;
   }
 
+  console.log("AUTH HEADER SET:", !!config.headers.Authorization);
+
   return config;
 });
 

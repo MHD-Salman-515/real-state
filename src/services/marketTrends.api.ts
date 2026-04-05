@@ -13,8 +13,14 @@ export interface MarketTrendResponse {
 }
 
 export async function getMarketTrends(params: Record<string, string | number | undefined> = {}): Promise<MarketTrendResponse> {
+  const normalizedParams = {
+    ...params,
+    city: String(params.city ?? "").trim(),
+    district: String(params.district ?? "").trim(),
+    property_type: String(params.property_type ?? params.propertyType ?? "apartment").trim() || "apartment",
+  };
   const query = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
+  Object.entries(normalizedParams).forEach(([k, v]) => {
     if (v === undefined || v === null || v === "") return;
     query.set(k, String(v));
   });

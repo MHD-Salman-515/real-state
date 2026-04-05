@@ -128,8 +128,10 @@ export function AuthProvider({ children }) {
     setToken(nextToken);
     setUser(normalizedUser);
 
+    localStorage.setItem("access_token", nextToken);
     localStorage.setItem(LS_TOKEN, nextToken);
     localStorage.setItem(LS_USER, JSON.stringify(normalizedUser));
+    api.defaults.headers.common.Authorization = `Bearer ${nextToken}`;
   }, []);
 
   const hydrateAuth = useCallback((nextToken, nextUser) => {
@@ -222,6 +224,7 @@ export function AuthProvider({ children }) {
     sessionStorage.removeItem(LS_TOKEN);
     sessionStorage.removeItem("access_token");
     sessionStorage.removeItem("token");
+    delete api.defaults.headers.common.Authorization;
   };
 
   const value = useMemo(

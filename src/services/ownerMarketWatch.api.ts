@@ -27,7 +27,12 @@ function pickArray<T = any>(payload: any): T[] {
   return [];
 }
 
+function logOwnerToken() {
+  console.log("OWNER TOKEN:", localStorage.getItem("access_token"));
+}
+
 export async function getOwnerMarketWatchList(): Promise<OwnerMarketWatchItem[]> {
+  logOwnerToken();
   const res = await api.get("/owner/market-watch/list");
   return pickArray<OwnerMarketWatchItem>(res.data).map((item) => ({
     ...item,
@@ -38,6 +43,7 @@ export async function getOwnerMarketWatchList(): Promise<OwnerMarketWatchItem[]>
 export async function getOwnerMarketWatchInsights(city?: string): Promise<OwnerMarketInsight[]> {
   const normalizedCity = String(city || "").trim();
   if (!normalizedCity) return [];
+  logOwnerToken();
   const res = await api.get("/owner/market-watch/insights", {
     params: { city: normalizedCity },
   });
@@ -57,11 +63,13 @@ export async function createOwnerMarketWatch(payload: Record<string, unknown>): 
     property_type: String(payload.property_type ?? payload.propertyType ?? "").trim(),
     days_window: Number(payload.days_window ?? payload.daysWindow ?? 30),
   };
+  logOwnerToken();
   const res = await api.post("/owner/market-watch", normalizedPayload);
   return res.data;
 }
 
 export async function deleteOwnerMarketWatch(id: string | number): Promise<any> {
+  logOwnerToken();
   const res = await api.delete(`/owner/market-watch/${id}`);
   return res.data;
 }

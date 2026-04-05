@@ -38,6 +38,12 @@ const MARKET_ENDPOINTS = [
   "/api/pricing/evaluate",
 ];
 
+function logOwnerToken(url: string) {
+  if (url.includes("/owner/") || url.includes("/owner-chat")) {
+    console.log("OWNER TOKEN:", localStorage.getItem("access_token"));
+  }
+}
+
 function normalizeRole(input: unknown): ChatRole {
   const role = String(input || "assistant").toLowerCase();
   if (role === "user" || role === "assistant" || role === "system" || role === "tool") return role;
@@ -113,6 +119,7 @@ async function getFirstSuccess<T = unknown>(urls: string[]): Promise<{ url: stri
   let lastError: unknown = null;
   for (const url of urls) {
     try {
+      logOwnerToken(url);
       const res = await api.get(url);
       return { url, data: res.data as T };
     } catch (err: any) {
@@ -129,6 +136,7 @@ async function postFirstSuccess<T = unknown>(urls: string[], bodyVariants: unkno
   for (const url of urls) {
     for (const body of bodyVariants) {
       try {
+        logOwnerToken(url);
         const res = await api.post(url, body);
         return { url, data: res.data as T };
       } catch (err: any) {
@@ -196,6 +204,7 @@ export async function sendOwnerChatMessage(sessionId: string, prompt: string): P
 export async function fetchOwnerMarketInsight(sessionId: string, prompt: string): Promise<MarketInsightResult | null> {
   for (const endpoint of MARKET_ENDPOINTS) {
     try {
+      logOwnerToken(endpoint);
       const res = await api.post(endpoint, {
         sessionId,
         message: prompt,
