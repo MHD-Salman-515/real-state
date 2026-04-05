@@ -103,10 +103,24 @@ api.interceptors.response.use(
     const url = formatErrorUrl(error?.config);
     const message = extractApiErrorMessage(error, "Request failed.");
     const originalRequest = error?.config;
+    const requestUrl = String(originalRequest?.url || "");
+    const isAuthRequest =
+      requestUrl.includes("/auth/login") ||
+      requestUrl.includes("/auth/register") ||
+      requestUrl.includes("/auth/refresh");
+    const hasToken =
+      !!localStorage.getItem("access_token") ||
+      !!localStorage.getItem("token");
 
     console.error(`[api] ${method} ${url} -> ${status}: ${message}`);
 
-    if (status === 401 && originalRequest && !originalRequest._retry) {
+    if (
+      status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !isAuthRequest &&
+      hasToken
+    ) {
       originalRequest._retry = true;
 
       try {
