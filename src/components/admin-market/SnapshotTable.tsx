@@ -1,4 +1,5 @@
 import type { MarketSnapshot } from "@/services/adminMarketSnapshots.api";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   snapshots: MarketSnapshot[];
@@ -7,25 +8,26 @@ type Props = {
 };
 
 export default function SnapshotTable({ snapshots, loading, onSelect }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="overflow-x-auto rounded-xl border border-white/10">
       <table className="min-w-[1050px] w-full text-sm text-white/90">
         <thead className="bg-black/40 text-xs uppercase tracking-[0.12em] text-white/55">
           <tr>
-            <th className="px-3 py-2 text-left">Date</th>
-            <th className="px-3 py-2 text-left">City</th>
-            <th className="px-3 py-2 text-left">District</th>
-            <th className="px-3 py-2 text-left">Property Type</th>
-            <th className="px-3 py-2 text-left">Listing Type</th>
-            <th className="px-3 py-2 text-left">Avg Price</th>
-            <th className="px-3 py-2 text-left">Avg Price/m²</th>
-            <th className="px-3 py-2 text-left">Listings</th>
-            <th className="px-3 py-2 text-left">Volatility</th>
+            <th className="px-3 py-2 text-left">{t("Date")}</th>
+            <th className="px-3 py-2 text-left">{t("City")}</th>
+            <th className="px-3 py-2 text-left">{t("District")}</th>
+            <th className="px-3 py-2 text-left">{t("Property Type")}</th>
+            <th className="px-3 py-2 text-left">{t("Listing Type")}</th>
+            <th className="px-3 py-2 text-left">{t("Avg Price")}</th>
+            <th className="px-3 py-2 text-left">{t("Avg Price/m²")}</th>
+            <th className="px-3 py-2 text-left">{t("Listings")}</th>
+            <th className="px-3 py-2 text-left">{t("Volatility")}</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
-            <tr><td colSpan={9} className="px-3 py-6 text-center text-white/60">Loading snapshots...</td></tr>
+            <tr><td colSpan={9} className="px-3 py-6 text-center text-white/60">{t("Loading snapshots...")}</td></tr>
           ) : snapshots.length ? (
             snapshots.map((s) => (
               <tr key={String(s.id)} className="cursor-pointer border-t border-white/10 hover:bg-white/5" onClick={() => onSelect(s)}>
@@ -41,7 +43,7 @@ export default function SnapshotTable({ snapshots, loading, onSelect }: Props) {
               </tr>
             ))
           ) : (
-            <tr><td colSpan={9} className="px-3 py-6 text-center text-white/60">No snapshots available.</td></tr>
+            <tr><td colSpan={9} className="px-3 py-6 text-center text-white/60">{t("No snapshots available.")}</td></tr>
           )}
         </tbody>
       </table>

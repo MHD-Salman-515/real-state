@@ -1,7 +1,9 @@
 import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function ChatWelcomeState() {
+  const { t } = useTranslation();
   return (
     <div className="grid min-h-[360px] place-items-center p-6 text-center">
       <motion.div
@@ -12,17 +14,17 @@ export default function ChatWelcomeState() {
       >
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/80">
           <Sparkles className="h-3.5 w-3.5" />
-          Owner AI
+          {t("Owner AI")}
         </div>
-        <h3 className="mt-4 text-2xl font-medium tracking-tight text-white">How can I help today?</h3>
-        <p className="mt-2 text-sm text-white/40">Type a command or ask a question</p>
+        <h3 className="mt-4 text-2xl font-medium tracking-tight text-white">{t("How can I help today?")}</h3>
+        <p className="mt-2 text-sm text-white/40">{t("Type a command or ask a question")}</p>
         <p className="mt-3 text-sm text-white/60">
-          Ask about pricing strategy, valuation changes, market trend risk, or portfolio optimization.
+          {t("Ask about pricing strategy, valuation changes, market trend risk, or portfolio optimization.")}
         </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs text-white/70">
-          <span className="rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1">Suggested Price</span>
-          <span className="rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1">District Trend</span>
-          <span className="rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1">Sell vs Wait</span>
+          <span className="rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1">{t("Suggested Price")}</span>
+          <span className="rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1">{t("District Trend")}</span>
+          <span className="rounded-full border border-white/15 bg-white/[0.06] px-2.5 py-1">{t("Sell vs Wait")}</span>
         </div>
       </motion.div>
     </div>

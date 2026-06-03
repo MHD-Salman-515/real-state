@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Command, LoaderIcon, Paperclip, SendIcon, Sparkles, XIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -23,6 +24,7 @@ const COMMANDS: CommandSuggestion[] = [
 ];
 
 export default function ChatComposer({ sending, onSend, onFocusChange }: Props) {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
   const [attachments, setAttachments] = useState<string[]>([]);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
@@ -92,7 +94,7 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
                       activeSuggestion === i ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
                     )}
                   >
-                    <span>{cmd.label}</span>
+                    <span>{t(cmd.label)}</span>
                     <span className="text-white/40">{cmd.prefix}</span>
                   </button>
                 ))}
@@ -138,7 +140,7 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
             }
           }}
           className="min-h-[60px] w-full resize-none border-none bg-transparent px-4 py-3 text-sm text-white/90 placeholder:text-white/20 focus:border-none"
-          placeholder="Ask zap a question..."
+          placeholder={t("Ask zap a question...")}
         />
         </div>
 
@@ -174,7 +176,7 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
               type="button"
               onClick={attachMock}
               className="rounded-lg p-2 text-white/40 transition-colors hover:text-white/90"
-              aria-label="Attach file"
+              aria-label={t("Attach file")}
             >
               <Paperclip className="h-4 w-4" />
             </button>
@@ -185,7 +187,7 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
                 "rounded-lg p-2 text-white/40 transition-colors hover:text-white/90",
                 showCommandPalette && "bg-white/10 text-white/90"
               )}
-              aria-label="Command palette"
+              aria-label={t("Command palette")}
             >
               <Command className="h-4 w-4" />
             </button>
@@ -206,7 +208,7 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
             )}
           >
             {sending ? <LoaderIcon className="h-4 w-4 animate-[spin_2s_linear_infinite]" /> : <SendIcon className="h-4 w-4" />}
-            <span>Send</span>
+            <span>{t("Send")}</span>
           </motion.button>
         </div>
       </div>

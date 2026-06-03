@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type SubmitPayload = {
   city: string;
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default function PriceRecommendationForm({ loading, onSubmit }: Props) {
+  const { t } = useTranslation();
   const [city, setCity] = useState("Damascus");
   const [district, setDistrict] = useState("");
   const [propertyType, setPropertyType] = useState("Apartment");
@@ -38,19 +40,19 @@ export default function PriceRecommendationForm({ loading, onSubmit }: Props) {
 
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-      <h3 className="text-sm font-semibold text-white">Price Recommendation Request</h3>
+      <h3 className="text-sm font-semibold text-white">{t("Price Recommendation Request")}</h3>
       <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        <input className={inputClass} value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" />
-        <input className={inputClass} value={district} onChange={(e) => setDistrict(e.target.value)} placeholder="District" />
+        <input className={inputClass} value={city} onChange={(e) => setCity(e.target.value)} placeholder={t("City")} />
+        <input className={inputClass} value={district} onChange={(e) => setDistrict(e.target.value)} placeholder={t("District")} />
         <select className={inputClass} value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
-          <option value="Apartment">Apartment</option>
-          <option value="Villa">Villa</option>
-          <option value="Office">Office</option>
-          <option value="Shop">Shop</option>
+          <option value="Apartment">{t("Apartment")}</option>
+          <option value="Villa">{t("Villa")}</option>
+          <option value="Office">{t("Office")}</option>
+          <option value="Shop">{t("Shop")}</option>
         </select>
-        <input className={inputClass} value={area} onChange={(e) => setArea(e.target.value)} placeholder="Area m²" type="number" />
-        <input className={inputClass} value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} placeholder="Bedrooms (optional)" type="number" />
-        <input className={inputClass} value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} placeholder="Bathrooms (optional)" type="number" />
+        <input className={inputClass} value={area} onChange={(e) => setArea(e.target.value)} placeholder={t("Area m²")} type="number" />
+        <input className={inputClass} value={bedrooms} onChange={(e) => setBedrooms(e.target.value)} placeholder={t("Bedrooms (optional)")} type="number" />
+        <input className={inputClass} value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} placeholder={t("Bathrooms (optional)")} type="number" />
       </div>
       <div className="mt-3 flex justify-end">
         <button
@@ -59,7 +61,7 @@ export default function PriceRecommendationForm({ loading, onSubmit }: Props) {
           disabled={loading}
           className="rounded-xl border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black disabled:opacity-50"
         >
-          {loading ? "Calculating..." : "Get Recommendation"}
+          {loading ? t("Calculating...") : t("Get Recommendation")}
         </button>
       </div>
     </section>

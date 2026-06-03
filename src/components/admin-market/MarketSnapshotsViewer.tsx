@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   getAdminMarketSnapshots,
   rebuildAdminMarketSnapshots,
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export default function MarketSnapshotsViewer({ onError, onSuccess }: Props) {
+  const { t } = useTranslation();
   const [snapshots, setSnapshots] = useState<MarketSnapshot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,7 +29,7 @@ export default function MarketSnapshotsViewer({ onError, onSuccess }: Props) {
       const data = await getAdminMarketSnapshots();
       setSnapshots(data);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Snapshots endpoint not available yet.";
+      const msg = err?.response?.data?.message || err?.message || t("Snapshots endpoint not available yet.");
       setError(msg);
       onError?.(msg);
       setSnapshots([]);
@@ -44,10 +46,10 @@ export default function MarketSnapshotsViewer({ onError, onSuccess }: Props) {
     setRebuilding(true);
     try {
       await rebuildAdminMarketSnapshots();
-      onSuccess?.("Snapshots rebuilt successfully.");
+      onSuccess?.(t("Snapshots rebuilt successfully."));
       await load();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Rebuild snapshots is not available.";
+      const msg = err?.response?.data?.message || err?.message || t("Rebuild snapshots is not available.");
       onError?.(msg);
       setError(msg);
     } finally {
@@ -59,8 +61,8 @@ export default function MarketSnapshotsViewer({ onError, onSuccess }: Props) {
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-sm font-semibold text-white">Market Snapshots</h2>
-          <p className="text-xs text-white/55">Daily snapshot viewer for historical market states.</p>
+          <h2 className="text-sm font-semibold text-white">{t("Market Snapshots")}</h2>
+          <p className="text-xs text-white/55">{t("Daily snapshot viewer for historical market states.")}</p>
         </div>
         <button
           type="button"
@@ -68,7 +70,7 @@ export default function MarketSnapshotsViewer({ onError, onSuccess }: Props) {
           disabled={rebuilding}
           className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white disabled:opacity-50"
         >
-          <RefreshCw className={`h-4 w-4 ${rebuilding ? "animate-spin" : ""}`} /> Rebuild Snapshots
+          <RefreshCw className={`h-4 w-4 ${rebuilding ? "animate-spin" : ""}`} /> {t("Rebuild Snapshots")}
         </button>
       </div>
 

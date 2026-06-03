@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ToastProvider.jsx";
 import TrendRangeSelector from "@/components/market-trends/TrendRangeSelector";
 import TrendSummaryCards from "@/components/market-trends/TrendSummaryCards";
@@ -31,6 +32,7 @@ const initialForm: WatchForm = {
 
 export default function OwnerMarketWatchPage() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [items, setItems] = useState<OwnerMarketWatchItem[]>([]);
   const [insights, setInsights] = useState<OwnerMarketInsight[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ export default function OwnerMarketWatchPage() {
       setItems(list);
       setInsights(insightData);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to load market watch data.";
+      const msg = err?.response?.data?.message || err?.message || t("Failed to load market watch data.");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -119,13 +121,13 @@ export default function OwnerMarketWatchPage() {
     const current = { ...form };
     const nextErrors: Partial<Record<keyof WatchForm, string>> = {};
 
-    if (!current.city.trim()) nextErrors.city = "Please enter the city.";
-    if (!current.district.trim()) nextErrors.district = "Please enter the district you want to monitor.";
-    if (!Number(current.daysWindow) || Number(current.daysWindow) <= 0) nextErrors.daysWindow = "Days window must be greater than 0.";
+    if (!current.city.trim()) nextErrors.city = t("Please enter the city.");
+    if (!current.district.trim()) nextErrors.district = t("Please enter the district you want to monitor.");
+    if (!Number(current.daysWindow) || Number(current.daysWindow) <= 0) nextErrors.daysWindow = t("Days window must be greater than 0.");
 
     setFormErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      toast.error("Please fix validation errors.");
+      toast.error(t("Please fix validation errors."));
       return;
     }
 
@@ -138,13 +140,13 @@ export default function OwnerMarketWatchPage() {
         days_window: Number(current.daysWindow),
       };
       await createOwnerMarketWatch(payload);
-      toast.success("Watch item created.");
+      toast.success(t("Watch item created."));
       setForm(initialForm);
       setFormErrors({});
       setShowForm(false);
       await load();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to create watch item.";
+      const msg = err?.response?.data?.message || err?.message || t("Failed to create watch item.");
       toast.error(msg);
     } finally {
       setCreating(false);
@@ -152,16 +154,16 @@ export default function OwnerMarketWatchPage() {
   };
 
   const handleDelete = async (id: string | number) => {
-    const ok = window.confirm("Delete this watch item?");
+    const ok = window.confirm(t("Delete this watch item?"));
     if (!ok) return;
 
     setDeletingId(id);
     try {
       await deleteOwnerMarketWatch(id);
-      toast.success("Watch item deleted.");
+      toast.success(t("Watch item deleted."));
       await load();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to delete watch item.";
+      const msg = err?.response?.data?.message || err?.message || t("Failed to delete watch item.");
       toast.error(msg);
     } finally {
       setDeletingId(null);
@@ -173,9 +175,9 @@ export default function OwnerMarketWatchPage() {
       <header className="rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Market Watch</h1>
+            <h1 className="text-2xl font-semibold text-white">{t("Market Watch")}</h1>
             <p className="mt-1 text-sm text-white/60">
-              Track critical zones, monitor pricing shifts, and keep owner-side intelligence aligned with market movement.
+              {t("Track critical zones, monitor pricing shifts, and keep owner-side intelligence aligned with market movement.")}
             </p>
           </div>
 
@@ -184,7 +186,7 @@ export default function OwnerMarketWatchPage() {
             onClick={() => setShowForm((v) => !v)}
             className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black"
           >
-            <Plus className="h-4 w-4" /> Add Watch Item
+            <Plus className="h-4 w-4" /> {t("Add Watch Item")}
           </button>
         </div>
       </header>
@@ -193,15 +195,15 @@ export default function OwnerMarketWatchPage() {
 
       <section className="grid gap-3 md:grid-cols-3">
         <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.14em] text-white/55">Watch Items</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-white/55">{t("Watch Items")}</p>
           <p className="mt-2 text-xl font-semibold text-white">{summary.total.toLocaleString()}</p>
         </article>
         <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.14em] text-white/55">Tracked Zones</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-white/55">{t("Tracked Zones")}</p>
           <p className="mt-2 text-xl font-semibold text-white">{summary.zones.toLocaleString()}</p>
         </article>
         <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <p className="text-xs uppercase tracking-[0.14em] text-white/55">Average Target / m²</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-white/55">{t("Average Target / m²")}</p>
           <p className="mt-2 text-xl font-semibold text-white">{Math.round(summary.avgTarget).toLocaleString()} SYP</p>
         </article>
       </section>
@@ -209,18 +211,18 @@ export default function OwnerMarketWatchPage() {
       <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 className="text-sm font-semibold text-white">Market Trend</h2>
-            <p className="text-xs text-white/55">Owner-facing pricing movement overview.</p>
+            <h2 className="text-sm font-semibold text-white">{t("Market Trend")}</h2>
+            <p className="text-xs text-white/55">{t("Owner-facing pricing movement overview.")}</p>
           </div>
           <TrendRangeSelector value={trendRange} onChange={setTrendRange} />
         </div>
         <TrendSummaryCards points={trendPoints} />
-        {trendLoading ? <p className="text-sm text-white/60">Loading trend data...</p> : <MarketTrendChart points={trendPoints} />}
+        {trendLoading ? <p className="text-sm text-white/60">{t("Loading trend data...")}</p> : <MarketTrendChart points={trendPoints} />}
       </section>
 
       {showForm ? (
         <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <h2 className="text-sm font-semibold text-white">Add Watch Item</h2>
+          <h2 className="text-sm font-semibold text-white">{t("Add Watch Item")}</h2>
           <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             <div>
               <select
@@ -232,11 +234,11 @@ export default function OwnerMarketWatchPage() {
                 }}
                 className="h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm text-white"
               >
-                <option value="Damascus">Damascus</option>
-                <option value="Rural Damascus">Rural Damascus</option>
-                <option value="Aleppo">Aleppo</option>
-                <option value="Homs">Homs</option>
-                <option value="Latakia">Latakia</option>
+                <option value="Damascus">{t("Damascus")}</option>
+                <option value="Rural Damascus">{t("Rural Damascus")}</option>
+                <option value="Aleppo">{t("Aleppo")}</option>
+                <option value="Homs">{t("Homs")}</option>
+                <option value="Latakia">{t("Latakia")}</option>
               </select>
               {formErrors.city ? <p className="mt-1 text-xs text-red-300">{formErrors.city}</p> : null}
             </div>
@@ -250,11 +252,11 @@ export default function OwnerMarketWatchPage() {
                 }}
                 className="h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm text-white"
               >
-                <option value="Mazzeh">Mazzeh</option>
-                <option value="Kafr Sousa">Kafr Sousa</option>
-                <option value="Abu Rummaneh">Abu Rummaneh</option>
-                <option value="Maliki">Maliki</option>
-                <option value="Project Dummar">Project Dummar</option>
+                <option value="Mazzeh">{t("Mazzeh")}</option>
+                <option value="Kafr Sousa">{t("Kafr Sousa")}</option>
+                <option value="Abu Rummaneh">{t("Abu Rummaneh")}</option>
+                <option value="Maliki">{t("Maliki")}</option>
+                <option value="Project Dummar">{t("Project Dummar")}</option>
               </select>
               {formErrors.district ? <p className="mt-1 text-xs text-red-300">{formErrors.district}</p> : null}
             </div>
@@ -264,10 +266,10 @@ export default function OwnerMarketWatchPage() {
                 onChange={(e) => setForm((p) => ({ ...p, propertyType: e.target.value }))}
                 className="h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm text-white"
               >
-                <option value="Apartment">Apartment</option>
-                <option value="Villa">Villa</option>
-                <option value="Office">Office</option>
-                <option value="Shop">Shop</option>
+                <option value="Apartment">{t("Apartment")}</option>
+                <option value="Villa">{t("Villa")}</option>
+                <option value="Office">{t("Office")}</option>
+                <option value="Shop">{t("Shop")}</option>
               </select>
             </div>
             <div>
@@ -279,7 +281,7 @@ export default function OwnerMarketWatchPage() {
                   setFormErrors((p) => ({ ...p, daysWindow: undefined }));
                 }}
                 className="h-10 w-full rounded-xl border border-white/10 bg-black/30 px-3 text-sm text-white"
-                placeholder="Days Window"
+                placeholder={t("Days Window")}
                 type="number"
                 min={1}
               />
@@ -293,7 +295,7 @@ export default function OwnerMarketWatchPage() {
               onClick={() => setShowForm(false)}
               className="rounded-xl border border-white/10 px-3 py-2 text-sm text-white/75 hover:bg-white/10"
             >
-              Cancel
+              {t("Cancel")}
             </button>
             <button
               type="button"
@@ -301,7 +303,7 @@ export default function OwnerMarketWatchPage() {
               disabled={creating}
               className="rounded-xl border border-white/20 bg-white px-3 py-2 text-sm font-semibold text-black disabled:opacity-50"
             >
-              {creating ? "Saving..." : "Save Watch Item"}
+              {creating ? t("Saving...") : t("Save Watch Item")}
             </button>
           </div>
         </section>
@@ -309,23 +311,23 @@ export default function OwnerMarketWatchPage() {
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <h2 className="mb-3 text-sm font-semibold text-white">Watch List</h2>
+          <h2 className="mb-3 text-sm font-semibold text-white">{t("Watch List")}</h2>
           <div className="overflow-x-auto rounded-xl border border-white/10">
             <table className="min-w-[900px] w-full text-sm text-white/90">
               <thead className="bg-black/40 text-xs uppercase tracking-[0.12em] text-white/55">
                 <tr>
-                  <th className="px-3 py-2 text-left">City</th>
-                  <th className="px-3 py-2 text-left">District</th>
-                  <th className="px-3 py-2 text-left">Property Type</th>
-                  <th className="px-3 py-2 text-left">Listing Type</th>
-                  <th className="px-3 py-2 text-left">Target / m²</th>
-                  <th className="px-3 py-2 text-left">Notes</th>
-                  <th className="px-3 py-2 text-left">Action</th>
+                  <th className="px-3 py-2 text-left">{t("City")}</th>
+                  <th className="px-3 py-2 text-left">{t("District")}</th>
+                  <th className="px-3 py-2 text-left">{t("Property Type")}</th>
+                  <th className="px-3 py-2 text-left">{t("Listing Type")}</th>
+                  <th className="px-3 py-2 text-left">{t("Target / m²")}</th>
+                  <th className="px-3 py-2 text-left">{t("Notes")}</th>
+                  <th className="px-3 py-2 text-left">{t("Action")}</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} className="px-3 py-6 text-center text-white/60">Loading...</td></tr>
+                  <tr><td colSpan={7} className="px-3 py-6 text-center text-white/60">{t("Loading...")}</td></tr>
                 ) : items.length ? (
                   items.map((item) => (
                     <tr key={String(item.id)} className="border-t border-white/10 hover:bg-white/5">
@@ -342,13 +344,13 @@ export default function OwnerMarketWatchPage() {
                           disabled={deletingId === item.id}
                           className="inline-flex items-center gap-1 rounded-lg border border-red-400/30 px-2 py-1 text-xs text-red-200 hover:bg-red-500/15 disabled:opacity-50"
                         >
-                          <Trash2 className="h-3.5 w-3.5" /> Delete
+                          <Trash2 className="h-3.5 w-3.5" /> {t("Delete")}
                         </button>
                       </td>
                     </tr>
                   ))
                 ) : (
-                  <tr><td colSpan={7} className="px-3 py-8 text-center text-white/60">No watch items yet.</td></tr>
+                  <tr><td colSpan={7} className="px-3 py-8 text-center text-white/60">{t("No watch items yet.")}</td></tr>
                 )}
               </tbody>
             </table>
@@ -356,19 +358,19 @@ export default function OwnerMarketWatchPage() {
         </section>
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-          <h2 className="text-sm font-semibold text-white">Insights</h2>
+          <h2 className="text-sm font-semibold text-white">{t("Insights")}</h2>
           <div className="mt-3 space-y-2">
             {loading ? (
-              <p className="text-sm text-white/60">Loading insights...</p>
+              <p className="text-sm text-white/60">{t("Loading insights...")}</p>
             ) : insights.length ? (
               insights.map((item, idx) => (
                 <article key={`${String(item.label || "insight")}-${idx}`} className="rounded-xl border border-white/10 bg-black/25 p-3">
-                  <p className="text-xs text-white/55">{String(item.label || `Insight ${idx + 1}`)}</p>
+                  <p className="text-xs text-white/55">{String(item.label || t("Insight {{id}}", { id: idx + 1 }))}</p>
                   <p className="mt-1 text-sm text-white/90">{String(item.value || "-")}</p>
                 </article>
               ))
             ) : (
-              <p className="text-sm text-white/60">No insights returned.</p>
+              <p className="text-sm text-white/60">{t("No insights returned.")}</p>
             )}
           </div>
         </section>

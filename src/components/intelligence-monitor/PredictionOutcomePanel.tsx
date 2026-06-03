@@ -1,4 +1,5 @@
 import type { PredictionOutcomeRow } from "@/utils/intelligenceAnalytics";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   rows: PredictionOutcomeRow[];
@@ -16,11 +17,12 @@ function errorClass(value: number): string {
 }
 
 export default function PredictionOutcomePanel({ rows, loading = false }: Props) {
+  const { t } = useTranslation();
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-white">Prediction vs Outcome</h2>
-        <p className="text-xs text-white/55">Latest 10 logged predictions compared to observed outcomes.</p>
+        <h2 className="text-sm font-semibold text-white">{t("Prediction vs Outcome")}</h2>
+        <p className="text-xs text-white/55">{t("Latest 10 logged predictions compared to observed outcomes.")}</p>
       </div>
 
       <div className="space-y-2">
@@ -36,15 +38,15 @@ export default function PredictionOutcomePanel({ rows, loading = false }: Props)
                 </p>
               </div>
               <div className="mt-1 grid gap-1 text-xs text-white/65 sm:grid-cols-3">
-                <span>Prediction: <strong className="text-white/90">{toMoney(row.predictedPrice)}</strong></span>
-                <span>Outcome: <strong className="text-white/90">{toMoney(row.outcomePrice)}</strong></span>
-                <span>Confidence: <strong className="text-white/90">{row.confidence}</strong></span>
+                <span>{t("Prediction:")} <strong className="text-white/90">{toMoney(row.predictedPrice)}</strong></span>
+                <span>{t("Outcome:")} <strong className="text-white/90">{toMoney(row.outcomePrice)}</strong></span>
+                <span>{t("Confidence:")} <strong className="text-white/90">{row.confidence}</strong></span>
               </div>
             </article>
           ))
         ) : (
           <div className="rounded-xl border border-white/10 bg-black/30 p-6 text-center text-sm text-white/55">
-            No prediction outcome logs available.
+            {t("No prediction outcome logs available.")}
           </div>
         )}
       </div>

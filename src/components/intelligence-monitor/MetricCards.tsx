@@ -1,4 +1,5 @@
 import type { IntelligenceSummaryMetrics } from "@/utils/intelligenceAnalytics";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   metrics: IntelligenceSummaryMetrics;
@@ -14,13 +15,14 @@ const METRICS = [
 ] as const;
 
 export default function MetricCards({ metrics, loading = false }: Props) {
+  const { t } = useTranslation();
   return (
     <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
       {METRICS.map((metric) => {
         const raw = Number(metrics[metric.key] || 0);
         return (
           <article key={metric.key} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-white/55">{metric.label}</p>
+            <p className="text-xs uppercase tracking-[0.14em] text-white/55">{t(metric.label)}</p>
             <p className="mt-2 text-2xl font-semibold text-white">
               {loading ? <span className="inline-block h-7 w-20 animate-pulse rounded bg-white/10" /> : metric.format(raw)}
             </p>

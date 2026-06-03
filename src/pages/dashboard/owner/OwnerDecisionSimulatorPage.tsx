@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import PropertyInputCard from "@/components/owner-decision-simulator/PropertyInputCard";
 import ScenarioControlsCard from "@/components/owner-decision-simulator/ScenarioControlsCard";
 import SimulationResultPanel from "@/components/owner-decision-simulator/SimulationResultPanel";
@@ -28,6 +29,7 @@ const defaultScenario: ScenarioInput = {
 };
 
 export default function OwnerDecisionSimulatorPage() {
+  const { t } = useTranslation();
   const [property, setProperty] = useState<PropertyBaseInput>(defaultProperty);
   const [scenario, setScenario] = useState<ScenarioInput>(defaultScenario);
   const [range, setRange] = useState<7 | 30 | 90>(30);
@@ -70,8 +72,8 @@ export default function OwnerDecisionSimulatorPage() {
   return (
     <div className="space-y-4">
       <header className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <h1 className="text-2xl font-semibold text-white">What-If Market Simulator</h1>
-        <p className="mt-1 text-sm text-white/60">Explore pricing and market scenarios before making a selling decision.</p>
+        <h1 className="text-2xl font-semibold text-white">{t("What-If Market Simulator")}</h1>
+        <p className="mt-1 text-sm text-white/60">{t("Explore pricing and market scenarios before making a selling decision.")}</p>
       </header>
 
       <PropertyInputCard value={property} onChange={(patch) => setProperty((p) => ({ ...p, ...patch }))} />
@@ -84,12 +86,12 @@ export default function OwnerDecisionSimulatorPage() {
       <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 className="text-sm font-semibold text-white">Trend Preview</h2>
-            <p className="text-xs text-white/55">Compact district trend context for decision support.</p>
+            <h2 className="text-sm font-semibold text-white">{t("Trend Preview")}</h2>
+            <p className="text-xs text-white/55">{t("Compact district trend context for decision support.")}</p>
           </div>
           <TrendRangeSelector value={range} onChange={setRange} />
         </div>
-        {trendLoading ? <p className="text-sm text-white/60">Loading trend...</p> : <MarketTrendChart points={trendPoints} title="District Market Preview" />}
+        {trendLoading ? <p className="text-sm text-white/60">{t("Loading trend...")}</p> : <MarketTrendChart points={trendPoints} title={t("District Market Preview")} />}
       </section>
     </div>
   );

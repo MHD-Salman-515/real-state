@@ -1,25 +1,27 @@
 // src/pages/admin/ARAging.jsx
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import api from "../../api/axios";
 
-function getBucketLabel(key) {
+function getBucketLabel(key, t) {
   switch (key) {
     case "0_30":
-      return "0-30 days";
+      return t("0-30 days");
     case "31_60":
-      return "31-60 days";
+      return t("31-60 days");
     case "61_90":
-      return "61-90 days";
+      return t("61-90 days");
     case "90_plus":
-      return "90+ days";
+      return t("90+ days");
     default:
       return key;
   }
 }
 
 export default function ARAging() {
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +36,7 @@ export default function ARAging() {
       setInvoices(pending);
     } catch (err) {
       console.error(err);
-      setError("Failed to load aging data");
+      setError(t("Failed to load aging data"));
     } finally {
       setLoading(false);
     }
@@ -75,11 +77,11 @@ export default function ARAging() {
     () =>
       Object.entries(buckets).map(([key, info]) => ({
         bucket: key,
-        label: getBucketLabel(key),
+        label: getBucketLabel(key, t),
         count: info.count,
         amount: info.amount,
       })),
-    [buckets]
+    [buckets, t]
   );
 
   const totalAmount = bucketRows.reduce((sum, b) => sum + b.amount, 0);
@@ -93,8 +95,8 @@ export default function ARAging() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="A/R Aging"
-        subtitle="Track overdue receivables by aging buckets."
+        title={t("A/R Aging")}
+        subtitle={t("Track overdue receivables by aging buckets.")}
       />
 
       {loading ? (
@@ -116,12 +118,12 @@ export default function ARAging() {
             >
               <p className="text-xs text-slate-300">{row.label}</p>
               <p className="mt-2 text-2xl font-semibold text-white/90">{formatMoney(row.amount)}</p>
-              <p className="mt-1 text-xs text-slate-400">{row.count} invoices</p>
+              <p className="mt-1 text-xs text-slate-400">{t("{{count}} invoices", { count: row.count })}</p>
             </Card>
           ))}
 
           <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15">
-            <p className="text-xs text-white/80">Total Overdue</p>
+            <p className="text-xs text-white/80">{t("Total Overdue")}</p>
             <p className="mt-2 text-2xl font-semibold text-white/80">
               {totalAmount.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
@@ -129,15 +131,15 @@ export default function ARAging() {
               })}{" "}
               $
             </p>
-            <p className="mt-1 text-xs text-white/80">Across all aging buckets</p>
+            <p className="mt-1 text-xs text-white/80">{t("Across all aging buckets")}</p>
           </Card>
         </div>
       )}
 
       <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="border-b border-white/10 px-4 py-3 md:px-5">
-          <h2 className="text-sm font-semibold text-white md:text-base">Aging Summary</h2>
-          <p className="mt-1 text-xs text-slate-300 md:text-sm">Outstanding receivables grouped by overdue period.</p>
+          <h2 className="text-sm font-semibold text-white md:text-base">{t("Aging Summary")}</h2>
+          <p className="mt-1 text-xs text-slate-300 md:text-sm">{t("Outstanding receivables grouped by overdue period.")}</p>
         </div>
 
         {error ? (
@@ -155,17 +157,17 @@ export default function ARAging() {
           </div>
         ) : invoices.length === 0 ? (
           <div className="p-8 text-center">
-            <h3 className="text-lg font-semibold text-white">No overdue invoices</h3>
-            <p className="mt-2 text-sm text-slate-300">All invoices are paid or there is no receivable data yet.</p>
+            <h3 className="text-lg font-semibold text-white">{t("No overdue invoices")}</h3>
+            <p className="mt-2 text-sm text-slate-300">{t("All invoices are paid or there is no receivable data yet.")}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-[900px] text-sm leading-5 text-slate-100">
               <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
                 <tr className="border-b border-white/10">
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Bucket</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Count</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Amount</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Bucket")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Count")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Amount")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">

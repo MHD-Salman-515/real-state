@@ -1,4 +1,5 @@
 import type { MarketTrendPoint } from "@/services/marketTrends.api";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   title?: string;
@@ -11,6 +12,7 @@ function safeNumber(v: unknown): number {
 }
 
 export default function MarketTrendChart({ title = "Market Trend", points }: Props) {
+  const { t } = useTranslation();
   const normalized = points.map((p) => ({
     date: p.date,
     avg: safeNumber(p.avgPricePerSqm || p.avgPrice),
@@ -27,8 +29,8 @@ export default function MarketTrendChart({ title = "Market Trend", points }: Pro
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-white">{title}</h3>
-          <p className="text-xs text-white/55">Average price per m² and volume trend</p>
+          <h3 className="text-sm font-semibold text-white">{t(title)}</h3>
+          <p className="text-xs text-white/55">{t("Average price per m² and volume trend")}</p>
         </div>
         <span
           className={`rounded-full border px-2.5 py-1 text-xs ${
@@ -39,7 +41,7 @@ export default function MarketTrendChart({ title = "Market Trend", points }: Pro
               : "border-white/15 bg-white/5 text-white/75"
           }`}
         >
-          {trend}
+          {t(trend)}
         </span>
       </div>
 
@@ -57,21 +59,21 @@ export default function MarketTrendChart({ title = "Market Trend", points }: Pro
             </div>
           ))
         ) : (
-          <div className="col-span-12 flex items-center justify-center text-sm text-white/55">No trend data available</div>
+          <div className="col-span-12 flex items-center justify-center text-sm text-white/55">{t("No trend data available")}</div>
         )}
       </div>
 
       <div className="mt-3 grid gap-2 md:grid-cols-3">
         <div className="rounded-xl border border-white/10 bg-black/25 p-2.5">
-          <p className="text-xs text-white/50">Latest price / m²</p>
+          <p className="text-xs text-white/50">{t("Latest price / m²")}</p>
           <p className="mt-1 text-sm font-semibold text-white">{Math.round(latest).toLocaleString()} SYP</p>
         </div>
         <div className="rounded-xl border border-white/10 bg-black/25 p-2.5">
-          <p className="text-xs text-white/50">Latest volume</p>
+          <p className="text-xs text-white/50">{t("Latest volume")}</p>
           <p className="mt-1 text-sm font-semibold text-white">{Math.round(normalized[normalized.length - 1]?.volume || 0)}</p>
         </div>
         <div className="rounded-xl border border-white/10 bg-black/25 p-2.5">
-          <p className="text-xs text-white/50">Data points</p>
+          <p className="text-xs text-white/50">{t("Data points")}</p>
           <p className="mt-1 text-sm font-semibold text-white">{normalized.length}</p>
         </div>
       </div>

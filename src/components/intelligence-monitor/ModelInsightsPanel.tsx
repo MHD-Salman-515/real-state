@@ -1,4 +1,5 @@
 import type { IntelligenceInsights } from "@/utils/intelligenceAnalytics";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   insights: IntelligenceInsights;
@@ -6,11 +7,12 @@ type Props = {
 };
 
 export default function ModelInsightsPanel({ insights, loading = false }: Props) {
+  const { t } = useTranslation();
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-white">Model Insights</h2>
-        <p className="text-xs text-white/55">System-generated observations for confidence and recommendation quality.</p>
+        <h2 className="text-sm font-semibold text-white">{t("Model Insights")}</h2>
+        <p className="text-xs text-white/55">{t("System-generated observations for confidence and recommendation quality.")}</p>
       </div>
 
       {loading ? (
@@ -23,21 +25,21 @@ export default function ModelInsightsPanel({ insights, loading = false }: Props)
         <div className="space-y-3">
           <div className="grid gap-2 sm:grid-cols-3">
             <article className="rounded-xl border border-white/10 bg-black/30 p-3">
-              <p className="text-xs text-white/55">Top District</p>
+              <p className="text-xs text-white/55">{t("Top District")}</p>
               <p className="mt-1 text-sm font-semibold text-white">{insights.strongestDistrict}</p>
             </article>
             <article className="rounded-xl border border-white/10 bg-black/30 p-3">
-              <p className="text-xs text-white/55">Sparse Data Zone</p>
+              <p className="text-xs text-white/55">{t("Sparse Data Zone")}</p>
               <p className="mt-1 text-sm font-semibold text-white">{insights.sparseDistrict}</p>
             </article>
             <article className="rounded-xl border border-white/10 bg-black/30 p-3">
-              <p className="text-xs text-white/55">Volatility Hotspot</p>
+              <p className="text-xs text-white/55">{t("Volatility Hotspot")}</p>
               <p className="mt-1 text-sm font-semibold text-white">{insights.volatilityHotspot}</p>
             </article>
           </div>
 
           <div className="rounded-xl border border-white/10 bg-black/30 p-3">
-            <p className="text-xs text-white/55">Recommendation Delta</p>
+            <p className="text-xs text-white/55">{t("Recommendation Delta")}</p>
             <p className="mt-1 text-sm font-semibold text-white">
               {insights.recommendationDeltaPct >= 0 ? "+" : ""}{insights.recommendationDeltaPct.toFixed(1)}%
             </p>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, RefreshCw, Upload } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ToastProvider.jsx";
 import TrendRangeSelector from "@/components/market-trends/TrendRangeSelector";
 import TrendSummaryCards from "@/components/market-trends/TrendSummaryCards";
@@ -36,6 +37,7 @@ function toTitleCase(value: string): string {
 
 export default function AdminMarketRecoveryPage() {
   const toast = useToast();
+  const { t } = useTranslation();
 
   const [qa, setQa] = useState<MarketQAResponse | null>(null);
   const [areas, setAreas] = useState<MarketAreaRow[]>([]);
@@ -70,7 +72,7 @@ export default function AdminMarketRecoveryPage() {
       setOutliers(outlierData);
       setSelectedOutlierIds([]);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to load market recovery data.";
+      const msg = err?.response?.data?.message || err?.message || t("Failed to load market recovery data.");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -190,7 +192,7 @@ export default function AdminMarketRecoveryPage() {
 
   const handleImport = async () => {
     if (!csvFile) {
-      toast.error("Please choose a CSV file first.");
+      toast.error(t("Please choose a CSV file first."));
       return;
     }
 
@@ -198,10 +200,10 @@ export default function AdminMarketRecoveryPage() {
     try {
       const result = await importAdminMarketCsv(csvFile, csvSource, Number(csvDays));
       setCsvResult(result);
-      toast.success("CSV imported successfully.");
+      toast.success(t("CSV imported successfully."));
       await loadAll();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "CSV import failed.";
+      const msg = err?.response?.data?.message || err?.message || t("CSV import failed.");
       toast.error(msg);
     } finally {
       setImporting(false);
@@ -212,10 +214,10 @@ export default function AdminMarketRecoveryPage() {
     setRebuilding(true);
     try {
       await rebuildAdminMarketAreas();
-      toast.success("Areas rebuilt successfully.");
+      toast.success(t("Areas rebuilt successfully."));
       await loadAll();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Rebuild failed.";
+      const msg = err?.response?.data?.message || err?.message || t("Rebuild failed.");
       toast.error(msg);
     } finally {
       setRebuilding(false);
@@ -224,17 +226,17 @@ export default function AdminMarketRecoveryPage() {
 
   const handleMark = async (flagged: boolean) => {
     if (!selectedOutlierIds.length) {
-      toast.warning("Select at least one outlier row.");
+      toast.warning(t("Select at least one outlier row."));
       return;
     }
 
     setMarking(true);
     try {
       await markAdminMarketOutliers(selectedOutlierIds, flagged);
-      toast.success(flagged ? "Outliers marked." : "Outliers unmarked.");
+      toast.success(flagged ? t("Outliers marked.") : t("Outliers unmarked."));
       await loadAll();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Outlier update failed.";
+      const msg = err?.response?.data?.message || err?.message || t("Outlier update failed.");
       toast.error(msg);
     } finally {
       setMarking(false);
@@ -246,9 +248,9 @@ export default function AdminMarketRecoveryPage() {
       <header className="rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Market Recovery</h1>
+            <h1 className="text-2xl font-semibold text-white">{t("Market Recovery")}</h1>
             <p className="mt-1 text-sm text-white/60">
-              Admin control panel for market QA, area rebuilds, CSV imports, and outlier governance.
+              {t("Admin control panel for market QA, area rebuilds, CSV imports, and outlier governance.")}
             </p>
           </div>
 
@@ -257,7 +259,7 @@ export default function AdminMarketRecoveryPage() {
             onClick={loadAll}
             className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Refresh
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> {t("Refresh")}
           </button>
         </div>
       </header>
@@ -268,11 +270,11 @@ export default function AdminMarketRecoveryPage() {
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {[
-          { label: "Total Records", value: stats.totalRecords.toLocaleString() },
-          { label: "Affected Zones", value: stats.affectedZones.toLocaleString() },
-          { label: "Average Price / m²", value: `${Math.round(stats.avgPriceSqm).toLocaleString()} SYP` },
-          { label: "Outliers", value: stats.outliers.toLocaleString() },
-          { label: "Recovery Score", value: `${Math.round(stats.recoveryScore)}%` },
+          { label: t("Total Records"), value: stats.totalRecords.toLocaleString() },
+          { label: t("Affected Zones"), value: stats.affectedZones.toLocaleString() },
+          { label: t("Average Price / m²"), value: `${Math.round(stats.avgPriceSqm).toLocaleString()} SYP` },
+          { label: t("Outliers"), value: stats.outliers.toLocaleString() },
+          { label: t("Recovery Score"), value: `${Math.round(stats.recoveryScore)}%` },
         ].map((card) => (
           <article key={card.label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
             <p className="text-xs uppercase tracking-[0.14em] text-white/55">{card.label}</p>
@@ -284,17 +286,17 @@ export default function AdminMarketRecoveryPage() {
       <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 className="text-sm font-semibold text-white">Market Trend Analytics</h2>
-            <p className="text-xs text-white/55">Average price, price per m², and listing volume direction.</p>
+            <h2 className="text-sm font-semibold text-white">{t("Market Trend Analytics")}</h2>
+            <p className="text-xs text-white/55">{t("Average price, price per m², and listing volume direction.")}</p>
           </div>
           <TrendRangeSelector value={trendRange} onChange={setTrendRange} />
         </div>
         <TrendSummaryCards points={trendPoints} />
-        {trendLoading ? <p className="text-sm text-white/60">Loading trend data...</p> : <MarketTrendChart points={trendPoints} />}
+        {trendLoading ? <p className="text-sm text-white/60">{t("Loading trend data...")}</p> : <MarketTrendChart points={trendPoints} />}
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <h2 className="text-sm font-semibold text-white">CSV Import</h2>
+        <h2 className="text-sm font-semibold text-white">{t("CSV Import")}</h2>
         <div className="mt-3 grid gap-3 md:grid-cols-[1fr_180px_120px_auto]">
           <input
             type="file"
@@ -306,13 +308,13 @@ export default function AdminMarketRecoveryPage() {
             value={csvSource}
             onChange={(e) => setCsvSource(e.target.value)}
             className="h-10 rounded-xl border border-white/10 bg-black/30 px-3 text-sm text-white"
-            placeholder="Source"
+            placeholder={t("Source")}
           />
           <input
             value={csvDays}
             onChange={(e) => setCsvDays(e.target.value)}
             className="h-10 rounded-xl border border-white/10 bg-black/30 px-3 text-sm text-white"
-            placeholder="days"
+            placeholder={t("days")}
             type="number"
             min={1}
           />
@@ -322,7 +324,7 @@ export default function AdminMarketRecoveryPage() {
             disabled={importing}
             className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white px-4 text-sm font-semibold text-black disabled:opacity-50"
           >
-            <Upload className="h-4 w-4" /> {importing ? "Importing..." : "Import CSV"}
+            <Upload className="h-4 w-4" /> {importing ? t("Importing...") : t("Import CSV")}
           </button>
         </div>
 
@@ -345,14 +347,14 @@ export default function AdminMarketRecoveryPage() {
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-white">Areas</h2>
+          <h2 className="text-sm font-semibold text-white">{t("Areas")}</h2>
           <button
             type="button"
             onClick={handleRebuild}
             disabled={rebuilding}
             className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white disabled:opacity-50"
           >
-            {rebuilding ? "Rebuilding..." : "Rebuild Areas"}
+            {rebuilding ? t("Rebuilding...") : t("Rebuild Areas")}
           </button>
         </div>
 
@@ -360,19 +362,19 @@ export default function AdminMarketRecoveryPage() {
           <table className="min-w-[900px] w-full text-sm text-white/90">
             <thead className="bg-black/40 text-xs uppercase tracking-[0.12em] text-white/55">
               <tr>
-                <th className="px-3 py-2 text-left">City</th>
-                <th className="px-3 py-2 text-left">District</th>
-                <th className="px-3 py-2 text-left">Property Type</th>
-                <th className="px-3 py-2 text-left">Avg Price/m² (USD)</th>
-                <th className="px-3 py-2 text-left">FX Used</th>
-                <th className="px-3 py-2 text-left">Sample Count</th>
-                <th className="px-3 py-2 text-left">Updated At</th>
-                <th className="px-3 py-2 text-left">Confidence</th>
+                <th className="px-3 py-2 text-left">{t("City")}</th>
+                <th className="px-3 py-2 text-left">{t("District")}</th>
+                <th className="px-3 py-2 text-left">{t("Property Type")}</th>
+                <th className="px-3 py-2 text-left">{t("Avg Price/m² (USD)")}</th>
+                <th className="px-3 py-2 text-left">{t("FX Used")}</th>
+                <th className="px-3 py-2 text-left">{t("Sample Count")}</th>
+                <th className="px-3 py-2 text-left">{t("Updated At")}</th>
+                <th className="px-3 py-2 text-left">{t("Confidence")}</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={8} className="px-3 py-6 text-center text-white/60">Loading...</td></tr>
+                <tr><td colSpan={8} className="px-3 py-6 text-center text-white/60">{t("Loading...")}</td></tr>
               ) : areaRows.length ? (
                 areaRows.map((row) => (
                   <tr key={row.key} className="border-t border-white/10 hover:bg-white/5">
@@ -397,7 +399,7 @@ export default function AdminMarketRecoveryPage() {
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan={8} className="px-3 py-6 text-center text-white/60">No valid area rows returned from backend.</td></tr>
+                <tr><td colSpan={8} className="px-3 py-6 text-center text-white/60">{t("No valid area rows returned from backend.")}</td></tr>
               )}
             </tbody>
           </table>
@@ -406,7 +408,7 @@ export default function AdminMarketRecoveryPage() {
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-white">Outliers</h2>
+          <h2 className="text-sm font-semibold text-white">{t("Outliers")}</h2>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -414,7 +416,7 @@ export default function AdminMarketRecoveryPage() {
               disabled={marking || !selectedOutlierIds.length}
               className="rounded-xl border border-amber-400/40 bg-amber-500/15 px-3 py-2 text-sm text-amber-100 disabled:opacity-50"
             >
-              Mark Outlier
+              {t("Mark Outlier")}
             </button>
             <button
               type="button"
@@ -422,7 +424,7 @@ export default function AdminMarketRecoveryPage() {
               disabled={marking || !selectedOutlierIds.length}
               className="rounded-xl border border-emerald-400/40 bg-emerald-500/15 px-3 py-2 text-sm text-emerald-100 disabled:opacity-50"
             >
-              Unmark Outlier
+              {t("Unmark Outlier")}
             </button>
           </div>
         </div>
@@ -434,19 +436,19 @@ export default function AdminMarketRecoveryPage() {
                 <th className="px-3 py-2 text-left">
                   <input type="checkbox" checked={allSelected} onChange={toggleAll} />
                 </th>
-                <th className="px-3 py-2 text-left">City</th>
-                <th className="px-3 py-2 text-left">District</th>
-                <th className="px-3 py-2 text-left">Type</th>
-                <th className="px-3 py-2 text-left">Listing</th>
-                <th className="px-3 py-2 text-left">Price</th>
-                <th className="px-3 py-2 text-left">Price/m²</th>
-                <th className="px-3 py-2 text-left">Reason</th>
-                <th className="px-3 py-2 text-left">Flagged</th>
+                <th className="px-3 py-2 text-left">{t("City")}</th>
+                <th className="px-3 py-2 text-left">{t("District")}</th>
+                <th className="px-3 py-2 text-left">{t("Type")}</th>
+                <th className="px-3 py-2 text-left">{t("Listing")}</th>
+                <th className="px-3 py-2 text-left">{t("Price")}</th>
+                <th className="px-3 py-2 text-left">{t("Price/m²")}</th>
+                <th className="px-3 py-2 text-left">{t("Reason")}</th>
+                <th className="px-3 py-2 text-left">{t("Flagged")}</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={9} className="px-3 py-6 text-center text-white/60">Loading...</td></tr>
+                <tr><td colSpan={9} className="px-3 py-6 text-center text-white/60">{t("Loading...")}</td></tr>
               ) : outliers.length ? (
                 outliers.map((row) => {
                   const selected = selectedOutlierIds.includes(row.id);
@@ -464,9 +466,9 @@ export default function AdminMarketRecoveryPage() {
                       <td className="px-3 py-2">{row.reason || "-"}</td>
                       <td className="px-3 py-2">
                         {row.flagged ? (
-                          <span className="inline-flex rounded-full border border-red-400/30 bg-red-500/15 px-2 py-0.5 text-xs text-red-200">Flagged</span>
+                          <span className="inline-flex rounded-full border border-red-400/30 bg-red-500/15 px-2 py-0.5 text-xs text-red-200">{t("Flagged")}</span>
                         ) : (
-                          <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-xs text-white/70">Normal</span>
+                          <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-xs text-white/70">{t("Normal")}</span>
                         )}
                       </td>
                     </tr>
@@ -476,7 +478,7 @@ export default function AdminMarketRecoveryPage() {
                 <tr>
                   <td colSpan={9} className="px-3 py-8 text-center text-white/60">
                     <div className="inline-flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4" /> No outliers returned.
+                      <AlertTriangle className="h-4 w-4" /> {t("No outliers returned.")}
                     </div>
                   </td>
                 </tr>

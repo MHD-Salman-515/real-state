@@ -1,4 +1,5 @@
 import type { MarketSnapshot } from "@/services/adminMarketSnapshots.api";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   snapshot: MarketSnapshot | null;
@@ -6,15 +7,16 @@ type Props = {
 };
 
 export default function SnapshotDetailsDrawer({ snapshot, onClose }: Props) {
+  const { t } = useTranslation();
   if (!snapshot) return null;
 
   return (
     <div className="fixed inset-0 z-[110] flex justify-end bg-black/60">
       <aside className="h-full w-full max-w-md overflow-auto border-l border-white/10 bg-[#050912] p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white">Snapshot Details</h3>
+          <h3 className="text-sm font-semibold text-white">{t("Snapshot Details")}</h3>
           <button onClick={onClose} type="button" className="rounded-lg border border-white/10 px-2 py-1 text-xs text-white/70 hover:bg-white/10">
-            Close
+            {t("Close")}
           </button>
         </div>
 

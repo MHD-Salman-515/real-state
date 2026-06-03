@@ -1,4 +1,5 @@
 import type { DistrictPerformanceRow } from "@/utils/intelligenceAnalytics";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   rows: DistrictPerformanceRow[];
@@ -13,22 +14,23 @@ function badgeClass(level: string) {
 }
 
 export default function DistrictPerformanceTable({ rows, loading = false }: Props) {
+  const { t } = useTranslation();
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-white">District Performance</h2>
-        <p className="text-xs text-white/55">Accuracy distribution by district confidence and volatility.</p>
+        <h2 className="text-sm font-semibold text-white">{t("District Performance")}</h2>
+        <p className="text-xs text-white/55">{t("Accuracy distribution by district confidence and volatility.")}</p>
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-white/10">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-black/40 text-white/65">
             <tr>
-              <th className="px-3 py-2 font-medium">District</th>
-              <th className="px-3 py-2 font-medium">Predictions</th>
-              <th className="px-3 py-2 font-medium">Average Error</th>
-              <th className="px-3 py-2 font-medium">Confidence</th>
-              <th className="px-3 py-2 font-medium">Volatility</th>
+              <th className="px-3 py-2 font-medium">{t("District")}</th>
+              <th className="px-3 py-2 font-medium">{t("Predictions")}</th>
+              <th className="px-3 py-2 font-medium">{t("Average Error")}</th>
+              <th className="px-3 py-2 font-medium">{t("Confidence")}</th>
+              <th className="px-3 py-2 font-medium">{t("Volatility")}</th>
             </tr>
           </thead>
           <tbody>
@@ -48,12 +50,12 @@ export default function DistrictPerformanceTable({ rows, loading = false }: Prop
                   <td className="px-3 py-2">±{row.averageError.toFixed(1)}%</td>
                   <td className="px-3 py-2">
                     <span className={`rounded-full border px-2 py-0.5 text-xs ${badgeClass(row.confidenceLevel)}`}>
-                      {row.confidenceLevel} Confidence
+                      {t("{{level}} Confidence", { level: row.confidenceLevel })}
                     </span>
                   </td>
                   <td className="px-3 py-2">
                     <span className={`rounded-full border px-2 py-0.5 text-xs ${badgeClass(row.marketVolatility)}`}>
-                      {row.marketVolatility} Volatility
+                      {t("{{level}} Volatility", { level: row.marketVolatility })}
                     </span>
                   </td>
                 </tr>
@@ -61,7 +63,7 @@ export default function DistrictPerformanceTable({ rows, loading = false }: Prop
             ) : (
               <tr>
                 <td colSpan={5} className="px-3 py-6 text-center text-white/55">
-                  No district analytics available.
+                  {t("No district analytics available.")}
                 </td>
               </tr>
             )}

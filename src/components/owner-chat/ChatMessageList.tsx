@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { ChatMessage } from "@/types/chat";
 import ChatWelcomeState from "@/components/owner-chat/ChatWelcomeState";
 
@@ -15,10 +16,11 @@ function time(v?: string): string {
 }
 
 function ThinkingIndicator() {
+  const { t } = useTranslation();
   return (
     <div className="flex justify-start px-4 pb-3">
       <div className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
-        <div className="mb-1 text-[10px] uppercase tracking-[0.15em] text-white/60">Assistant Thinking</div>
+        <div className="mb-1 text-[10px] uppercase tracking-[0.15em] text-white/60">{t("Assistant Thinking")}</div>
         <div className="flex items-center gap-1.5">
           {[0, 1, 2].map((i) => (
             <motion.span
@@ -35,6 +37,7 @@ function ThinkingIndicator() {
 }
 
 export default function ChatMessageList({ messages, loading }: Props) {
+  const { t } = useTranslation();
   if (!messages.length && !loading) return <ChatWelcomeState />;
 
   return (
@@ -60,7 +63,7 @@ export default function ChatMessageList({ messages, loading }: Props) {
               }`}
             >
               <div className="mb-1 text-[10px] uppercase tracking-[0.15em] opacity-70">
-                {user ? "User" : tool ? "Tool" : "Assistant"} {time(m.createdAt)}
+                {user ? t("User") : tool ? t("Tool") : t("Assistant")} {time(m.createdAt)}
               </div>
               <p className="whitespace-pre-wrap text-sm leading-6">{m.content}</p>
             </article>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import MarketRecoveryStats from "@/components/market-recovery/MarketRecoveryStats";
 import MarketRecoveryAlerts from "@/components/market-recovery/MarketRecoveryAlerts";
@@ -23,6 +24,7 @@ const initialFilters: MarketRecoveryFiltersState = {
 };
 
 export default function MarketRecoveryPage() {
+  const { t } = useTranslation();
   const [records, setRecords] = useState<MarketRecoveryRecord[]>(marketRecoverySeed);
   const [filters, setFilters] = useState<MarketRecoveryFiltersState>(initialFilters);
   const [modalOpen, setModalOpen] = useState(false);
@@ -81,7 +83,7 @@ export default function MarketRecoveryPage() {
   };
 
   const handleDelete = (record: MarketRecoveryRecord) => {
-    const ok = window.confirm(`Delete market record for ${record.city} / ${record.district}?`);
+    const ok = window.confirm(t("Delete market record for {{city}} / {{district}}?", { city: record.city, district: record.district }));
     if (!ok) return;
     setRecords((prev) => prev.filter((item) => item.id !== record.id));
   };
@@ -91,10 +93,10 @@ export default function MarketRecoveryPage() {
       [
         `${record.city} / ${record.district}`,
         `${record.propertyType} - ${record.listingType}`,
-        `Price: ${record.price.toLocaleString()} SYP`,
-        `Price/m²: ${Math.round(record.pricePerSqm).toLocaleString()} SYP`,
-        `Source: ${record.source}`,
-        `Status: ${record.status}`,
+        `${t("Price:")} ${record.price.toLocaleString()} SYP`,
+        `${t("Price/m²:")} ${Math.round(record.pricePerSqm).toLocaleString()} SYP`,
+        `${t("Source:")} ${record.source}`,
+        `${t("Status:")} ${t(record.status)}`,
       ].join("\n")
     );
   };
@@ -104,9 +106,9 @@ export default function MarketRecoveryPage() {
       <header className="rounded-2xl border border-white/10 bg-white/5 p-4 md:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Market Recovery</h1>
+            <h1 className="text-2xl font-semibold text-white">{t("Market Recovery")}</h1>
             <p className="mt-1 max-w-3xl text-sm text-white/60">
-              Manage emergency market updates, add fresh pricing records, and stabilize property intelligence after market changes.
+              {t("Manage emergency market updates, add fresh pricing records, and stabilize property intelligence after market changes.")}
             </p>
           </div>
 
@@ -116,7 +118,7 @@ export default function MarketRecoveryPage() {
             className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black"
           >
             <Plus className="h-4 w-4" />
-            Add New Market Data
+            {t("Add New Market Data")}
           </button>
         </div>
       </header>

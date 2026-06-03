@@ -1,4 +1,5 @@
 import type { MarketTrendPoint } from "@/services/marketTrends.api";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   points: MarketTrendPoint[];
@@ -11,6 +12,7 @@ function n(v: unknown): number {
 }
 
 export default function AccuracyTrendChart({ points, loading = false }: Props) {
+  const { t } = useTranslation();
   const chartPoints = points.slice(-14).map((p, idx, arr) => {
     const avg = n(p.avgPricePerSqm || p.avgPrice);
     const first = n(arr[0]?.avgPricePerSqm || arr[0]?.avgPrice) || 1;
@@ -28,8 +30,8 @@ export default function AccuracyTrendChart({ points, loading = false }: Props) {
   return (
     <section className="rounded-2xl border border-white/10 bg-white/5 p-4">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-white">Accuracy Trend</h2>
-        <p className="text-xs text-white/55">Prediction accuracy progression by recent periods.</p>
+        <h2 className="text-sm font-semibold text-white">{t("Accuracy Trend")}</h2>
+        <p className="text-xs text-white/55">{t("Prediction accuracy progression by recent periods.")}</p>
       </div>
 
       {loading ? (
@@ -56,7 +58,7 @@ export default function AccuracyTrendChart({ points, loading = false }: Props) {
         </>
       ) : (
         <div className="flex h-52 items-center justify-center rounded-xl border border-white/10 bg-black/30 text-sm text-white/55">
-          No trend data available.
+          {t("No trend data available.")}
         </div>
       )}
     </section>

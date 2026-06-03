@@ -1,5 +1,6 @@
 import { MessageSquare, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { ChatSession } from "@/types/chat";
 
 type Props = {
@@ -12,16 +13,17 @@ type Props = {
 };
 
 export default function ChatSessionSidebar({ sessions, activeSessionId, loading, onSelect, onNew, onDelete }: Props) {
+  const { t } = useTranslation();
   return (
     <aside className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur-2xl">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Sessions</h3>
+        <h3 className="text-sm font-semibold text-white">{t("Sessions")}</h3>
         <button
           type="button"
           onClick={onNew}
           className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs text-white transition hover:bg-white/15"
         >
-          <Plus className="h-3.5 w-3.5" /> New
+          <Plus className="h-3.5 w-3.5" /> {t("New")}
         </button>
       </div>
 
@@ -52,9 +54,9 @@ export default function ChatSessionSidebar({ sessions, activeSessionId, loading,
                   <button type="button" className="w-full text-left" onClick={() => onSelect(s.id)}>
                     <p className="flex items-center gap-1.5 truncate text-sm text-white">
                       <MessageSquare className="h-3.5 w-3.5 text-white/60" />
-                      {s.title || "Session"}
+                      {s.title || t("Session")}
                     </p>
-                    <p className="mt-1 truncate text-xs text-white/55">{s.preview || "No preview"}</p>
+                    <p className="mt-1 truncate text-xs text-white/55">{s.preview || t("No preview")}</p>
                   </button>
                   <div className="mt-2 flex justify-end">
                     <button
@@ -62,7 +64,7 @@ export default function ChatSessionSidebar({ sessions, activeSessionId, loading,
                       onClick={() => onDelete(s.id)}
                       className="inline-flex items-center gap-1 rounded-md border border-red-400/30 px-2 py-0.5 text-[11px] text-red-200 hover:bg-red-500/10"
                     >
-                      <Trash2 className="h-3 w-3" /> Delete
+                      <Trash2 className="h-3 w-3" /> {t("Delete")}
                     </button>
                   </div>
                 </div>
@@ -71,7 +73,7 @@ export default function ChatSessionSidebar({ sessions, activeSessionId, loading,
           })}
         </ul>
       ) : (
-        <p className="text-sm text-white/60">No sessions yet.</p>
+        <p className="text-sm text-white/60">{t("No sessions yet.")}</p>
       )}
     </aside>
   );

@@ -1,4 +1,5 @@
 import type { MarketRecoveryRecord } from "./types";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   records: MarketRecoveryRecord[];
@@ -9,6 +10,7 @@ function formatPrice(v: number): string {
 }
 
 export default function MarketRecoveryStats({ records }: Props) {
+  const { t } = useTranslation();
   const total = records.length;
   const latest = [...records].sort((a, b) => +new Date(b.dateAdded) - +new Date(a.dateAdded))[0];
   const affectedZones = new Set(records.filter((r) => r.status !== "Stable").map((r) => `${r.city}-${r.district}`)).size;
@@ -17,11 +19,11 @@ export default function MarketRecoveryStats({ records }: Props) {
   const recoveryStatus = total ? Math.round((recoveringCount / total) * 100) : 0;
 
   const cards = [
-    { label: "Total Records", value: total.toLocaleString(), hint: "Tracked entries" },
-    { label: "Last Update", value: latest?.dateAdded || "-", hint: latest?.district || "No records yet" },
-    { label: "Affected Zones", value: affectedZones.toLocaleString(), hint: "Unstable/Dropping" },
-    { label: "Average Price / m²", value: formatPrice(avgSqm), hint: "Across filtered records" },
-    { label: "Recovery Status", value: `${recoveryStatus}%`, hint: "Recovering entries ratio" },
+    { label: t("Total Records"), value: total.toLocaleString(), hint: t("Tracked entries") },
+    { label: t("Last Update"), value: latest?.dateAdded || "-", hint: latest?.district || t("No records yet") },
+    { label: t("Affected Zones"), value: affectedZones.toLocaleString(), hint: t("Unstable/Dropping") },
+    { label: t("Average Price / m²"), value: formatPrice(avgSqm), hint: t("Across filtered records") },
+    { label: t("Recovery Status"), value: `${recoveryStatus}%`, hint: t("Recovering entries ratio") },
   ];
 
   return (

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ToastProvider.jsx";
 import MetricCards from "@/components/intelligence-monitor/MetricCards";
 import AccuracyTrendChart from "@/components/intelligence-monitor/AccuracyTrendChart";
@@ -24,6 +25,7 @@ import {
 
 export default function AdminIntelligenceMonitorPage() {
   const toast = useToast();
+  const { t } = useTranslation();
 
   const [qa, setQa] = useState<MarketQAResponse | null>(null);
   const [areas, setAreas] = useState<MarketAreaRow[]>([]);
@@ -48,7 +50,7 @@ export default function AdminIntelligenceMonitorPage() {
       setOutliers(outlierData);
       setTrendPoints(Array.isArray(trendData?.points) ? trendData.points : []);
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to load intelligence monitor analytics.";
+      const msg = err?.response?.data?.message || err?.message || t("Failed to load intelligence monitor analytics.");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -70,9 +72,9 @@ export default function AdminIntelligenceMonitorPage() {
       <header className="rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-white">AI Intelligence Monitor</h1>
+            <h1 className="text-2xl font-semibold text-white">{t("AI Intelligence Monitor")}</h1>
             <p className="mt-1 text-sm text-white/60">
-              Track prediction accuracy, recommendation reliability, and market model performance over time.
+              {t("Track prediction accuracy, recommendation reliability, and market model performance over time.")}
             </p>
           </div>
 
@@ -81,7 +83,7 @@ export default function AdminIntelligenceMonitorPage() {
             onClick={load}
             className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Refresh
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> {t("Refresh")}
           </button>
         </div>
       </header>
