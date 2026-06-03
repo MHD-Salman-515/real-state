@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const SLIDES = [
   {
@@ -65,6 +66,7 @@ export default function HeroShowcase({
   onSecondaryCta,
   onContinueDraft,
 }) {
+  const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [videoError, setVideoError] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -109,6 +111,7 @@ export default function HeroShowcase({
           <img
             src={activeSlide.type === "video" ? activeSlide.thumb : activeSlide.src}
             alt="Hero poster fallback"
+            
             className={`h-full w-full object-cover transition-opacity duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
           />
         )}
@@ -120,17 +123,17 @@ export default function HeroShowcase({
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-5 pb-24 pt-20 sm:px-8 lg:px-12">
         <div className="max-w-2xl">
           <p className="mb-4 inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs tracking-[0.2em] text-slate-100">
-            {activeSlide.badge}
+            {t(activeSlide.badge)}
           </p>
           <h1
             className={`text-4xl font-black leading-tight sm:text-5xl lg:text-6xl transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
           >
-            {activeSlide.title}
+            {t(activeSlide.title)}
           </h1>
           <p
             className={`mt-5 max-w-xl text-sm text-slate-200 sm:text-base transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
           >
-            {activeSlide.description}
+            {t(activeSlide.description)}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <button
@@ -138,14 +141,14 @@ export default function HeroShowcase({
               onClick={onPrimaryCta}
               className="rounded-xl bg-white/10 px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/10"
             >
-              {activeSlide.primaryLabel}
+              {t(activeSlide.primaryLabel)}
             </button>
             <button
               type="button"
               onClick={onSecondaryCta}
               className="rounded-xl border border-white/40 bg-black/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
             >
-              {activeSlide.secondaryLabel}
+              {t(activeSlide.secondaryLabel)}
             </button>
           </div>
         </div>
@@ -154,7 +157,7 @@ export default function HeroShowcase({
           {lastSearch && (
             <div className="mb-4 flex flex-col gap-3 rounded-xl border border-white/15 bg-black/35 p-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-slate-100">
-                Last saved search:
+                {t("Last saved search:")}
                 <span className="ms-2 font-mono text-white/90">
                   {Object.entries(lastSearch)
                     .map(([k, v]) => `${k}:${v}`)
@@ -167,14 +170,14 @@ export default function HeroShowcase({
                   className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/90 transition hover:bg-white/10"
                   onClick={applyLastSearch}
                 >
-                  Apply
+                  {t("Apply")}
                 </button>
                 <button
                   type="button"
                   className="rounded-lg border border-white/30 px-3 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
                   onClick={clearLastSearch}
                 >
-                  Clear
+                  {t("Clear")}
                 </button>
               </div>
             </div>
@@ -183,8 +186,8 @@ export default function HeroShowcase({
           <form onSubmit={onQuickSearch} className="grid gap-3 sm:grid-cols-2">
             <input
               className={inputMini}
-              placeholder="City"
-              aria-label="City"
+              placeholder={t("City")}
+              aria-label={t("City")}
               value={quick.city}
               onChange={(e) => setQuick({ ...quick, city: e.target.value })}
             />
@@ -193,17 +196,17 @@ export default function HeroShowcase({
               value={quick.type}
               onChange={(e) => setQuick({ ...quick, type: e.target.value })}
             >
-              <option value="">Type</option>
-              <option value="APARTMENT">Apartment</option>
-              <option value="VILLA">Villa</option>
-              <option value="HOUSE">House</option>
-              <option value="STUDIO">Studio</option>
+              <option value="">{t("Type")}</option>
+              <option value="APARTMENT">{t("Apartment")}</option>
+              <option value="VILLA">{t("Villa")}</option>
+              <option value="HOUSE">{t("House")}</option>
+              <option value="STUDIO">{t("Studio")}</option>
             </select>
             <input
               className={inputMini}
               inputMode="numeric"
-              placeholder="Min price"
-              aria-label="Min price"
+              placeholder={t("Min price")}
+              aria-label={t("Min price")}
               value={quick.minPrice}
               onChange={(e) =>
                 setQuick({ ...quick, minPrice: onlyNum(e.target.value) })
@@ -212,8 +215,8 @@ export default function HeroShowcase({
             <input
               className={inputMini}
               inputMode="numeric"
-              placeholder="Max price"
-              aria-label="Max price"
+              placeholder={t("Max price")}
+              aria-label={t("Max price")}
               value={quick.maxPrice}
               onChange={(e) =>
                 setQuick({ ...quick, maxPrice: onlyNum(e.target.value) })
@@ -225,13 +228,13 @@ export default function HeroShowcase({
                 className="rounded-lg border border-white/30 px-3 py-2 text-sm transition hover:bg-white/10"
                 onClick={resetForm}
               >
-                Reset
+                {t("Reset")}
               </button>
               <button
                 type="submit"
                 className="rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/10"
               >
-                Quick Search
+                {t("Quick Search")}
               </button>
             </div>
           </form>
@@ -239,14 +242,14 @@ export default function HeroShowcase({
           {hasDraft && (
             <div className="mt-4 flex flex-col gap-3 rounded-xl border border-white/15 bg-black/35 p-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-slate-100">
-                You have an unfinished booking draft.
+                {t("You have an unfinished booking draft.")}
               </div>
               <button
                 type="button"
                 className="rounded-lg border border-white/15 px-3 py-2 text-sm text-white/80 transition hover:bg-white/10"
                 onClick={onContinueDraft}
               >
-                Continue Draft
+                {t("Continue Draft")}
               </button>
             </div>
           )}
@@ -261,7 +264,7 @@ export default function HeroShowcase({
               <button
                 key={slide.id}
                 type="button"
-                aria-label={`Show slide ${slide.id}`}
+                aria-label={t("Show slide {{id}}", { id: slide.id })}
                 onClick={() => handleSlideChange(index)}
                 className={`group relative h-16 min-w-28 overflow-hidden rounded-lg border transition md:h-16 md:min-w-0 md:w-full ${
                   isActive
@@ -271,7 +274,7 @@ export default function HeroShowcase({
               >
                 <img
                   src={slide.thumb}
-                  alt={`Thumbnail ${slide.id}`}
+                  alt={t("Thumbnail {{id}}", { id: slide.id })}
                   className={`h-full w-full object-cover transition duration-300 ${isActive ? "brightness-100" : "brightness-75 group-hover:brightness-90"}`}
                 />
                 <span

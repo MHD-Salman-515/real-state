@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Bell, CheckCheck, Trash2 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { useNotifications } from "@/components/notifications/useNotifications";
 import { useAuth } from "@/context/AuthContext.jsx";
 import type { NotificationItem } from "@/lib/notifications/types";
 
-function formatTime(ts: number): string {
+function formatTime(ts: number, t: (value: string, options?: any) => string): string {
   const d = new Date(ts);
   const now = Date.now();
   const diff = Math.max(0, now - ts);
@@ -15,9 +16,9 @@ function formatTime(ts: number): string {
   const hour = 60 * minute;
   const day = 24 * hour;
 
-  if (diff < minute) return "Just now";
-  if (diff < hour) return `${Math.floor(diff / minute)}m ago`;
-  if (diff < day) return `Today ${d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  if (diff < minute) return t("Just now");
+  if (diff < hour) return t("{{count}}m ago", { count: Math.floor(diff / minute) });
+  if (diff < day) return t("Today {{time}}", { time: d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) });
 
   return d.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 }
@@ -38,6 +39,7 @@ function splitByDate(items: NotificationItem[]): { today: NotificationItem[]; ea
 }
 
 export default function NotificationsBell() {
+  const { t } = useTranslation();
   const { user, token } = useAuth();
   const isAuthenticated = Boolean(user || token);
   const navigate = useNavigate();
@@ -80,10 +82,10 @@ export default function NotificationsBell() {
   const nextPath = `${location.pathname}${location.search || ""}`;
 
   const tabs: Array<{ id: "all" | "system" | "properties" | "search"; label: string }> = [
-    { id: "all", label: "All" },
-    { id: "system", label: "System" },
-    { id: "properties", label: "Properties" },
-    { id: "search", label: "Search" },
+    { id: "all", label: t("All") },
+    { id: "system", label: t("System") },
+    { id: "properties", label: t("Properties") },
+    { id: "search", label: t("Search") },
   ];
 
   const renderItem = (item: NotificationItem) => (
@@ -102,7 +104,7 @@ export default function NotificationsBell() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
               <p className="truncate text-sm font-medium">{item.title}</p>
-              <span className="shrink-0 text-[10px] text-white/45">{formatTime(item.createdAt)}</span>
+              <span className="shrink-0 text-[10px] text-white/45">{formatTime(item.createdAt, t)}</span>
             </div>
             <p className="mt-1 text-xs text-white/70">{item.message}</p>
           </div>
@@ -117,7 +119,7 @@ export default function NotificationsBell() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/35 text-white transition hover:bg-white/5"
-        aria-label="Notifications"
+        aria-label={t("Notifications")}
         aria-expanded={open}
       >
         <Bell className="h-5 w-5" />
@@ -132,9 +134,9 @@ export default function NotificationsBell() {
         <div className="absolute right-0 z-[90] mt-3 w-[92vw] max-w-[360px] overflow-hidden rounded-2xl border border-white/10 bg-black/70 shadow-2xl backdrop-blur-xl">
           {!isAuthenticated ? (
             <div className="p-5">
-              <h3 className="text-sm font-semibold text-white">Sign in to see notifications</h3>
+              <h3 className="text-sm font-semibold text-white">{t("Sign in to see notifications")}</h3>
               <p className="mt-2 text-xs text-white/70">
-                Create an account or sign in to receive updates about bookings, properties, and system alerts.
+                {t("Create an account or sign in to receive updates about bookings, properties, and system alerts.")}
               </p>
               <button
                 type="button"
@@ -144,14 +146,14 @@ export default function NotificationsBell() {
                 }}
                 className="mt-4 inline-flex rounded-xl border border-white/10 bg-white/10 px-3 py-2 text-sm font-medium text-white transition hover:bg-white/20"
               >
-                Log in
+                {t("Log in")}
               </button>
             </div>
           ) : (
             <>
               <div className="border-b border-white/10 px-4 py-3">
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-white">Notifications</h3>
+                  <h3 className="text-sm font-semibold text-white">{t("Notifications")}</h3>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -159,7 +161,7 @@ export default function NotificationsBell() {
                       className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-white/70 transition hover:bg-white/5 hover:text-white"
                     >
                       <CheckCheck className="h-3.5 w-3.5" />
-                      Mark all read
+                      {t("Mark all read")}
                     </button>
                     <button
                       type="button"
@@ -167,7 +169,7 @@ export default function NotificationsBell() {
                       className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-white/70 transition hover:bg-white/5 hover:text-white"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                      Clear all
+                      {t("Clear all")}
                     </button>
                   </div>
                 </div>
@@ -196,20 +198,20 @@ export default function NotificationsBell() {
               <div className="max-h-[420px] overflow-y-auto px-3 py-2">
                 {filtered.length === 0 ? (
                   <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5 text-center text-sm text-white/60">
-                    No notifications yet
+                    {t("No notifications yet")}
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {today.length > 0 ? (
                       <section>
-                        <p className="px-1 pb-1 text-[10px] uppercase tracking-[0.18em] text-white/45">Today</p>
+                        <p className="px-1 pb-1 text-[10px] uppercase tracking-[0.18em] text-white/45">{t("Today")}</p>
                         <ul className="space-y-2">{today.map(renderItem)}</ul>
                       </section>
                     ) : null}
 
                     {earlier.length > 0 ? (
                       <section>
-                        <p className="px-1 pb-1 text-[10px] uppercase tracking-[0.18em] text-white/45">Earlier</p>
+                        <p className="px-1 pb-1 text-[10px] uppercase tracking-[0.18em] text-white/45">{t("Earlier")}</p>
                         <ul className="space-y-2">{earlier.map(renderItem)}</ul>
                       </section>
                     ) : null}

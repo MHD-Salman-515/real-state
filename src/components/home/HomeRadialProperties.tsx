@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import HorizontalDragGallery from "@/components/ui/horizontal-drag-gallery";
 import { Badge } from "@/components/ui/badge";
@@ -19,13 +20,14 @@ const PROPERTIES = [
 export default function HomeRadialProperties() {
   const navigate = useNavigate();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
 
   return (
     <div id="quick-search" className="min-h-screen w-full bg-transparent overflow-x-hidden text-white">
       <div className="h-[300px] flex flex-col items-center justify-center px-4 text-center">
         <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">CREOS</p>
-        <h2 className="text-3xl font-bold tracking-tight md:text-5xl">Featured Properties</h2>
-        <p className="mt-4 animate-bounce text-xs uppercase tracking-[0.25em] text-muted-foreground">↓ Scroll</p>
+        <h2 className="text-3xl font-bold tracking-tight md:text-5xl">{t("Featured Properties")}</h2>
+        <p className="mt-4 animate-bounce text-xs uppercase tracking-[0.25em] text-muted-foreground">{t("↓ Scroll")}</p>
       </div>
 
       <HorizontalDragGallery className="!min-h-screen">
@@ -54,7 +56,7 @@ export default function HomeRadialProperties() {
 
             <div className="absolute left-3 top-3">
               <Badge variant="secondary" className="border-white/10 bg-white/15 text-[10px] uppercase tracking-wide text-white">
-                {property.cat}
+                {t(property.cat)}
               </Badge>
             </div>
 

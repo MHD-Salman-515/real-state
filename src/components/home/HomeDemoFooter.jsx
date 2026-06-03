@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const FOOTER_LINKS = [
   { label: "Quick Search", href: "#quick-search", isAnchor: true },
@@ -9,6 +10,8 @@ const FOOTER_LINKS = [
 ];
 
 export default function HomeDemoFooter() {
+  const { t } = useTranslation();
+
   return (
     <footer className="mt-10 border-t bg-muted/30 px-4 py-8 text-muted-foreground">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 text-sm md:flex-row">
@@ -16,11 +19,11 @@ export default function HomeDemoFooter() {
           {FOOTER_LINKS.map((link) =>
             link.isAnchor ? (
               <a key={link.label} href={link.href} className="transition hover:text-foreground">
-                {link.label}
+                {t(link.label)}
               </a>
             ) : (
               <Link key={link.label} to={link.href} className="transition hover:text-foreground">
-                {link.label}
+                {t(link.label)}
               </Link>
             )
           )}

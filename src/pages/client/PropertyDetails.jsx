@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../../components/ToastProvider.jsx";
 import { store } from "../../lib/clientStore.js";
 import { buildApiUrl, resolveApiAssetUrl } from "../../api/axios";
@@ -19,6 +20,7 @@ export default function PropertyDetails() {
   const toast = useToast();
   const { notify } = useNotifications();
   const { user, token } = useAuth();
+  const { t } = useTranslation();
   const isAuthenticated = Boolean(user || token);
   const [isFav, setIsFav] = useState(false);
   const [activeRoom, setActiveRoom] = useState("ALL");
@@ -33,7 +35,7 @@ export default function PropertyDetails() {
       try {
         if (USE_LOCAL_DATA) {
           const local = getPropertyById(String(id));
-          if (!local) throw new Error("Not found");
+          if (!local) throw new Error(t("Not found"));
           setItem({
             id: local.id,
             title: local.title,
@@ -57,11 +59,11 @@ export default function PropertyDetails() {
         const data = await res.json();
         setItem(data);
       } catch {
-        toast.error("فشل تحميل تفاصيل العقار");
+        toast.error(t("Failed to load property details"));
       }
     }
     load();
-  }, [id, toast]);
+  }, [id, t, toast]);
 
   // عند فتح الصفحة
   useEffect(() => {
@@ -73,15 +75,15 @@ export default function PropertyDetails() {
   const toggleFav = () => {
     if (!requireAuthOrRedirect({ isAuthenticated, nav, loc })) return;
     const key = String(id);
-    const propertyTitle = item?.title || `Property #${key}`;
+    const propertyTitle = item?.title || t("Property #{{id}}", { id: key });
     if (store.isFav(key)) {
       store.removeFav(key);
       setIsFav(false);
       toast.info("تم إزالة العقار من المفضلة");
       notify({
         type: "properties",
-        title: "Removed from favorites",
-        message: `${propertyTitle} was removed from your favorites.`,
+        title: t("Removed from favorites"),
+        message: t("{{property}} was removed from your favorites.", { property: propertyTitle }),
       });
     } else {
       store.addFav(key);
@@ -89,8 +91,8 @@ export default function PropertyDetails() {
       toast.success("تمت إضافة العقار إلى المفضلة");
       notify({
         type: "properties",
-        title: "Saved to favorites",
-        message: `${propertyTitle} was added to your favorites.`,
+        title: t("Saved to favorites"),
+        message: t("{{property}} was added to your favorites.", { property: propertyTitle }),
       });
     }
   };
@@ -104,8 +106,8 @@ export default function PropertyDetails() {
     toast.info("تم إنشاء مسودة حجز للعقار");
     notify({
       type: "system",
-      title: "Draft saved",
-      message: "Your visit request draft was saved.",
+      title: t("Draft saved"),
+      message: t("Your visit request draft was saved."),
     });
   };
 
@@ -199,7 +201,7 @@ export default function PropertyDetails() {
                 type="button"
                 onClick={toggleFav}
                 className="absolute top-4 right-4 h-10 w-10 rounded-2xl border border-white/15 bg-black/35 backdrop-blur-xl shadow hover:scale-105 transition"
-                aria-label="favorite"
+                aria-label={t("Favorite")}
               >
                 <span className="text-lg">{isFav ? "💚" : "🤍"}</span>
               </button>
@@ -336,7 +338,7 @@ export default function PropertyDetails() {
         {/* رجوع */}
         {/* Details */}
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-100">Details</h2>
+          <h2 className="text-sm font-semibold text-slate-100">{t("Details")}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             {detailsPairs.map((d) => (
               <div

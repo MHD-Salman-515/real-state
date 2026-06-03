@@ -1,6 +1,7 @@
 // src/pages/client/Search.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../../components/ToastProvider.jsx";
 import { store } from "../../lib/clientStore.js";
 import { buildApiUrl, resolveApiAssetUrl } from "../../api/axios";
@@ -15,6 +16,7 @@ export default function Search() {
   const toast = useToast();
   const { notify } = useNotifications();
   const { user, token } = useAuth();
+  const { t } = useTranslation();
   const loc = useLocation();
   const navigate = useNavigate();
   const isAuthenticated = Boolean(user || token);
@@ -56,12 +58,12 @@ export default function Search() {
     );
     notify({
       type: "search",
-      title: hasFilters ? "Search applied" : "Search reset",
+      title: hasFilters ? t("Search applied") : t("Search reset"),
       message: hasFilters
-        ? "Your filters were applied successfully."
-        : "Filters were cleared.",
+        ? t("Your filters were applied successfully.")
+        : t("Filters were cleared."),
     });
-  }, [notify, q.city, q.type, q.minPrice, q.maxPrice, q.bedroomsMin, q.furnished, q.parking, q.elevator, q.sort]);
+  }, [notify, q.city, q.type, q.minPrice, q.maxPrice, q.bedroomsMin, q.furnished, q.parking, q.elevator, q.sort, t]);
 
   // ---------------------------------------------
   //                 🔥 تحميل العقارات + تطبيق الفلاتر
@@ -180,12 +182,12 @@ export default function Search() {
         setItems(formatted);
       } catch (err) {
         console.error(err);
-        toast.error("فشل تحميل العقارات");
+        toast.error(t("Failed to load properties."));
       }
     }
 
     load();
-  }, [q, toast, bedroomsMin, furnished, parking, elevator, sort]);
+  }, [q, toast, bedroomsMin, furnished, parking, elevator, sort, t]);
   // ---------------------------------------------
 
   // شرايح الفلاتر
@@ -263,7 +265,7 @@ export default function Search() {
           onChange={(e) => setParam("bedroomsMin", e.target.value)}
           className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white"
         >
-          <option value="">Bedrooms: Any</option>
+          <option value="">{t("Bedrooms: Any")}</option>
           <option value="1">1+</option>
           <option value="2">2+</option>
           <option value="3">3+</option>
@@ -274,10 +276,10 @@ export default function Search() {
           onChange={(e) => setParam("sort", e.target.value)}
           className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white"
         >
-          <option value="newest">Sort: Newest</option>
-          <option value="price_asc">Price ↑</option>
-          <option value="price_desc">Price ↓</option>
-          <option value="area_desc">Area ↓</option>
+          <option value="newest">{t("Sort: Newest")}</option>
+          <option value="price_asc">{t("Price ↑")}</option>
+          <option value="price_desc">{t("Price ↓")}</option>
+          <option value="area_desc">{t("Area ↓")}</option>
         </select>
         <label className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white/90">
           <input
@@ -286,7 +288,7 @@ export default function Search() {
             onChange={(e) => setParam("furnished", e.target.checked ? "1" : "")}
             className="accent-white"
           />
-          Furnished
+          {t("Furnished")}
         </label>
         <label className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white/90">
           <input
@@ -295,7 +297,7 @@ export default function Search() {
             onChange={(e) => setParam("parking", e.target.checked ? "1" : "")}
             className="accent-white"
           />
-          Parking
+          {t("Parking")}
         </label>
         <label className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white/90">
           <input
@@ -304,7 +306,7 @@ export default function Search() {
             onChange={(e) => setParam("elevator", e.target.checked ? "1" : "")}
             className="accent-white"
           />
-          Elevator
+          {t("Elevator")}
         </label>
         <button
           type="button"
@@ -319,7 +321,7 @@ export default function Search() {
           }}
           className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/90"
         >
-          Reset Extra Filters
+          {t("Reset Extra Filters")}
         </button>
       </div>
 

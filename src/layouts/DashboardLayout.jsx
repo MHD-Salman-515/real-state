@@ -135,7 +135,7 @@ export default function DashboardLayout({
             </button>
 
             <div className="min-w-0 flex-1">
-              <h1 className="truncate text-base font-semibold text-white">{computedTitle}</h1>
+              <h1 className="truncate text-base font-semibold text-white">{t(computedTitle)}</h1>
               <p className="truncate text-[11px] text-slate-400">{t(subtitle)}</p>
             </div>
 

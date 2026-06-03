@@ -133,7 +133,7 @@ export default function TopBar() {
         <Link
           to="/"
           className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 text-white/90 transition hover:bg-white/5 hover:text-white"
-          aria-label="CREOS home"
+          aria-label={t("CREOS home")}
         >
           <Building2 className="h-5 w-5" />
           <span className="text-sm font-semibold tracking-[0.2em]">CREOS</span>
@@ -166,7 +166,7 @@ export default function TopBar() {
                 type="button"
                 onClick={() => setProfileOpen((v) => !v)}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/35 text-white transition hover:bg-white/5"
-                aria-label="Profile menu"
+                aria-label={t("Profile menu")}
                 aria-expanded={profileOpen}
               >
                 <CircleUserRound className="h-5 w-5" />

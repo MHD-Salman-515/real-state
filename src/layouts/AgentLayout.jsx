@@ -1,6 +1,7 @@
 // src/layouts/AgentLayout.jsx
 import { NavLink, Outlet, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 function Item({ to, label, onClick }) {
   return (
@@ -21,6 +22,7 @@ function Item({ to, label, onClick }) {
 }
 
 export default function AgentLayout() {
+  const { t } = useTranslation();
   const [notifOpen, setNotifOpen] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -66,7 +68,7 @@ export default function AgentLayout() {
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-full bg-white/10 shadow-soft shadow-white/10" />
           <div className="font-semibold">
-            <span className="text-white/90">Agent</span> Panel
+            <span className="text-white/90">{t("Agent")}</span> {t("Panel")}
           </div>
         </div>
         <div className="text-[11px] text-slate-300 mt-1">
@@ -109,7 +111,7 @@ export default function AgentLayout() {
               <button
                 className="lg:hidden inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-sm hover:bg-white/10 transition"
                 onClick={() => setOpen(true)}
-                aria-label="open menu"
+                aria-label={t("Open menu")}
               >
                 ☰
               </button>
@@ -186,7 +188,7 @@ export default function AgentLayout() {
                         type="button"
                         onClick={() => setNotifOpen(false)}
                       >
-                        إغلاق
+                      {t("Close")}
                       </button>
                     </div>
                   </div>

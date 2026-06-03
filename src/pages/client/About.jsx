@@ -1,4 +1,8 @@
-﻿export default function About() {
+﻿import { useTranslation } from "react-i18next";
+
+export default function About() {
+  const { t } = useTranslation();
+
   return (
     <div className="creos-theme relative min-h-screen overflow-hidden bg-[var(--creos-bg)] text-[var(--creos-text)]">
 
@@ -10,33 +14,31 @@
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] text-white/90">
                   <span className="h-1.5 w-1.5 animate-ping rounded-full bg-white/10" />
-                  <span>Platform Rights And Operating Standards</span>
+                  <span>{t("Platform Rights And Operating Standards")}</span>
                 </div>
                 <h1 className="text-2xl font-bold md:text-3xl">
-                  Safe And Transparent Usage For <span className="text-white/90">CREOS</span>
+                  {t("Safe And Transparent Usage For")} <span className="text-white/90">CREOS</span>
                 </h1>
                 <p className="max-w-3xl text-sm text-slate-300 md:text-base">
-                  Before browsing, booking, or submitting requests, users should understand the core principles that keep
-                  the platform fair and reliable for clients, agents, and property owners.
+                  {t("Before browsing, booking, or submitting requests, users should understand the core principles that keep the platform fair and reliable for clients, agents, and property owners.")}
                 </p>
               </div>
 
               <div className="grid gap-4 text-sm md:grid-cols-2">
                 <div className="space-y-2 rounded-2xl border border-white/15 bg-gradient-to-b from-white/20 via-black/40 to-black/60 p-4">
-                  <h3 className="font-semibold text-white/90">User Rights</h3>
+                  <h3 className="font-semibold text-white/90">{t("User Rights")}</h3>
                   <ul className="list-inside list-disc space-y-1.5 text-slate-200">
-                    <li>Review listing details before requesting a visit.</li>
-                    <li>Cancel or update a request within allowed windows.</li>
-                    <li>Protect personal contact data and communication privacy.</li>
-                    <li>Receive clear updates on booking and request status.</li>
+                    <li>{t("Review listing details before requesting a visit.")}</li>
+                    <li>{t("Cancel or update a request within allowed windows.")}</li>
+                    <li>{t("Protect personal contact data and communication privacy.")}</li>
+                    <li>{t("Receive clear updates on booking and request status.")}</li>
                   </ul>
                 </div>
 
                 <div className="space-y-2 rounded-2xl border border-white/15 bg-black/35 p-4">
-                  <h3 className="font-semibold text-white">About The System</h3>
+                  <h3 className="font-semibold text-white">{t("About The System")}</h3>
                   <p className="text-slate-300">
-                    CREOS is designed as a centralized real estate operations system to align discovery, visits, support,
-                    and operational communication in one experience.
+                    {t("CREOS is designed as a centralized real estate operations system to align discovery, visits, support, and operational communication in one experience.")}
                   </p>
                 </div>
               </div>

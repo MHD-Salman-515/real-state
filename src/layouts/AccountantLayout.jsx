@@ -232,16 +232,16 @@ export default function AccountantLayout() {
               <button
                 className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-sm transition hover:bg-white/10 lg:hidden"
                 onClick={() => setMobileOpen(true)}
-                aria-label="open menu"
+                aria-label={t("Open menu")}
               >
-                Menu
+                {t("Menu")}
               </button>
               <div className="relative flex items-center gap-2" ref={brandMenuRef}>
                 <button
                   type="button"
                   onClick={handleLogoNavigate}
                   className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-black/30 transition hover:border-white/15 hover:bg-white/10"
-                  aria-label="Go to dashboard home"
+                  aria-label={t("Go to dashboard home")}
                 >
                   <Logo className="h-5 w-5 text-white/90" />
                 </button>
@@ -267,7 +267,7 @@ export default function AccountantLayout() {
                       onClick={() => setBrandMenuOpen(false)}
                       className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
                     >
-                      Profile Settings
+                      {t("Profile Settings")}
                     </Link>
                     <button
                       type="button"
@@ -281,7 +281,7 @@ export default function AccountantLayout() {
               </div>
               <div className="min-w-0">
                 <p className="truncate text-xs uppercase tracking-[0.14em] text-white/90">
-                  Accountant Workspace
+                  {t("Accountant Workspace")}
                 </p>
                 <h1 className="truncate text-sm font-semibold text-white md:text-base">
                   {pageTitle}
@@ -293,7 +293,7 @@ export default function AccountantLayout() {
               <div className="hidden md:block">
                 <input
                   type="search"
-                  placeholder="Search accounting tools..."
+                  placeholder={t("Search accounting tools...")}
                   className="w-56 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-white/15 focus:bg-white/10"
                 />
               </div>
@@ -303,7 +303,7 @@ export default function AccountantLayout() {
                   type="button"
                   onClick={() => setNotifOpen((v) => !v)}
                   className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
-                  aria-label="notifications"
+                  aria-label={t("Notifications")}
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5" />

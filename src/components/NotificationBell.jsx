@@ -1,18 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useToast } from "./ToastProvider.jsx";
 import { validateHref } from "../utils/notificationRoutes.js";
 
-function titleFromType(type) {
+function titleFromType(type, t) {
   switch (type) {
     case "success":
-      return "Success";
+      return t("Success");
     case "error":
-      return "Error";
+      return t("Error");
     case "warning":
-      return "Warning";
+      return t("Warning");
     default:
-      return "Info";
+      return t("Info");
   }
 }
 
@@ -28,6 +29,7 @@ function formatTime(at) {
 export default function NotificationBell() {
   const { history, clearHistory } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const panelRef = useRef(null);
@@ -79,8 +81,8 @@ export default function NotificationBell() {
         type="button"
         className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
         onClick={() => setOpen((v) => !v)}
-        title="Notifications"
-        aria-label="Notifications"
+        title={t("Notifications")}
+        aria-label={t("Notifications")}
         aria-haspopup="dialog"
         aria-expanded={open}
       >
@@ -101,17 +103,17 @@ export default function NotificationBell() {
           tabIndex={-1}
           className="absolute right-0 z-[9998] mt-2 w-[340px] rounded-2xl border border-white/10 bg-[#050912]/95 backdrop-blur"
           role="dialog"
-          aria-label="Notifications panel"
+          aria-label={t("Notifications panel")}
         >
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <h3 className="text-sm font-semibold text-white">Notifications</h3>
+            <h3 className="text-sm font-semibold text-white">{t("Notifications")}</h3>
             <button
               type="button"
               disabled
               className="cursor-not-allowed rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-slate-500"
-              title="Mark all as read is not available"
+              title={t("Mark all as read is not available")}
             >
-              Mark all as read
+              {t("Mark all as read")}
             </button>
           </div>
 
@@ -137,7 +139,7 @@ export default function NotificationBell() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">
                           <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">
-                            {titleFromType(n.type)}
+                            {titleFromType(n.type, t)}
                           </p>
                           <span className="text-[11px] text-slate-500">{formatTime(n.at)}</span>
                         </div>
@@ -151,7 +153,7 @@ export default function NotificationBell() {
                             }}
                             className="mt-2 text-xs font-medium text-white/90 transition hover:text-white/90"
                           >
-                            {n.hrefLabel || "Open"}
+                            {n.hrefLabel || t("Open")}
                           </button>
                         ) : null}
                       </div>
@@ -169,7 +171,7 @@ export default function NotificationBell() {
               onClick={clearHistory}
               className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200 transition duration-200 hover:border-rose-300/35 hover:bg-rose-500/10 hover:text-rose-100"
             >
-              مسح الإشعارات
+              {t("Clear notifications")}
             </button>
           </div>
         </div>

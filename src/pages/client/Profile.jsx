@@ -1,5 +1,6 @@
 ﻿// src/pages/client/Profile.jsx
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 import api, { extractApiErrorMessage } from "../../api/axios";
@@ -16,6 +17,7 @@ function sanitizePhoneInput(value) {
 export default function Profile() {
   const { updateUser } = useAuth();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
   const [me, setMe] = useState({ fullName: "", phone: "" });
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -43,12 +45,12 @@ export default function Profile() {
     const phone = sanitizePhoneInput(me.phone);
 
     if (!fullName) {
-      setSaveError("Please enter your full name.");
+      setSaveError(t("Please enter your full name."));
       return;
     }
 
     if (!userId) {
-      setSaveError("Unable to detect your user account id.");
+      setSaveError(t("Unable to detect your user account id."));
       return;
     }
 
@@ -72,18 +74,18 @@ export default function Profile() {
       updateUser(mergedUser);
       setMe({ fullName: mergedUser.fullName || "", phone: mergedUser.phone || "" });
 
-      notifyCrudSuccess("Your profile info was saved.", "Profile updated", {
+      notifyCrudSuccess(t("Your profile info was saved."), t("Profile updated"), {
         href: "/client/profile",
       });
       notify({
         type: "system",
-        title: "Profile updated",
-        message: "Your changes were saved successfully.",
+        title: t("Profile updated"),
+        message: t("Your changes were saved successfully."),
       });
     } catch (err) {
-      const message = extractApiErrorMessage(err, "Failed to save profile.");
+      const message = extractApiErrorMessage(err, t("Failed to save profile."));
       setSaveError(message);
-      notifyCrudError(message, "Profile update failed", { href: "/client/profile" });
+      notifyCrudError(message, t("Profile update failed"), { href: "/client/profile" });
     } finally {
       setLoading(false);
     }
@@ -103,26 +105,26 @@ export default function Profile() {
     <section className="relative z-10 max-w-3xl mx-auto px-4 lg:px-0 py-10">
       <div className="card-glass border border-white/15 rounded-2xl p-5 md:p-6 shadow-soft space-y-5">
         <div className="space-y-2">
-          <h1 className="text-2xl md:text-3xl font-black tracking-tight">Profile</h1>
-          <p className="text-sm text-slate-300">Update your contact information and profile details.</p>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight">{t("Profile")}</h1>
+          <p className="text-sm text-slate-300">{t("Update your contact information and profile details.")}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4 md:gap-5">
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">Full name</label>
+            <label className="block text-xs text-slate-400 mb-1.5">{t("Full name")}</label>
             <input
               className={inputCls}
-              placeholder="Example: Alex Morgan"
+              placeholder={t("Example: Alex Morgan")}
               value={me.fullName}
               onChange={(e) => setMe((prev) => ({ ...prev, fullName: e.target.value }))}
             />
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">Phone</label>
+            <label className="block text-xs text-slate-400 mb-1.5">{t("Phone")}</label>
             <input
               className={inputCls}
-              placeholder="Example: +1 555 123 4567"
+              placeholder={t("Example: +1 555 123 4567")}
               value={me.phone}
               onChange={(e) =>
                 setMe((prev) => ({
@@ -147,7 +149,7 @@ export default function Profile() {
             disabled={loading}
             className="px-5 py-2.5 rounded-xl bg-white/10 text-sm font-semibold text-black shadow-lg shadow-white/10 hover:bg-white/10 transition disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Save"}
+            {loading ? t("Saving...") : t("Save")}
           </button>
 
           <button
@@ -155,11 +157,11 @@ export default function Profile() {
             onClick={reset}
             className="px-4 py-2.5 rounded-xl border border-slate-500/60 text-sm text-slate-200 hover:bg-white/5 transition"
           >
-            Reset
+            {t("Reset")}
           </button>
 
           {(me.fullName || me.phone) && (
-            <span className="text-[11px] text-slate-400">Your profile is saved to the server.</span>
+            <span className="text-[11px] text-slate-400">{t("Your profile is saved to the server.")}</span>
           )}
         </div>
       </div>

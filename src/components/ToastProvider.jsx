@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const ToastCtx = createContext(null);
@@ -21,6 +22,7 @@ function buildStorageKey(user) {
 
 export function ToastProvider({ children }) {
   const { user } = useAuth();
+  const { t: tr } = useTranslation();
   const [toasts, setToasts] = useState([]);
   const [history, setHistory] = useState([]);
   const idRef = useRef(1);
@@ -159,8 +161,8 @@ export function ToastProvider({ children }) {
               <button
                 onClick={() => remove(t.id)}
                 className="px-1 text-sm leading-none text-slate-400 hover:text-slate-200"
-                aria-label="Close"
-                title="Close"
+                aria-label={tr("Close")}
+                title={tr("Close")}
               >
                 x
               </button>

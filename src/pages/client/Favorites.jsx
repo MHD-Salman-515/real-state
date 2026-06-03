@@ -5,10 +5,12 @@ import { store } from "../../lib/clientStore.js";
 import { Link } from "react-router-dom";
 import { buildApiUrl, resolveApiAssetUrl } from "../../api/axios";
 import { useNotifications } from "@/components/notifications/useNotifications";
+import { useTranslation } from "react-i18next";
 
 export default function Favorites() {
   const toast = useToast();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
   const [ids, setIds] = useState([]);
   const [items, setItems] = useState([]); // derived from API
   const placeholderSrc = "/placeholder-property.svg";
@@ -49,10 +51,10 @@ export default function Favorites() {
     toast.info("تمت إزالة العقار من المفضلة");
     notify({
       type: "properties",
-      title: "Removed from favorites",
+      title: t("Removed from favorites"),
       message: property?.title
-        ? `${property.title} was removed from your favorites.`
-        : "The property was removed from your favorites.",
+        ? t("{{property}} was removed from your favorites.", { property: property.title })
+        : t("The property was removed from your favorites."),
     });
   };
 
@@ -108,7 +110,7 @@ export default function Favorites() {
                       e.currentTarget.src = placeholderSrc;
                     }}
                     className="rounded-xl mb-3 w-full h-32 object-cover border border-white/10"
-                    alt={p.title || "Property"}
+                    alt={p.title || t("Property")}
                   />
 
                   <p className="text-xs text-slate-400">

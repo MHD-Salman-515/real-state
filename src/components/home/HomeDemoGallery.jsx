@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import RadialScrollGallery from "@/components/ui/portfolio-and-image-gallery";
 import { Badge } from "@/components/ui/badge";
@@ -73,6 +74,7 @@ const FEATURED_PROPERTIES = [
 
 export default function HomeDemoGallery() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="bg-background min-h-[600px] text-foreground overflow-hidden rounded-lg border w-full">
@@ -80,8 +82,8 @@ export default function HomeDemoGallery() {
         <Badge variant="outline" className="mb-4 border-white/15 bg-white/10 text-[10px] tracking-[0.22em] uppercase">
           CREOS
         </Badge>
-        <h2 className="text-3xl font-bold tracking-tight md:text-5xl">Featured Properties</h2>
-        <p className="mt-4 animate-bounce text-xs uppercase tracking-[0.25em] text-muted-foreground">↓ Scroll</p>
+        <h2 className="text-3xl font-bold tracking-tight md:text-5xl">{t("Featured Properties")}</h2>
+        <p className="mt-4 animate-bounce text-xs uppercase tracking-[0.25em] text-muted-foreground">{t("↓ Scroll")}</p>
       </div>
 
       <RadialScrollGallery
@@ -106,7 +108,7 @@ export default function HomeDemoGallery() {
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute right-3 top-3">
-                <Badge className="bg-black/65 text-white">{property.cat}</Badge>
+                <Badge className="bg-black/65 text-white">{t(property.cat)}</Badge>
               </div>
             </div>
             <div className="space-y-1.5 p-4">
@@ -122,7 +124,7 @@ export default function HomeDemoGallery() {
       </RadialScrollGallery>
 
       <div className="h-[300px] flex items-center justify-center px-4 text-center">
-        <p className="text-sm text-muted-foreground">Discover more listings on the properties page.</p>
+        <p className="text-sm text-muted-foreground">{t("Discover more listings on the properties page.")}</p>
       </div>
     </div>
   );

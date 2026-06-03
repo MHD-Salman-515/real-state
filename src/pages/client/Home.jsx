@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../../components/ToastProvider.jsx";
 import HeroShowcase from "../../components/home/HeroShowcase.jsx";
 import { notify } from "@/components/notifications/NotificationsProvider";
@@ -10,6 +11,7 @@ const LAST_SEARCH_KEY = "last_search_v1";
 export default function Home() {
   const nav = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const [quick, setQuick] = useState({
     city: "",
@@ -29,7 +31,7 @@ export default function Home() {
       if (exists) {
         const shownInSession = sessionStorage.getItem("draft_toast_shown") === "true";
         if (!draftToastShownRef.current && !shownInSession) {
-          toast.info("You have an unfinished booking draft.");
+          toast.info(t("You have an unfinished booking draft."));
           draftToastShownRef.current = true;
           sessionStorage.setItem("draft_toast_shown", "true");
         }
@@ -57,7 +59,7 @@ export default function Home() {
       const tmp = min;
       min = max;
       max = tmp;
-      toast.info("Price range was adjusted (min/max).");
+      toast.info(t("Price range was adjusted (min/max)."));
     }
 
     const query = {
@@ -75,11 +77,11 @@ export default function Home() {
 
     const params = new URLSearchParams();
     Object.entries(query).forEach(([k, v]) => v && params.set(k, v));
-    toast.success("Quick search applied.");
+    toast.success(t("Quick search applied."));
     notify({
       type: "search",
-      title: "Search applied",
-      message: "Your filters were applied successfully.",
+      title: t("Search applied"),
+      message: t("Your filters were applied successfully."),
     });
     nav(`/search?${params.toString()}`);
   };
@@ -88,7 +90,7 @@ export default function Home() {
     if (!lastSearch) return;
     const q = new URLSearchParams();
     Object.entries(lastSearch).forEach(([k, v]) => v && q.set(k, v));
-    toast.info("Last search filters restored.");
+    toast.info(t("Last search filters restored."));
     nav(`/search?${q.toString()}`);
   };
 
@@ -99,12 +101,12 @@ export default function Home() {
       // ignore storage write errors
     }
     setLastSearch(null);
-    toast.info("Last search cleared.");
+    toast.info(t("Last search cleared."));
   };
 
   const resetForm = () => {
     setQuick({ city: "", type: "", minPrice: "", maxPrice: "" });
-    toast.info("Search form reset.");
+    toast.info(t("Search form reset."));
   };
 
   return (
@@ -121,15 +123,15 @@ export default function Home() {
           clearLastSearch={clearLastSearch}
           hasDraft={hasDraft}
           onPrimaryCta={() => {
-            toast.info("Moving to properties.");
+            toast.info(t("Moving to properties."));
             nav("/properties");
           }}
           onSecondaryCta={() => {
-            toast.info("Continue your booking flow.");
+            toast.info(t("Continue your booking flow."));
             nav("/client/book-visit");
           }}
           onContinueDraft={() => {
-            toast.info("Opening your draft booking.");
+            toast.info(t("Opening your draft booking."));
             nav("/client/book-visit");
           }}
         />
@@ -137,38 +139,38 @@ export default function Home() {
         <section className="mx-auto w-full max-w-6xl px-4 lg:px-0">
           <div className="grid gap-4 md:grid-cols-3">
             <article className="rounded-2xl border border-white/15 bg-black/40 p-5 backdrop-blur-xl">
-              <div className="text-[11px] uppercase tracking-wide text-white/90">Precision Search</div>
-              <h3 className="mt-2 text-lg font-semibold">Discover Listings Faster</h3>
-              <p className="mt-2 text-sm text-slate-300">Filter by city, type, and price range with instant query-driven navigation.</p>
+              <div className="text-[11px] uppercase tracking-wide text-white/90">{t("Precision Search")}</div>
+              <h3 className="mt-2 text-lg font-semibold">{t("Discover Listings Faster")}</h3>
+              <p className="mt-2 text-sm text-slate-300">{t("Filter by city, type, and price range with instant query-driven navigation.")}</p>
             </article>
             <article className="rounded-2xl border border-white/15 bg-black/40 p-5 backdrop-blur-xl">
-              <div className="text-[11px] uppercase tracking-wide text-white/90">Visit Workflow</div>
-              <h3 className="mt-2 text-lg font-semibold">Book With Clear Steps</h3>
-              <p className="mt-2 text-sm text-slate-300">Use structured booking and follow-up actions to confirm visits reliably.</p>
+              <div className="text-[11px] uppercase tracking-wide text-white/90">{t("Visit Workflow")}</div>
+              <h3 className="mt-2 text-lg font-semibold">{t("Book With Clear Steps")}</h3>
+              <p className="mt-2 text-sm text-slate-300">{t("Use structured booking and follow-up actions to confirm visits reliably.")}</p>
             </article>
             <article className="rounded-2xl border border-white/15 bg-black/40 p-5 backdrop-blur-xl">
-              <div className="text-[11px] uppercase tracking-wide text-white/90">Operations Ready</div>
-              <h3 className="mt-2 text-lg font-semibold">CREOS Central Control</h3>
-              <p className="mt-2 text-sm text-slate-300">Manage property discovery, requests, and communication in one place.</p>
+              <div className="text-[11px] uppercase tracking-wide text-white/90">{t("Operations Ready")}</div>
+              <h3 className="mt-2 text-lg font-semibold">{t("CREOS Central Control")}</h3>
+              <p className="mt-2 text-sm text-slate-300">{t("Manage property discovery, requests, and communication in one place.")}</p>
             </article>
           </div>
         </section>
 
         <section className="mx-auto w-full max-w-6xl px-4 lg:px-0">
           <div className="rounded-3xl border border-white/15 bg-gradient-to-r from-black/70 via-white/10 to-black/70 p-6 shadow-xl shadow-white/10 backdrop-blur-xl md:p-8">
-            <h2 className="text-2xl font-bold md:text-3xl">Explore the full CREOS experience</h2>
+            <h2 className="text-2xl font-bold md:text-3xl">{t("Explore the full CREOS experience")}</h2>
             <p className="mt-3 max-w-2xl text-sm text-slate-300 md:text-base">
-              Browse curated properties, review services, learn about our workflow, and contact the team from dedicated pages.
+              {t("Browse curated properties, review services, learn about our workflow, and contact the team from dedicated pages.")}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link to="/properties" className="rounded-xl bg-white/10 px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/10">
-                View Properties
+                {t("View Properties")}
               </Link>
               <Link to="/services" className="rounded-xl border border-white/30 bg-black/30 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10">
-                See Services
+                {t("See Services")}
               </Link>
               <Link to="/contact" className="rounded-xl border border-white/30 bg-black/30 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10">
-                Contact Team
+                {t("Contact Team")}
               </Link>
             </div>
           </div>

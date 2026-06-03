@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../../components/ToastProvider.jsx";
 import { buildApiUrl, resolveApiAssetUrl } from "../../api/axios";
 import { getAllProperties } from "@/data/propertiesStore";
@@ -9,6 +10,7 @@ const PAGE_SIZE = 24;
 
 export default function Properties() {
   const toast = useToast();
+  const { t } = useTranslation();
   const placeholderSrc = "/img/placeholder-property.jpg";
 
   const [properties, setProperties] = useState([]);
@@ -39,7 +41,7 @@ export default function Properties() {
         setHasMore(false);
       } catch (error) {
         console.error(error);
-        toast.error("Failed to load properties.");
+        toast.error(t("Failed to load properties."));
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -62,7 +64,7 @@ export default function Properties() {
       setHasMore(result.page < result.totalPages);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to load more properties.");
+      toast.error(t("Failed to load more properties."));
     } finally {
       setIsLoadingMore(false);
     }
@@ -72,8 +74,8 @@ export default function Properties() {
     return properties.map((property) => ({
       id: property.id,
       title: property.title,
-      city: property.city || "—",
-      district: property.district || property.address || "—",
+      city: property.city || t("Not available"),
+      district: property.district || property.address || t("Not available"),
       area: Number(property.area_m2 ?? 0),
       bedrooms: Number(property.bedrooms ?? 0),
       priceLabel:
@@ -93,9 +95,9 @@ export default function Properties() {
     <div className="min-h-screen bg-black text-white">
       <main className="mx-auto w-full px-4 pb-12 pt-12">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-bold md:text-3xl">Properties</h1>
+          <h1 className="text-2xl font-bold md:text-3xl">{t("Properties")}</h1>
           <Link to="/search" className="text-sm text-white/70 hover:text-white">
-            Open Advanced Search
+            {t("Open Advanced Search")}
           </Link>
         </div>
 
@@ -140,7 +142,7 @@ export default function Properties() {
                       {property.city} • {property.district}
                     </p>
                     <p className="text-sm text-white/70">
-                      {property.area} m² • {property.bedrooms} bedrooms
+                      {t("{{area}} m² • {{bedrooms}} bedrooms", { area: property.area, bedrooms: property.bedrooms })}
                     </p>
                     <p className="text-lg font-bold text-white">{property.priceLabel}</p>
                   </div>
@@ -156,7 +158,7 @@ export default function Properties() {
                   disabled={isLoadingMore}
                   className="mt-10 rounded-lg border border-white/20 px-6 py-3 text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isLoadingMore ? "Loading..." : "Load More"}
+                  {isLoadingMore ? t("Loading...") : t("Load More")}
                 </button>
               </div>
             ) : null}
