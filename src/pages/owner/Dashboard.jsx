@@ -10,21 +10,22 @@ const TASKS = [
 
 export default function OwnerDashboard() {
   const { t } = useTranslation();
+  const tasks = TASKS.map((task) => ({ title: t(task.title), due: t(task.due) }));
   const KPI = [
     { label: t("Owned Properties"), value: "42", change: "+4.8%" },
     { label: t("Visit Requests"), value: "19", change: "+2.2%" },
     { label: t("Occupancy"), value: "88%", change: "+1.3%" },
     { label: t("Monthly Revenue"), value: "$214K", change: "+7.6%" },
   ];
-  const ACTIONS = [t("Add Property"), "Review Visits", "Update Pricing", "Download Summary"];
+  const ACTIONS = [t("Add Property"), t("Review Visits"), t("Update Pricing"), t("Download Summary")];
   return (
     <StarterDashboard
       roleLabel={t("owner")}
       title={t("Owner Performance Dashboard")}
-      subtitle="Track property performance, incoming requests, and occupancy momentum at a glance."
+      subtitle={t("Track property performance, incoming requests, and occupancy momentum at a glance.")}
       kpis={KPI}
       actions={ACTIONS}
-      tasks={TASKS}
+      tasks={tasks}
     />
   );
 }

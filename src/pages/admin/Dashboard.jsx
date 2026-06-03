@@ -17,22 +17,30 @@ const ACTIVITY = [
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
+  const tasks = TASKS.map((task) => ({ title: t(task.title), due: t(task.due) }));
+  const activity = ACTIVITY.map((item) => ({
+    ...item,
+    item: t(item.item),
+    owner: t(item.owner),
+    status: t(item.status),
+    time: item.time,
+  }));
   const KPI = [
     { label: t("Platform Health"), value: "99.2%", change: "+0.4%" },
     { label: t("Open Incidents"), value: "12", change: "-3.1%" },
     { label: t("New Users"), value: "84", change: "+6.8%" },
     { label: t("Compliance"), value: "96%", change: "+1.1%" },
   ];
-  const ACTIONS = [t("Manage Users"), "Review Permissions", "Broadcast Notice", "Export Audit"];
+  const ACTIONS = [t("Manage Users"), t("Review Permissions"), t("Broadcast Notice"), t("Export Audit")];
   return (
     <StarterDashboard
       roleLabel={t("admin")}
       title={t("Admin Control Dashboard")}
-      subtitle="Monitor system health, users, and operational governance from one control center."
+      subtitle={t("Monitor system health, users, and operational governance from one control center.")}
       kpis={KPI}
       actions={ACTIONS}
-      tasks={TASKS}
-      activity={ACTIVITY}
+      tasks={tasks}
+      activity={activity}
     />
   );
 }

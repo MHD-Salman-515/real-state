@@ -40,7 +40,7 @@ export default function WorkerLayout() {
   const displayName =
     user?.fullName || user?.name ||
     (user?.email ? String(user.email).split("@")[0] : "") ||
-    user?.username || "User";
+    user?.username || t("User");
 
   const pageTitle = t(PAGE_TITLE_KEYS[location.pathname] || "Worker Dashboard");
   const userStorageKey = useMemo(() => {
@@ -112,7 +112,7 @@ export default function WorkerLayout() {
   const Sidebar = ({ onNav }) => (
     <aside className="flex h-full flex-col border-e border-white/10 bg-[#050912]/90 backdrop-blur-xl">
       <div className="border-b border-white/10 px-4 py-5">
-        <p className="text-[11px] uppercase tracking-[0.16em] text-white/90">CREOS Worker</p>
+        <p className="text-[11px] uppercase tracking-[0.16em] text-white/90">{t("CREOS Worker")}</p>
         <h2 className="mt-1 text-lg font-semibold text-white">{t('Service Desk')}</h2>
         <div className="mt-2 text-[11px] text-slate-300">
           {t('User:')} <strong className="text-white/90">{displayName}</strong>
@@ -137,7 +137,7 @@ export default function WorkerLayout() {
           <div className="flex items-center justify-between gap-3 px-4 py-3 lg:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <button className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-sm transition hover:bg-white/10 lg:hidden"
-                onClick={() => setMobileOpen(true)} aria-label="open menu">Menu</button>
+                onClick={() => setMobileOpen(true)} aria-label={t("Open menu")}>{t("Menu")}</button>
               <div className="relative flex items-center gap-2" ref={brandMenuRef}>
                 <button type="button" onClick={handleLogoNavigate}
                   className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-black/30 transition hover:border-white/15 hover:bg-white/10"
@@ -148,7 +148,7 @@ export default function WorkerLayout() {
                   <div className="absolute left-0 top-full z-40 mt-2 w-64 rounded-2xl border border-white/10 bg-[#050912]/95 p-2 backdrop-blur-xl">
                     <div className="border-b border-white/10 px-3 py-2">
                       <p className="truncate text-sm font-medium text-slate-100">{displayName}</p>
-                      <p className="text-xs uppercase tracking-wide text-slate-400">{String(user?.role || "worker")}</p>
+                      <p className="text-xs uppercase tracking-wide text-slate-400">{String(user?.role || t("worker"))}</p>
                     </div>
                     <Link to="/client/profile" onClick={() => setBrandMenuOpen(false)}
                       className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90">
@@ -162,7 +162,7 @@ export default function WorkerLayout() {
                 ) : null}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-xs uppercase tracking-[0.14em] text-white/90">Worker Workspace</p>
+                <p className="truncate text-xs uppercase tracking-[0.14em] text-white/90">{t("Worker Workspace")}</p>
                 <h1 className="truncate text-sm font-semibold text-white md:text-base">{pageTitle}</h1>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function WorkerLayout() {
               <div className="relative" ref={notifRef}>
                 <button type="button" onClick={() => setNotifOpen((v) => !v)}
                   className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
-                  aria-label="notifications">
+                  aria-label={t("Notifications")}>
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5" />
                     <path d="M9 17a3 3 0 0 0 6 0" />

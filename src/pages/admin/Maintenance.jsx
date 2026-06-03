@@ -64,7 +64,7 @@ export default function AdminMaintenance() {
   };
 
   const deleteTicket = async (id) => {
-    if (!confirm("Do you want to delete this ticket?")) return;
+    if (!confirm(tr("Do you want to delete this ticket?"))) return;
 
     try {
       await api.delete(`/tickets/${id}`);
@@ -160,21 +160,21 @@ export default function AdminMaintenance() {
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-sm font-semibold text-white md:text-base">Tickets</h2>
-            <p className="mt-1 text-xs text-slate-300">Update status, assign teams, and maintain service records.</p>
+            <h2 className="text-sm font-semibold text-white md:text-base">{tr("Tickets")}</h2>
+            <p className="mt-1 text-xs text-slate-300">{tr("Update status, assign teams, and maintain service records.")}</p>
           </div>
         </div>
 
         <div className="mb-3 rounded-xl border border-white/10 bg-black/25 p-3">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2">
-              <label className="text-xs text-slate-300">Status</label>
+              <label className="text-xs text-slate-300">{tr("Status")}</label>
               <select value={filter} onChange={(e) => setFilter(e.target.value)} className={selectClass}>
-                <option className={optionClass} value="ALL">All</option>
-                <option className={optionClass} value="OPEN">Open</option>
-                <option className={optionClass} value="IN_PROGRESS">In Progress</option>
-                <option className={optionClass} value="COMPLETED">Completed</option>
-                <option className={optionClass} value="CANCELLED">Cancelled</option>
+                <option className={optionClass} value="ALL">{tr("All")}</option>
+                <option className={optionClass} value="OPEN">{tr("Open")}</option>
+                <option className={optionClass} value="IN_PROGRESS">{tr("In Progress")}</option>
+                <option className={optionClass} value="COMPLETED">{tr("Completed")}</option>
+                <option className={optionClass} value="CANCELLED">{tr("Cancelled")}</option>
               </select>
             </div>
             <button
@@ -182,7 +182,7 @@ export default function AdminMaintenance() {
               onClick={load}
               className="self-start rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90 md:self-auto"
             >
-              Refresh
+              {tr("Refresh")}
             </button>
           </div>
         </div>
@@ -194,11 +194,11 @@ export default function AdminMaintenance() {
                 <th className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300 tabular-nums">ID</th>
                 <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Property</th>
                 <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Client</th>
-                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Worker</th>
-                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Supplier</th>
-                <th className="w-[160px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Status</th>
-                <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Created</th>
-                <th className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] uppercase tracking-wide text-slate-300">Actions</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("worker")}</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("Supplier")}</th>
+                <th className="w-[160px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("Status")}</th>
+                <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("Created")}</th>
+                <th className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] uppercase tracking-wide text-slate-300">{tr("Actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -214,35 +214,35 @@ export default function AdminMaintenance() {
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-6 text-center text-slate-400">No tickets found</td>
+                  <td colSpan={8} className="p-6 text-center text-slate-400">{tr("No tickets found")}</td>
                 </tr>
               ) : (
                 filtered.map((t) => (
                   <tr key={t.id} className="transition-colors even:bg-white/[0.02] hover:bg-white/5">
                     <td className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle tabular-nums">{t.id}</td>
-                    <td className="max-w-[220px] truncate px-4 py-3 align-middle" title={t.property?.title || "â€”"}>{t.property?.title || "â€”"}</td>
-                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.client?.fullName || "â€”"}>{t.client?.fullName || "â€”"}</td>
-                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.worker?.fullName || "â€”"}>{t.worker?.fullName || "â€”"}</td>
-                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.supplier?.fullName || "â€”"}>{t.supplier?.fullName || "â€”"}</td>
+                    <td className="max-w-[220px] truncate px-4 py-3 align-middle" title={t.property?.title || "—"}>{t.property?.title || "—"}</td>
+                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.client?.fullName || "—"}>{t.client?.fullName || "—"}</td>
+                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.worker?.fullName || "—"}>{t.worker?.fullName || "—"}</td>
+                    <td className="max-w-[180px] truncate px-4 py-3 align-middle" title={t.supplier?.fullName || "—"}>{t.supplier?.fullName || "—"}</td>
                     <td className="w-[160px] whitespace-nowrap px-4 py-3 align-middle">
                       <select value={t.status} onChange={(e) => updateStatus(t.id, e.target.value)} className={selectClass}>
-                        <option className={optionClass} value="OPEN">Open</option>
-                        <option className={optionClass} value="IN_PROGRESS">In Progress</option>
-                        <option className={optionClass} value="COMPLETED">Completed</option>
-                        <option className={optionClass} value="CANCELLED">Cancelled</option>
+                        <option className={optionClass} value="OPEN">{tr("Open")}</option>
+                        <option className={optionClass} value="IN_PROGRESS">{tr("In Progress")}</option>
+                        <option className={optionClass} value="COMPLETED">{tr("Completed")}</option>
+                        <option className={optionClass} value="CANCELLED">{tr("Cancelled")}</option>
                       </select>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 align-middle">{t.createdAt ? new Date(t.createdAt).toLocaleDateString("ar-EG") : "â€”"}</td>
+                    <td className="whitespace-nowrap px-4 py-3 align-middle">{t.createdAt ? new Date(t.createdAt).toLocaleDateString("ar-EG") : "—"}</td>
                     <td className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center">
                       <div className="flex flex-wrap items-center justify-center gap-2">
                         <button className="rounded-lg border border-blue-400/40 bg-blue-500/10 px-3 py-1 text-xs text-blue-200 transition hover:bg-blue-500/20" onClick={() => openAssignWorker(t)}>
-                          Assign Worker
+                          {tr("Assign Worker")}
                         </button>
                         <button className="rounded-lg border border-violet-400/40 bg-violet-500/10 px-3 py-1 text-xs text-violet-200 transition hover:bg-violet-500/20" onClick={() => openAssignSupplier(t)}>
-                          Assign Supplier
+                          {tr("Assign Supplier")}
                         </button>
                         <button className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-1 text-xs text-red-300 transition hover:bg-red-500/20" onClick={() => deleteTicket(t.id)}>
-                          Delete
+                          {tr("Delete")}
                         </button>
                       </div>
                     </td>
@@ -258,7 +258,7 @@ export default function AdminMaintenance() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#050912]/95 p-5 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">Assign Worker</h3>
+              <h3 className="text-lg font-semibold text-white">{tr("Assign Worker")}</h3>
               <button
                 className="rounded-lg border border-white/15 px-2 py-1 text-xs text-slate-300 transition hover:bg-white/10"
                 onClick={() => {
@@ -267,7 +267,7 @@ export default function AdminMaintenance() {
                   setCurrentTicket(null);
                 }}
               >
-                Close
+                {tr("Close")}
               </button>
             </div>
 
@@ -277,7 +277,7 @@ export default function AdminMaintenance() {
                 value={selectedWorker ?? ""}
                 onChange={(e) => setSelectedWorker(e.target.value ? Number(e.target.value) : null)}
               >
-                <option className={optionClass} value="">Select worker...</option>
+                <option className={optionClass} value="">{tr("Select worker...")}</option>
                 {workers.map((w) => (
                   <option key={w.id} className={optionClass} value={w.id}>
                     {w.fullName}
@@ -287,7 +287,7 @@ export default function AdminMaintenance() {
             </div>
 
             <button className="mt-4 w-full rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-black transition hover:bg-white/10" onClick={assignWorker}>
-              Save
+              {tr("Save")}
             </button>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function AdminMaintenance() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#050912]/95 p-5 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">Assign Supplier</h3>
+              <h3 className="text-lg font-semibold text-white">{tr("Assign Supplier")}</h3>
               <button
                 className="rounded-lg border border-white/15 px-2 py-1 text-xs text-slate-300 transition hover:bg-white/10"
                 onClick={() => {
@@ -306,7 +306,7 @@ export default function AdminMaintenance() {
                   setCurrentTicket(null);
                 }}
               >
-                Close
+                {tr("Close")}
               </button>
             </div>
 
@@ -316,7 +316,7 @@ export default function AdminMaintenance() {
                 value={selectedSupplier ?? ""}
                 onChange={(e) => setSelectedSupplier(e.target.value ? Number(e.target.value) : null)}
               >
-                <option className={optionClass} value="">Select supplier...</option>
+                <option className={optionClass} value="">{tr("Select supplier...")}</option>
                 {suppliers.map((s) => (
                   <option key={s.id} className={optionClass} value={s.id}>
                     {s.fullName}
@@ -326,7 +326,7 @@ export default function AdminMaintenance() {
             </div>
 
             <button className="mt-4 w-full rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-black transition hover:bg-white/10" onClick={assignSupplier}>
-              Save
+              {tr("Save")}
             </button>
           </div>
         </div>
@@ -334,4 +334,3 @@ export default function AdminMaintenance() {
     </section>
   );
 }
-

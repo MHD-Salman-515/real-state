@@ -90,13 +90,13 @@ export default function AdminFinance() {
     return Object.entries(stats.byType || {}).map(([type, info]) => ({
       type,
       label:
-        type === "RENT"
-          ? t("Rent")
-          : type === "SALE"
-            ? t("Sale")
-            : type === "SERVICE"
-              ? t("Service")
-              : type,
+      type === "RENT"
+        ? t("Rent")
+        : type === "SALE"
+          ? t("Sale")
+          : type === "SERVICE"
+            ? t("Service")
+            : type,
       count: info.count,
       amount: info.amount,
     }));
@@ -107,8 +107,8 @@ export default function AdminFinance() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Finance & Reports"
-        subtitle="Invoices summary, cash flow insights, and distribution."
+        title={t("Finance & Reports")}
+        subtitle={t("Invoices summary, cash flow insights, and distribution.")}
       />
 
       {error ? (
@@ -120,7 +120,7 @@ export default function AdminFinance() {
               onClick={loadInvoices}
               className="inline-flex items-center justify-center rounded-xl border border-red-300/40 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-100 transition duration-200 hover:bg-red-500/20"
             >
-              Retry
+              {t("Retry")}
             </button>
           </div>
         </Card>
@@ -137,28 +137,28 @@ export default function AdminFinance() {
         ) : (
           <>
             <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15 hover:bg-white/10">
-              <p className="text-xs text-white/90">Total Invoices</p>
+              <p className="text-xs text-white/90">{t("Total Invoices")}</p>
               <p className="mt-2 text-2xl font-semibold text-white/90">
                 {stats.totalAmount.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
               </p>
             </Card>
 
             <Card className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15 hover:bg-white/10">
-              <p className="text-xs text-slate-300">Paid</p>
+              <p className="text-xs text-slate-300">{t("Paid")}</p>
               <p className="mt-2 text-2xl font-semibold text-white">
                 {stats.totalPaid.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
               </p>
             </Card>
 
             <Card className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition duration-200 hover:border-white/15 hover:bg-white/10">
-              <p className="text-xs text-white/80">Pending</p>
+              <p className="text-xs text-white/80">{t("Pending")}</p>
               <p className="mt-2 text-2xl font-semibold text-white/80">
                 {stats.totalPending.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
               </p>
             </Card>
 
             <Card className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 backdrop-blur-xl transition duration-200 hover:border-red-300/50 hover:bg-red-500/15">
-              <p className="text-xs text-red-200">Overdue</p>
+              <p className="text-xs text-red-200">{t("Overdue")}</p>
               <p className="mt-2 text-2xl font-semibold text-red-100">
                 {stats.totalOverdue.toLocaleString("en-US", { maximumFractionDigits: 0 })} $
               </p>
@@ -169,8 +169,8 @@ export default function AdminFinance() {
 
       <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="border-b border-white/10 px-4 py-3 md:px-5">
-          <h2 className="text-sm font-semibold text-white md:text-base">Revenue Distribution</h2>
-          <p className="mt-1 text-xs text-slate-300 md:text-sm">Distribution by invoice type and amount share.</p>
+          <h2 className="text-sm font-semibold text-white md:text-base">{t("Revenue Distribution")}</h2>
+          <p className="mt-1 text-xs text-slate-300 md:text-sm">{t("Distribution by invoice type and amount share.")}</p>
         </div>
 
         {loading ? (
@@ -184,17 +184,17 @@ export default function AdminFinance() {
           </div>
         ) : !hasRows ? (
           <div className="p-8 text-center">
-            <h3 className="text-lg font-semibold text-white">No finance records yet</h3>
-            <p className="mt-2 text-sm text-slate-300">There are no invoice distributions to display.</p>
+            <h3 className="text-lg font-semibold text-white">{t("No finance records yet")}</h3>
+            <p className="mt-2 text-sm text-slate-300">{t("There are no invoice distributions to display.")}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-[900px] text-sm leading-5 text-slate-100">
               <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
                 <tr className="border-b border-white/10">
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Invoice Type</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Count</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Total Amount</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Invoice Type")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Count")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Total Amount")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">

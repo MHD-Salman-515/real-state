@@ -76,7 +76,7 @@ export default function SalesInvoices() {
   };
 
   const deleteInvoice = (id) => {
-    if (!confirm("Delete this invoice?")) return;
+    if (!confirm(t("Delete this invoice?"))) return;
     api
       .delete(`/invoices/${id}`)
       .then(() => {
@@ -128,7 +128,7 @@ export default function SalesInvoices() {
           className="inline-flex h-8 items-center justify-center rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 text-xs text-rose-200 transition hover:bg-rose-500/20"
           onClick={() => deleteInvoice(i.id)}
         >
-          Delete
+          {t("Delete")}
         </button>
       ),
     },
@@ -142,21 +142,21 @@ export default function SalesInvoices() {
     <section className="space-y-4">
       <PageHeader
         title={t("Sales Invoices")}
-        subtitle="Manage property sales invoices and payment status."
+        subtitle={t("Manage property sales invoices and payment status.")}
         actions={
           <button
             className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
             onClick={() => setShowForm(true)}
           >
-            + New Sales Invoice
+            + {t("New Sales Invoice")}
           </button>
         }
       />
 
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
         <div className="mb-3">
-          <h3 className="text-sm font-semibold text-white md:text-base">Sales Invoice Records</h3>
-          <p className="mt-1 text-xs text-slate-300">Create, review, and remove sales invoices.</p>
+          <h3 className="text-sm font-semibold text-white md:text-base">{t("Sales Invoice Records")}</h3>
+          <p className="mt-1 text-xs text-slate-300">{t("Create, review, and remove sales invoices.")}</p>
         </div>
         <Table columns={columns} rows={rows} emptyText={t("No sales invoices found")} />
       </Card>
@@ -173,15 +173,15 @@ export default function SalesInvoices() {
                   </svg>
                 </span>
                 <div>
-                  <h3 className="text-lg font-semibold text-white">Create Sales Invoice</h3>
-                  <p className="mt-1 text-xs text-slate-300">Fill invoice details and save.</p>
+                  <h3 className="text-lg font-semibold text-white">{t("Create Sales Invoice")}</h3>
+                  <p className="mt-1 text-xs text-slate-300">{t("Fill invoice details and save.")}</p>
                 </div>
               </div>
             </div>
 
             <form onSubmit={createInvoice} className="mt-4 space-y-3">
               <div>
-                <label className="text-xs text-slate-300">Client</label>
+                <label className="text-xs text-slate-300">{t("Client")}</label>
                 <div className="relative">
                   <select
                     className={selectClass}
@@ -189,7 +189,7 @@ export default function SalesInvoices() {
                     onChange={(e) => setForm({ ...form, clientId: e.target.value })}
                   >
                     <option className={optionClass} value="">
-                      Select client...
+                      {t("Select client...")}
                     </option>
                     {clients.map((c) => (
                       <option className={optionClass} key={c.id} value={c.id}>
@@ -206,7 +206,7 @@ export default function SalesInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Property</label>
+                <label className="text-xs text-slate-300">{t("Property")}</label>
                 <div className="relative">
                   <select
                     className={selectClass}
@@ -214,7 +214,7 @@ export default function SalesInvoices() {
                     onChange={(e) => setForm({ ...form, propertyId: e.target.value })}
                   >
                     <option className={optionClass} value="">
-                      Select property...
+                      {t("Select property...")}
                     </option>
                     {properties.map((p) => (
                       <option className={optionClass} key={p.id} value={p.id}>
@@ -231,7 +231,7 @@ export default function SalesInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Total Amount</label>
+                <label className="text-xs text-slate-300">{t("Total Amount")}</label>
                 <input
                   type="number"
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
@@ -241,7 +241,7 @@ export default function SalesInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Tax</label>
+                <label className="text-xs text-slate-300">{t("Tax")}</label>
                 <input
                   type="number"
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
@@ -251,7 +251,7 @@ export default function SalesInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Due Date</label>
+                <label className="text-xs text-slate-300">{t("Due Date")}</label>
                 <input
                   type="date"
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
@@ -261,7 +261,7 @@ export default function SalesInvoices() {
               </div>
 
               <button className="w-full rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10">
-                Save Invoice
+                {t("Save Invoice")}
               </button>
             </form>
 
@@ -269,7 +269,7 @@ export default function SalesInvoices() {
               className="mt-3 w-full rounded-xl border border-white/20 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10"
               onClick={() => setShowForm(false)}
             >
-              Close
+              {t("Close")}
             </button>
           </div>
         </div>

@@ -74,21 +74,21 @@ export default function ARAging() {
     <section className="space-y-4">
       <PageHeader
         title={t("A/R Aging")}
-        subtitle="Analyze unpaid invoices by aging buckets."
+        subtitle={t("Analyze unpaid invoices by aging buckets.")}
         actions={
           <button
             onClick={load}
             className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
           >
-            Refresh
+            {t("Refresh")}
           </button>
         }
       />
 
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
         <div className="mb-3">
-          <h3 className="text-sm font-semibold text-white md:text-base">A/R Aging List</h3>
-          <p className="mt-1 text-xs text-slate-300">Open receivables and aging status by invoice.</p>
+          <h3 className="text-sm font-semibold text-white md:text-base">{t("A/R Aging List")}</h3>
+          <p className="mt-1 text-xs text-slate-300">{t("Open receivables and aging status by invoice.")}</p>
         </div>
         <Table columns={columns} rows={rows} emptyText={t("No unpaid invoices found")} />
       </Card>
@@ -99,7 +99,7 @@ export default function ARAging() {
             key={b}
             className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-xl"
           >
-            <h3 className="text-sm font-semibold text-white">{b}</h3>
+            <h3 className="text-sm font-semibold text-white">{t(b)}</h3>
             <p className="mt-2 text-3xl font-semibold text-white/90">
               {rows.filter((r) => r.bucket === b).length}
             </p>

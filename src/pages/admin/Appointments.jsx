@@ -89,7 +89,7 @@ export default function AdminAppointments() {
   };
 
   const deleteItem = async (id) => {
-    if (!confirm("Are you sure you want to delete this appointment?")) return;
+    if (!confirm(t("Are you sure you want to delete this appointment?"))) return;
 
     try {
       await api.delete(`/appointments/${id}`);
@@ -112,17 +112,17 @@ export default function AdminAppointments() {
       <Toolbar className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
         <div className="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-300">Status</label>
+            <label className="text-sm text-slate-300">{t("Status")}</label>
             <select
               className="min-w-[180px] rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100 outline-none transition duration-200 focus:border-white/15"
               value={statusFilter}
               onChange={(e) => filterStatus(e.target.value)}
             >
-              <option value="">All statuses</option>
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Approved</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="">{t("All statuses")}</option>
+              <option value="PENDING">{t("Pending")}</option>
+              <option value="APPROVED">{t("Approved")}</option>
+              <option value="COMPLETED">{t("Completed")}</option>
+              <option value="CANCELLED">{t("Cancelled")}</option>
             </select>
           </div>
 
@@ -131,15 +131,15 @@ export default function AdminAppointments() {
             onClick={load}
             className="self-start rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90 md:self-auto"
           >
-            Refresh
+            {t("Refresh")}
           </button>
         </div>
       </Toolbar>
 
       <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="border-b border-white/10 px-4 py-3 md:px-5">
-          <h3 className="text-sm font-semibold text-white md:text-base">All Appointments</h3>
-          <p className="mt-1 text-xs text-slate-300 md:text-sm">Update status or remove entries.</p>
+          <h3 className="text-sm font-semibold text-white md:text-base">{t("All Appointments")}</h3>
+          <p className="mt-1 text-xs text-slate-300 md:text-sm">{t("Update status or remove entries.")}</p>
         </div>
 
         {loading ? (
@@ -153,8 +153,8 @@ export default function AdminAppointments() {
           </div>
         ) : rows.length === 0 ? (
           <div className="p-8 text-center">
-            <h4 className="text-base font-semibold text-white">No appointments found</h4>
-            <p className="mt-2 text-sm text-slate-300">Try changing the status filter to view more records.</p>
+            <h4 className="text-base font-semibold text-white">{t("No appointments found")}</h4>
+            <p className="mt-2 text-sm text-slate-300">{t("Try changing the status filter to view more records.")}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -164,11 +164,11 @@ export default function AdminAppointments() {
                   <th className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300 tabular-nums">ID</th>
                   <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Client</th>
                   <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Property</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Agent</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Date</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Time</th>
-                  <th className="w-[160px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Status</th>
-                  <th className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] font-semibold uppercase tracking-wide text-slate-300">Actions</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Agent")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Date")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Time")}</th>
+                  <th className="w-[160px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Status")}</th>
+                  <th className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
@@ -198,17 +198,17 @@ export default function AdminAppointments() {
                           value={r.status}
                           onChange={(e) => updateStatus(r.id, e.target.value)}
                         >
-                          <option value="PENDING">Pending</option>
-                          <option value="APPROVED">Approved</option>
-                          <option value="COMPLETED">Completed</option>
-                          <option value="CANCELLED">Cancelled</option>
+                          <option value="PENDING">{t("Pending")}</option>
+                          <option value="APPROVED">{t("Approved")}</option>
+                          <option value="COMPLETED">{t("Completed")}</option>
+                          <option value="CANCELLED">{t("Cancelled")}</option>
                         </select>
 
                         <button
                           onClick={() => deleteItem(r.id)}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/40 bg-red-500/10 text-red-300 transition duration-200 hover:bg-red-500/20"
-                          title="Delete"
-                          aria-label="Delete"
+                          title={t("Delete")}
+                          aria-label={t("Delete")}
                         >
                           <TrashIcon />
                         </button>

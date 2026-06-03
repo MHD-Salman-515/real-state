@@ -44,7 +44,7 @@ export default function SupplierInvoices() {
     <section className="space-y-4">
       <PageHeader
         title={t("Supplier Invoices")}
-        subtitle="Track supplier-related expenses linked to tickets and invoices."
+        subtitle={t("Track supplier-related expenses linked to tickets and invoices.")}
       />
 
       {loading ? (
@@ -58,8 +58,8 @@ export default function SupplierInvoices() {
       ) : (
         <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
           <div className="mb-3">
-            <h3 className="text-sm font-semibold text-white md:text-base">Supplier Expense Records</h3>
-            <p className="mt-1 text-xs text-slate-300">All supplier expenses and linked ticket context.</p>
+            <h3 className="text-sm font-semibold text-white md:text-base">{t("Supplier Expense Records")}</h3>
+            <p className="mt-1 text-xs text-slate-300">{t("All supplier expenses and linked ticket context.")}</p>
           </div>
           <Table columns={columns} rows={data} emptyText={t("No supplier invoices available")} />
         </Card>

@@ -76,7 +76,7 @@ export default function RentInvoices() {
   };
 
   const deleteInvoice = (id) => {
-    if (!confirm("Delete this invoice?")) return;
+    if (!confirm(t("Delete this invoice?"))) return;
     api
       .delete(`/invoices/${id}`)
       .then(() => {
@@ -99,7 +99,7 @@ export default function RentInvoices() {
     { key: "amount", header: t("Amount"), render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
     {
       key: "status",
-      header: "Status",
+      header: t("Status"),
       render: (i) => (
         <span
           className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${
@@ -116,18 +116,18 @@ export default function RentInvoices() {
     },
     {
       key: "dueDate",
-      header: "Due Date",
+      header: t("Due Date"),
       render: (i) => (i.dueDate ? new Date(i.dueDate).toLocaleDateString() : "-"),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("Actions"),
       render: (i) => (
         <button
           className="inline-flex h-8 items-center justify-center rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 text-xs text-rose-200 transition hover:bg-rose-500/20"
           onClick={() => deleteInvoice(i.id)}
         >
-          Delete
+          {t("Delete")}
         </button>
       ),
     },
@@ -137,21 +137,21 @@ export default function RentInvoices() {
     <section className="space-y-4">
       <PageHeader
         title={t("Rent Invoices")}
-        subtitle="Manage rent billing records for tenants."
+        subtitle={t("Manage rent billing records for tenants.")}
         actions={
           <button
             className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
             onClick={() => setShowForm(true)}
           >
-            + New Rent Invoice
+            + {t("New Rent Invoice")}
           </button>
         }
       />
 
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
         <div className="mb-3">
-          <h3 className="text-sm font-semibold text-white md:text-base">Rent Invoice Records</h3>
-          <p className="mt-1 text-xs text-slate-300">Track tenant invoices and overdue payments.</p>
+          <h3 className="text-sm font-semibold text-white md:text-base">{t("Rent Invoice Records")}</h3>
+          <p className="mt-1 text-xs text-slate-300">{t("Track tenant invoices and overdue payments.")}</p>
         </div>
         <Table columns={columns} rows={rows} emptyText={t("No rent invoices found")} />
       </Card>
@@ -159,18 +159,18 @@ export default function RentInvoices() {
       {showForm ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#050912]/95 p-5 backdrop-blur-xl">
-            <h3 className="text-lg font-semibold text-white">Create Rent Invoice</h3>
-            <p className="mt-1 text-xs text-slate-400">Fill invoice details and save.</p>
+            <h3 className="text-lg font-semibold text-white">{t("Create Rent Invoice")}</h3>
+            <p className="mt-1 text-xs text-slate-400">{t("Fill invoice details and save.")}</p>
 
             <form onSubmit={createInvoice} className="mt-4 space-y-3">
               <div>
-                <label className="text-xs text-slate-300">Client</label>
+                <label className="text-xs text-slate-300">{t("Client")}</label>
                 <select
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
                   value={form.clientId}
                   onChange={(e) => setForm({ ...form, clientId: e.target.value })}
                 >
-                  <option value="">Select client...</option>
+                  <option value="">{t("Select client...")}</option>
                   {clients.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.fullName}
@@ -180,13 +180,13 @@ export default function RentInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Property</label>
+                <label className="text-xs text-slate-300">{t("Property")}</label>
                 <select
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
                   value={form.propertyId}
                   onChange={(e) => setForm({ ...form, propertyId: e.target.value })}
                 >
-                  <option value="">Select property...</option>
+                  <option value="">{t("Select property...")}</option>
                   {properties.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.title}
@@ -196,7 +196,7 @@ export default function RentInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Amount</label>
+                <label className="text-xs text-slate-300">{t("Amount")}</label>
                 <input
                   type="number"
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
@@ -206,7 +206,7 @@ export default function RentInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Tax</label>
+                <label className="text-xs text-slate-300">{t("Tax")}</label>
                 <input
                   type="number"
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
@@ -216,7 +216,7 @@ export default function RentInvoices() {
               </div>
 
               <div>
-                <label className="text-xs text-slate-300">Due Date</label>
+                <label className="text-xs text-slate-300">{t("Due Date")}</label>
                 <input
                   type="date"
                   className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
@@ -226,7 +226,7 @@ export default function RentInvoices() {
               </div>
 
               <button className="w-full rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10">
-                Save Invoice
+                {t("Save Invoice")}
               </button>
             </form>
 
@@ -234,7 +234,7 @@ export default function RentInvoices() {
               className="mt-3 w-full rounded-xl border border-white/20 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10"
               onClick={() => setShowForm(false)}
             >
-              Close
+              {t("Close")}
             </button>
           </div>
         </div>

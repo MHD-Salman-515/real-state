@@ -39,7 +39,7 @@ export default function OwnerLayout() {
     user?.full_name ||
     user?.username ||
     (user?.email ? String(user.email).split("@")[0] : "") ||
-    "User";
+    t("User");
 
   useEffect(() => {
     function onMouseDown(e) {
@@ -73,7 +73,7 @@ export default function OwnerLayout() {
     <aside className="flex h-full flex-col border-e border-white/10 bg-[#050912]/90 backdrop-blur-xl">
       <div className="border-b border-white/10 px-4 py-5">
         <p className="text-[11px] uppercase tracking-[0.16em] text-white/90">
-          CREOS Owner
+          {t("CREOS Owner")}
         </p>
         <h2 className="mt-1 text-lg font-semibold text-white">{t('Operations Panel')}</h2>
         <div className="mt-2 text-[11px] text-slate-300">
@@ -117,9 +117,9 @@ export default function OwnerLayout() {
               <button
                 className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-sm transition hover:bg-white/10 lg:hidden"
                 onClick={() => setOpen(true)}
-                aria-label="open menu"
+                  aria-label={t("Open menu")}
               >
-                Menu
+                {t("Menu")}
               </button>
               <div className="relative flex items-center gap-2" ref={brandMenuRef}>
                 <button
@@ -143,7 +143,7 @@ export default function OwnerLayout() {
                   <div className="absolute left-0 top-full z-40 mt-2 w-64 rounded-2xl border border-white/10 bg-[#050912]/95 p-2 backdrop-blur-xl">
                     <div className="border-b border-white/10 px-3 py-2">
                       <p className="truncate text-sm font-medium text-slate-100">{displayName}</p>
-                      <p className="text-xs uppercase tracking-wide text-slate-400">{role || "owner"}</p>
+                      <p className="text-xs uppercase tracking-wide text-slate-400">{role || t("owner")}</p>
                     </div>
                     <Link
                       to="/client/profile"
@@ -164,10 +164,10 @@ export default function OwnerLayout() {
               </div>
               <div className="min-w-0">
                 <p className="truncate text-xs uppercase tracking-[0.14em] text-white/90">
-                  Owner Workspace
+                  {t("Owner Workspace")}
                 </p>
                 <h1 className="truncate text-sm font-semibold text-white md:text-base">
-                  Property Operations
+                  {t("Property Operations")}
                 </h1>
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function OwnerLayout() {
               <div className="hidden md:block">
                 <input
                   type="search"
-                  placeholder="Search..."
+                  placeholder={t("Search...")}
                   className="w-48 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-400 outline-none transition focus:border-white/15 focus:bg-white/10"
                 />
               </div>

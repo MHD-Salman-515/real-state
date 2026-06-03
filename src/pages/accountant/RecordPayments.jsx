@@ -66,7 +66,7 @@ export default function RecordPayments() {
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
         <form onSubmit={submitPayment} className="space-y-4">
           <div>
-            <label className="text-sm text-slate-300">Invoice</label>
+            <label className="text-sm text-slate-300">{t("Invoice")}</label>
             <select
               className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"
               value={selectedInvoice?.id || ""}
@@ -75,7 +75,7 @@ export default function RecordPayments() {
                 setSelectedInvoice(inv || null);
               }}
             >
-              <option value="">-- Select invoice --</option>
+              <option value="">{t("Select invoice...")}</option>
               {invoices.map((inv) => (
                 <option key={inv.id} value={inv.id}>
                   #{inv.id} - {inv.type} - {inv.totalAmount}$
@@ -85,7 +85,7 @@ export default function RecordPayments() {
           </div>
 
           <div>
-            <label className="text-sm text-slate-300">Amount</label>
+            <label className="text-sm text-slate-300">{t("Amount")}</label>
             <input
               type="number"
               className="mt-1 w-full rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-sm text-slate-100"

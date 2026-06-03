@@ -82,7 +82,7 @@ export default function AdminUsers({
       console.error(err);
       const message =
         err?.response?.data?.message ||
-        (status ? `Failed to load users (HTTP ${status})` : "Failed to load users");
+        (status ? `${t("Failed to load users")} (HTTP ${status})` : t("Failed to load users"));
       setError(String(message));
     } finally {
       setLoading(false);
@@ -138,9 +138,9 @@ export default function AdminUsers({
     const name = row?.fullName || row?.email || `#${id}`;
     const strongNotice =
       role === "ADMIN"
-        ? `\n\nHigh-impact action: this account has ADMIN privileges.`
+        ? `\n\n${t("High-impact action: this account has ADMIN privileges.")}`
         : "";
-    if (!confirm(`Delete user ${name}? This action cannot be undone.${strongNotice}`)) return;
+    if (!confirm(`${t("Delete user")} ${name}? ${strongNotice}`)) return;
 
     try {
       await api.delete(`/users/${id}`);
@@ -150,7 +150,7 @@ export default function AdminUsers({
       await loadUsers();
     } catch (err) {
       console.error(err);
-      const message = err.response?.data?.message || "Error: cannot delete user";
+      const message = err.response?.data?.message || t("Error: cannot delete user");
       notifyCrudError(message, t("Operation failed"), {
         href: "/admin/users",
       });
@@ -175,13 +175,13 @@ export default function AdminUsers({
 
   return (
     <section className="space-y-4">
-      <PageHeader title={t(pageTitle)} subtitle={pageSubtitle} />
-      <p className="text-xs text-slate-400">Workforce & Suppliers</p>
+      <PageHeader title={t(pageTitle)} subtitle={t(pageSubtitle)} />
+      <p className="text-xs text-slate-400">{t("Workforce & Suppliers")}</p>
 
       <Toolbar className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
         <div className="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2">
-            <label className="text-xs text-slate-300">Role filter:</label>
+            <label className="text-xs text-slate-300">{t("Role filter:")}</label>
             <select
               className="rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2 text-xs text-slate-100"
               value={roleFilter}
@@ -199,15 +199,15 @@ export default function AdminUsers({
             onClick={() => setShowNewModal(true)}
             className="self-start rounded-xl bg-white/10 px-3 py-2 text-xs font-medium text-black transition hover:bg-white/10 md:self-auto"
           >
-            Create User
+            {t("Create User")}
           </button>
         </div>
       </Toolbar>
 
       <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="border-b border-white/10 px-4 py-3 md:px-5">
-          <h3 className="text-sm font-semibold text-white md:text-base">All Users</h3>
-          <p className="mt-1 text-xs text-slate-300 md:text-sm">Manage roles and access.</p>
+          <h3 className="text-sm font-semibold text-white md:text-base">{t("All Users")}</h3>
+          <p className="mt-1 text-xs text-slate-300 md:text-sm">{t("Manage roles and access.")}</p>
         </div>
 
         {loading ? (
@@ -225,12 +225,12 @@ export default function AdminUsers({
               <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
                 <tr className="border-b border-white/10">
                   <th className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300 tabular-nums">ID</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Name</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Role</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Email</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Phone</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Created At</th>
-                  <th className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] font-semibold uppercase tracking-wide text-slate-300">Actions</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Name")}</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Role")}</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Email")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Phone")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Created At")}</th>
+                  <th className="w-[120px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
@@ -240,11 +240,11 @@ export default function AdminUsers({
                   </tr>
                 ) : filteredRows.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-6 text-center text-sm text-slate-400">No data available</td>
+                    <td colSpan={7} className="px-4 py-6 text-center text-sm text-slate-400">{t("No data available")}</td>
                   </tr>
                 ) : (
                   filteredRows.map((row) => {
-                    const label = ROLE_LABELS[row.role] || row.role || "Unspecified";
+                    const label = ROLE_LABELS[row.role] || row.role || t("Unspecified");
                     const cls = ROLE_BADGE[row.role] || "bg-slate-500/10 text-slate-200 border-slate-400/30";
                     return (
                       <tr key={row.id} className="transition-colors even:bg-white/[0.02] hover:bg-white/5">
@@ -275,8 +275,8 @@ export default function AdminUsers({
                             <button
                               onClick={() => deleteUser(row)}
                               className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/40 bg-red-500/10 text-red-300 transition duration-200 hover:bg-red-500/20"
-                              title="Delete user"
-                              aria-label="Delete user"
+                              title={t("Delete user")}
+                              aria-label={t("Delete user")}
                             >
                               <TrashIcon />
                             </button>
@@ -297,21 +297,21 @@ export default function AdminUsers({
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#050912]/95 p-5 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-white">Create User</h2>
-                <p className="mt-1 text-xs text-slate-400">Enter user details and assign role.</p>
+                <h2 className="text-lg font-semibold text-white">{t("Create User")}</h2>
+                <p className="mt-1 text-xs text-slate-400">{t("Enter user details and assign role.")}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowNewModal(false)}
                 className="rounded-lg border border-white/20 px-2 py-1 text-xs text-slate-300 transition hover:bg-white/10"
               >
-                Close
+                {t("Close")}
               </button>
             </div>
 
             <form className="space-y-3" onSubmit={createUser}>
               <div className="space-y-1">
-                <label className="text-xs text-slate-300">Full name</label>
+                <label className="text-xs text-slate-300">{t("Full name")}</label>
                 <input
                   className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-white/15"
                   value={newUser.fullName}
@@ -320,7 +320,7 @@ export default function AdminUsers({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-slate-300">Email</label>
+                <label className="text-xs text-slate-300">{t("Email")}</label>
                 <input
                   type="email"
                   className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-white/15"
@@ -330,7 +330,7 @@ export default function AdminUsers({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-slate-300">Phone</label>
+                <label className="text-xs text-slate-300">{t("Phone")}</label>
                 <input
                   className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-white/15"
                   value={newUser.phone}
@@ -339,7 +339,7 @@ export default function AdminUsers({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-slate-300">Password</label>
+                <label className="text-xs text-slate-300">{t("Password")}</label>
                 <input
                   type="password"
                   required
@@ -350,7 +350,7 @@ export default function AdminUsers({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs text-slate-300">Role</label>
+                <label className="text-xs text-slate-300">{t("Role")}</label>
                 <select
                   className="w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-white/15"
                   value={newUser.role}
@@ -368,13 +368,13 @@ export default function AdminUsers({
                   onClick={() => setShowNewModal(false)}
                   className="rounded-xl border border-white/20 px-3 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
                 >
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button
                   type="submit"
                   className="rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-black transition hover:bg-white/10"
                 >
-                  Save
+                  {t("Save")}
                 </button>
               </div>
             </form>

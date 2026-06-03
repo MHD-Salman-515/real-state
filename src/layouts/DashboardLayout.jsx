@@ -59,7 +59,7 @@ export default function DashboardLayout({
             type="button"
             onClick={() => setSidebarCollapsed((v) => !v)}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/20 bg-black/40 text-slate-200 transition hover:bg-white/10"
-            aria-label="Toggle sidebar"
+            aria-label={t("Toggle sidebar")}
           >
             {sidebarCollapsed ? ">" : "<"}
           </button>
@@ -100,7 +100,7 @@ export default function DashboardLayout({
               type="button"
               onClick={() => setMobileOpen(false)}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-black/40 text-white transition hover:bg-white/10"
-              aria-label="Close sidebar"
+              aria-label={t("Close sidebar")}
             >
               X
             </button>
@@ -115,7 +115,7 @@ export default function DashboardLayout({
                 onClick={() => setMobileOpen(false)}
               >
                 <span className="inline-flex h-2 w-2 rounded-full bg-white/10" />
-                <span>{item.label}</span>
+                <span>{t(item.label)}</span>
               </NavLink>
             ))}
           </nav>
@@ -129,20 +129,20 @@ export default function DashboardLayout({
               type="button"
               onClick={() => setMobileOpen(true)}
               className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-black/40 text-white transition hover:bg-white/10 lg:hidden"
-              aria-label="Open sidebar"
+              aria-label={t("Open sidebar")}
             >
               <span className="text-sm">|||</span>
             </button>
 
             <div className="min-w-0 flex-1">
               <h1 className="truncate text-base font-semibold text-white">{computedTitle}</h1>
-              <p className="truncate text-[11px] text-slate-400">{subtitle}</p>
+              <p className="truncate text-[11px] text-slate-400">{t(subtitle)}</p>
             </div>
 
             <div className="hidden min-w-[240px] flex-1 md:block lg:max-w-sm">
               <input
                 type="search"
-                placeholder="Search dashboard..."
+                placeholder={t("Search dashboard...")}
                 className="h-10 w-full rounded-xl border border-white/15 bg-black/40 px-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-white/15 focus:outline-none focus:ring-2 focus:ring-white/30"
               />
             </div>
@@ -152,13 +152,13 @@ export default function DashboardLayout({
                 type="button"
                 className="rounded-lg border border-white/20 bg-black/35 px-3 py-2 text-xs text-slate-200 transition hover:bg-white/10"
               >
-                New Task
+                {t("New Task")}
               </button>
               <button
                 type="button"
                 className="rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-black transition hover:bg-white/10"
               >
-                Quick Add
+                {t("Quick Add")}
               </button>
 
               <div className="relative">
@@ -166,7 +166,7 @@ export default function DashboardLayout({
                   type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/45 text-white/90 transition hover:bg-white/10"
-                  aria-label="Open user menu"
+                  aria-label={t("Open user menu")}
                 >
                   U
                 </button>
@@ -176,19 +176,19 @@ export default function DashboardLayout({
                       type="button"
                       className="block w-full rounded-lg px-3 py-2 text-left text-slate-200 transition hover:bg-white/10"
                     >
-                      Profile
+                      {t("Profile")}
                     </button>
                     <button
                       type="button"
                       className="block w-full rounded-lg px-3 py-2 text-left text-slate-200 transition hover:bg-white/10"
                     >
-                      Preferences
+                      {t("Preferences")}
                     </button>
                     <button
                       type="button"
                       className="block w-full rounded-lg px-3 py-2 text-left text-rose-300 transition hover:bg-rose-500/10"
                     >
-                      Logout
+                      {t("Logout")}
                     </button>
                   </div>
                 )}
