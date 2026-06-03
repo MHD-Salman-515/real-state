@@ -118,6 +118,81 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     save(identity.userId, items);
   }, [identity.userId, items]);
 
+  // Real-time SSE connection to /notifications/stream
+  useEffect(() => {
+    const token = (auth?.token as string | undefined) || localStorage.getItem("access_token") || "";
+    if (!token) return;
+
+    const API_BASE =
+      import.meta.env.VITE_API_BASE ||
+      import.meta.env.VITE_API_URL ||
+      "https://real-state-backend-yc23.onrender.com";
+
+    const controller = new AbortController();
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const connectSSE = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/notifications/stream`, {
+          headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
+        });
+        if (!res.ok || !res.body) return;
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let eventType = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (line.startsWith("event:")) {
+              eventType = line.slice(6).trim();
+            } else if (line.startsWith("data:") && eventType === "notification") {
+              try {
+                const raw = JSON.parse(line.slice(5).trim()) as {
+                  type?: string;
+                  title?: string;
+                  message?: string;
+                };
+                const type: NotificationType = (["system", "properties", "search"] as string[]).includes(
+                  String(raw.type || "")
+                )
+                  ? (raw.type as NotificationType)
+                  : "system";
+                const title = String(raw.title || "Notification");
+                const message = String(raw.message || "");
+                if (message) {
+                  setItems(add(identity.userId, { type, title, message }));
+                }
+              } catch {
+                // malformed SSE data — ignore
+              }
+              eventType = "";
+            } else if (line === "") {
+              eventType = "";
+            }
+          }
+        }
+      } catch (err) {
+        if ((err as { name?: string })?.name === "AbortError") return;
+        reconnectTimer = setTimeout(connectSSE, 3000);
+      }
+    };
+
+    connectSSE();
+    return () => {
+      controller.abort();
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+    };
+  }, [identity.userId, auth?.token]);
+
   useEffect(() => {
     const onGlobalNotify = (event: Event) => {
       const custom = event as CustomEvent<NotifyPayload>;

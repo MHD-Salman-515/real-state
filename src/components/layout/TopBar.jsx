@@ -63,6 +63,9 @@ function profileLinksByRole(role) {
     ...base,
     { label: "Favorites", to: "/client/favorites" },
     { label: "My Bookings", to: "/client/appointments" },
+    { label: "مساعد البحث", to: "/client/chat" },
+    { label: "سجل البحث", to: "/client/history" },
+    { label: "بحث محفوظ", to: "/client/saved-searches" },
   ];
 }
 
@@ -140,6 +143,11 @@ export default function TopBar() {
           <Link to="/search" className="text-sm text-white/70 transition hover:text-white">
             Search
           </Link>
+          {roleKey === "client" && (
+            <Link to="/client/chat" className="text-sm text-white/70 transition hover:text-white">
+              مساعد البحث
+            </Link>
+          )}
           <Link to={dashboardPath} className="text-sm text-white/70 transition hover:text-white">
             Dashboard
           </Link>

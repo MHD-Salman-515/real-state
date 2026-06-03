@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { to: "/accountant/cost-allocation", label: "Cost Allocation" },
   { to: "/accountant/income", label: "Income" },
   { to: "/accountant/aging", label: "A/R Aging" },
+  { to: "/accountant/expenses", label: "Expenses" },
 ];
 
 const PAGE_TITLES = {
@@ -23,6 +24,7 @@ const PAGE_TITLES = {
   "/accountant/cost-allocation": "Cost Allocation",
   "/accountant/income": "Income",
   "/accountant/aging": "A/R Aging",
+  "/accountant/expenses": "Expenses",
 };
 
 function Item({ to, label, onClick }) {

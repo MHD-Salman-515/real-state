@@ -53,6 +53,7 @@ import OwnerAppointments from "./pages/owner/Appointments.jsx";
 import OwnerChatPage from "./pages/owner/OwnerChatPage";
 import OwnerMarketWatchPage from "./pages/dashboard/owner/OwnerMarketWatchPage";
 import OwnerDecisionSimulatorPage from "./pages/dashboard/owner/OwnerDecisionSimulatorPage";
+import OwnerMapPickerPage from "./pages/owner/MapPickerPage";
 
 // ===== Worker pages =====
 import WorkerDashboard from "./pages/worker/WorkerDashboard.jsx";
@@ -78,6 +79,11 @@ const AgentLayout = lazy(() => import("./layouts/AgentLayout.jsx"));
 const AgentAppointments = lazy(() => import("./pages/agent/Appointments.jsx"));
 const AgentLinkOps = lazy(() => import("./pages/agent/LinkOps.jsx"));
 
+// ===== Buyer/Client AI pages =====
+import BuyerChatPage from "./pages/client/BuyerChatPage.jsx";
+import BuyerHistory from "./pages/client/BuyerHistory.jsx";
+import SavedSearches from "./pages/client/SavedSearches.jsx";
+
 // ===== Accountant (lazy) =====
 const AccountantLayout = lazy(() => import("./layouts/AccountantLayout.jsx"));
 const SalesInvoices = lazy(() => import("./pages/accountant/SalesInvoices.jsx"));
@@ -87,6 +93,7 @@ const SupplierInvoices = lazy(() => import("./pages/accountant/SupplierInvoices.
 const CostAllocation = lazy(() => import("./pages/accountant/CostAllocation.jsx"));
 const AccountantIncome = lazy(() => import("./pages/accountant/Income.jsx"));
 const AccountantAging = lazy(() => import("./pages/accountant/ARAging.jsx"));
+const AccountantExpenses = lazy(() => import("./pages/accountant/Expenses.jsx"));
 
 // ===== Supplier (non-lazy) =====
 import SupplierLayout from "./layouts/SupplierLayout.jsx";
@@ -147,6 +154,12 @@ export default function App() {
                       <Route path="/client/favorites" element={<Favorites />} />
                       <Route path="/client/profile" element={<Profile />} />
 
+                      {/* Buyer AI assistant */}
+                      <Route path="/client/chat" element={<BuyerChatPage />} />
+                      <Route path="/client/chat/:sessionId" element={<BuyerChatPage />} />
+                      <Route path="/client/history" element={<BuyerHistory />} />
+                      <Route path="/client/saved-searches" element={<SavedSearches />} />
+
                       {/* نظام التذاكر للعميل */}
                       <Route path="/property/:id/create-ticket" element={<CreateTicket />} />
                       <Route path="/client/tickets" element={<Tickets />} />
@@ -175,6 +188,7 @@ export default function App() {
                       <Route path="decision-simulator" element={<OwnerDecisionSimulatorPage />} />
                       <Route path="chat" element={<OwnerChatPage />} />
                       <Route path="chat/:sessionId" element={<OwnerChatPage />} />
+                      <Route path="map-picker" element={<OwnerMapPickerPage />} />
                     </Route>
                   </Route>
 
@@ -223,6 +237,7 @@ export default function App() {
                       <Route path="cost-allocation" element={<CostAllocation />} />
                       <Route path="income" element={<AccountantIncome />} />
                       <Route path="aging" element={<AccountantAging />} />
+                      <Route path="expenses" element={<AccountantExpenses />} />
                     </Route>
                   </Route>
 
