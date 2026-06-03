@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useToast } from "../../components/ToastProvider.jsx";
 import { AuthComponent } from "../../components/ui/sign-up";
@@ -12,6 +13,7 @@ const LAST_EMAIL = "last_email_v1";
 export default function Login() {
   const { login } = useAuth();
   const { notify } = useNotifications();
+  const { t } = useTranslation();
   const toast = useToast();
   const nav = useNavigate();
   const loc = useLocation();
@@ -34,7 +36,7 @@ export default function Login() {
     const rawPassword = String(password || "");
 
     if (!emailTrimmed || !rawPassword) {
-      setSubmitError("Email and password are required.");
+      setSubmitError(t('Email and password are required.'));
       return;
     }
 
@@ -56,27 +58,27 @@ export default function Login() {
       if (remember) localStorage.setItem(LAST_EMAIL, email);
       else localStorage.removeItem(LAST_EMAIL);
 
-      toast.success(`Welcome ${u.full_name}!`);
+      toast.success(`${t('Welcome back')}, ${u.full_name}!`);
 
       const role = normalizeRoleLabel(u.role || "Guest");
       const displayName = String(u.full_name || "").trim();
 
       notify({
         type: "system",
-        title: displayName ? `Welcome back, ${displayName}` : "Welcome back",
-        message: `Signed in as ${role}`,
+        title: displayName ? `${t('Welcome back')}, ${displayName}` : t('Welcome back'),
+        message: `${t('Signed in as')} ${role}`,
       });
       notify({
         type: "system",
-        title: "Session secured",
-        message: "You are signed in successfully.",
+        title: t('Session secured'),
+        message: t('You are signed in successfully.'),
       });
 
       const params = new URLSearchParams(loc.search);
       const next = params.get("next");
       nav(next || getRoleLandingPath(u), { replace: true });
     } catch (err) {
-      const msg = err?.message || "Unable to sign in. Please check your credentials.";
+      const msg = err?.message || t('Unable to sign in. Please check your credentials.');
       setSubmitError(msg);
       toast.error(msg);
     } finally {

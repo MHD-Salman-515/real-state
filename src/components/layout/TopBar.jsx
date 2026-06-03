@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Building2, CircleUserRound, LogOut } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 import NotificationsBell from "@/components/notifications/NotificationsBell";
 import { useAuth } from "@/context/AuthContext.jsx";
-import { getUserIdentity, normalizeRoleLabel } from "@/lib/notifications/storage";
+import { getUserIdentity } from "@/lib/notifications/storage";
+import LanguageToggle from "@/i18n/LanguageToggle";
 
 const DASHBOARD_BY_ROLE = {
   admin: "/admin",
@@ -25,52 +27,53 @@ function normalizeRoleKey(role) {
   return value;
 }
 
-function profileLinksByRole(role) {
+function profileLinksByRole(role, t) {
   const normalized = normalizeRoleKey(role);
 
-  const base = [{ label: "Settings", to: "/client/profile" }];
+  const base = [{ label: t('Settings'), to: "/client/profile" }];
 
   if (normalized === "owner") {
     return [
       ...base,
-      { label: "My Properties", to: "/owner/properties" },
-      { label: "My Bookings", to: "/owner/appointments" },
-      { label: "Owner Dashboard", to: "/owner" },
+      { label: t('My Properties'), to: "/owner/properties" },
+      { label: t('My Bookings'), to: "/owner/appointments" },
+      { label: t('Owner Dashboard'), to: "/owner" },
     ];
   }
 
   if (normalized === "admin") {
-    return [...base, { label: "Admin Dashboard", to: "/admin" }];
+    return [...base, { label: t('Admin Dashboard'), to: "/admin" }];
   }
 
   if (normalized === "accountant") {
-    return [...base, { label: "Accountant Dashboard", to: "/accountant" }];
+    return [...base, { label: t('Accountant Dashboard'), to: "/accountant" }];
   }
 
   if (normalized === "supplier") {
-    return [...base, { label: "Supplier Dashboard", to: "/supplier" }];
+    return [...base, { label: t('Supplier Dashboard'), to: "/supplier" }];
   }
 
   if (normalized === "worker") {
-    return [...base, { label: "Worker Dashboard", to: "/worker" }];
+    return [...base, { label: t('Worker Dashboard'), to: "/worker" }];
   }
 
   if (normalized === "agent") {
-    return [...base, { label: "Agent Dashboard", to: "/agent" }];
+    return [...base, { label: t('Agent Dashboard'), to: "/agent" }];
   }
 
   return [
     ...base,
-    { label: "Favorites", to: "/client/favorites" },
-    { label: "My Bookings", to: "/client/appointments" },
-    { label: "مساعد البحث", to: "/client/chat" },
-    { label: "سجل البحث", to: "/client/history" },
-    { label: "بحث محفوظ", to: "/client/saved-searches" },
+    { label: t('Favorites'), to: "/client/favorites" },
+    { label: t('My Bookings'), to: "/client/appointments" },
+    { label: t('AI Search'), to: "/client/chat" },
+    { label: t('Search History'), to: "/client/history" },
+    { label: t('Saved Searches'), to: "/client/saved-searches" },
   ];
 }
 
 export default function TopBar() {
   const { user, token, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -101,7 +104,7 @@ export default function TopBar() {
 
   const identity = getUserIdentity(user, token);
   const roleKey = normalizeRoleKey(user?.role || identity.role);
-  const role = normalizeRoleLabel(roleKey || "Guest");
+  const role = t(roleKey || 'client');
   const isAuthenticated = Boolean(user || token);
   const dashboardPath = isAuthenticated ? DASHBOARD_BY_ROLE[roleKey] || "/" : "/auth/login";
   const displayName =
@@ -109,7 +112,7 @@ export default function TopBar() {
     user?.full_name ||
     user?.name ||
     (user?.email ? String(user.email).split("@")[0] : identity.name || "Guest");
-  const profileLinks = useMemo(() => profileLinksByRole(roleKey), [roleKey]);
+  const profileLinks = useMemo(() => profileLinksByRole(roleKey, t), [roleKey, t]);
 
   const onLogout = async () => {
     try {
@@ -138,23 +141,24 @@ export default function TopBar() {
 
         <nav className="hidden items-center gap-6 md:flex">
           <Link to="/properties" className="text-sm text-white/70 transition hover:text-white">
-            Properties
+            {t('Properties')}
           </Link>
           <Link to="/search" className="text-sm text-white/70 transition hover:text-white">
-            Search
+            {t('Search')}
           </Link>
           {roleKey === "client" && (
             <Link to="/client/chat" className="text-sm text-white/70 transition hover:text-white">
-              مساعد البحث
+              {t('AI Search')}
             </Link>
           )}
           <Link to={dashboardPath} className="text-sm text-white/70 transition hover:text-white">
-            Dashboard
+            {t('Dashboard')}
           </Link>
         </nav>
 
         <div className="flex items-center gap-2">
           <NotificationsBell />
+          <LanguageToggle />
 
           {isAuthenticated ? (
             <div ref={menuRef} className="relative">
@@ -192,7 +196,7 @@ export default function TopBar() {
                       className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-white/75 transition hover:bg-white/5 hover:text-white"
                     >
                       <LogOut className="h-4 w-4" />
-                      Logout
+                      {t('Logout')}
                     </button>
                   </div>
                 </div>
@@ -204,13 +208,13 @@ export default function TopBar() {
                 to="/auth/register"
                 className="hidden rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-sm text-white/70 transition hover:bg-white/5 hover:text-white sm:inline-flex"
               >
-                Register
+                {t('Register')}
               </Link>
               <Link
                 to="/auth/login"
                 className="inline-flex rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-sm text-white/80 transition hover:bg-white/5 hover:text-white"
               >
-                Log in
+                {t('Log in')}
               </Link>
             </div>
           )}

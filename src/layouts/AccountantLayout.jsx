@@ -1,22 +1,23 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useAuth } from "../context/AuthContext.jsx";
 import { validateHref } from "../utils/notificationRoutes.js";
 import Logo from "../components/brand/Logo.jsx";
 import { getRoleLandingPath } from "../utils/roleLanding.js";
 
-const NAV_ITEMS = [
-  { to: "/accountant/sales-invoices", label: "Sales Invoices" },
-  { to: "/accountant/rent-invoices", label: "Rent Invoices" },
-  { to: "/accountant/record-payments", label: "Record Payments" },
-  { to: "/accountant/supplier-invoices", label: "Supplier Invoices" },
-  { to: "/accountant/cost-allocation", label: "Cost Allocation" },
-  { to: "/accountant/income", label: "Income" },
-  { to: "/accountant/aging", label: "A/R Aging" },
-  { to: "/accountant/expenses", label: "Expenses" },
+const NAV_DEFS = [
+  { to: "/accountant/sales-invoices", key: "Sales Invoices" },
+  { to: "/accountant/rent-invoices", key: "Rent Invoices" },
+  { to: "/accountant/record-payments", key: "Record Payments" },
+  { to: "/accountant/supplier-invoices", key: "Supplier Invoices" },
+  { to: "/accountant/cost-allocation", key: "Cost Allocation" },
+  { to: "/accountant/income", key: "Income" },
+  { to: "/accountant/aging", key: "A/R Aging" },
+  { to: "/accountant/expenses", key: "Expenses" },
 ];
 
-const PAGE_TITLES = {
+const PAGE_TITLE_KEYS = {
   "/accountant/sales-invoices": "Sales Invoices",
   "/accountant/rent-invoices": "Rent Invoices",
   "/accountant/record-payments": "Record Payments",
@@ -47,6 +48,7 @@ function Item({ to, label, onClick }) {
 
 export default function AccountantLayout() {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -57,6 +59,11 @@ export default function AccountantLayout() {
 
   const notifRef = useRef(null);
   const brandMenuRef = useRef(null);
+
+  const NAV_ITEMS = useMemo(
+    () => NAV_DEFS.map(d => ({ to: d.to, label: t(d.key) })),
+    [t]
+  );
 
   const displayName =
     user?.fullName ||
@@ -72,7 +79,7 @@ export default function AccountantLayout() {
   }, [user?.id, user?.email]);
 
   const unreadCount = notifications.length;
-  const pageTitle = PAGE_TITLES[location.pathname] || "Accounting";
+  const pageTitle = t(PAGE_TITLE_KEYS[location.pathname] || "Accounting");
 
   useEffect(() => {
     if (!userStorageKey) {
@@ -104,7 +111,7 @@ export default function AccountantLayout() {
       const ts = Number(d.time || d.createdAt || Date.now());
       const item = {
         id: `acc-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        message: d.message || d.text || "New accounting notification",
+        message: d.message || d.text || t('New accounting notification'),
         type: d.type || "info",
         title: d.title || "",
         createdAt: ts,
@@ -122,7 +129,7 @@ export default function AccountantLayout() {
       window.removeEventListener("accountant:addNotif", onAdd);
       window.removeEventListener("notify:add", onAdd);
     };
-  }, [userStorageKey]);
+  }, [userStorageKey, t]);
 
   useEffect(() => {
     function onMouseDown(e) {
@@ -186,11 +193,11 @@ export default function AccountantLayout() {
     <aside className="flex h-full flex-col border-e border-white/10 bg-[#050912]/90 backdrop-blur-xl">
       <div className="border-b border-white/10 px-4 py-5">
         <p className="text-[11px] uppercase tracking-[0.16em] text-white/90">
-          CREOS Accountant
+          {t('CREOS Accountant')}
         </p>
-        <h2 className="mt-1 text-lg font-semibold text-white">Finance Console</h2>
+        <h2 className="mt-1 text-lg font-semibold text-white">{t('Finance Console')}</h2>
         <div className="mt-2 text-[11px] text-slate-300">
-          User: <strong className="text-white/90">{displayName}</strong>
+          {t('User:')} <strong className="text-white/90">{displayName}</strong>
         </div>
       </div>
 
@@ -206,7 +213,7 @@ export default function AccountantLayout() {
           onClick={onNav}
           className="block rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
         >
-          Back to Site
+          {t('Back to Site')}
         </Link>
       </nav>
     </aside>
@@ -267,7 +274,7 @@ export default function AccountantLayout() {
                       onClick={handleDropdownLogout}
                       className="mt-1 block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
                     >
-                      Log out
+                      {t('Logout')}
                     </button>
                   </div>
                 ) : null}
@@ -312,27 +319,27 @@ export default function AccountantLayout() {
                 {notifOpen ? (
                   <div className="absolute right-0 z-30 mt-2 w-[340px] rounded-2xl border border-white/10 bg-[#050912]/95 backdrop-blur-xl">
                     <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-                      <h3 className="text-sm font-semibold text-white">Notifications</h3>
+                      <h3 className="text-sm font-semibold text-white">{t('Notifications')}</h3>
                       <div className="flex items-center gap-2">
                         {notifications.length > 0 ? (
                           <button
                             onClick={clearNotifications}
                             className="text-xs text-rose-300 transition hover:text-rose-200"
                           >
-                            مسح الإشعارات
+                            {t('Clear')}
                           </button>
                         ) : null}
                         <button
                           onClick={() => setNotifOpen(false)}
                           className="text-xs text-slate-400 transition hover:text-white/90"
                         >
-                          Close
+                          {t('Close')}
                         </button>
                       </div>
                     </div>
                     <div className="max-h-80 overflow-auto">
                       {notifications.length === 0 ? (
-                        <div className="p-4 text-center text-sm text-slate-400">لا توجد إشعارات</div>
+                        <div className="p-4 text-center text-sm text-slate-400">{t('No notifications')}</div>
                       ) : (
                         notifications.map((n) => {
                           const target = resolveHref(n);
@@ -358,7 +365,7 @@ export default function AccountantLayout() {
                                     }}
                                     className="mt-1 text-xs font-medium text-white/90 transition hover:text-white/90"
                                   >
-                                    {n.hrefLabel || "Open"}
+                                    {n.hrefLabel || t('Open')}
                                   </button>
                                 ) : null}
                                 {n.createdAt ? (
@@ -383,7 +390,7 @@ export default function AccountantLayout() {
                 className="rounded-xl border border-white/20 px-3 py-1.5 text-xs text-slate-100 transition hover:bg-white/10 md:text-sm"
                 onClick={logout}
               >
-                Logout
+                {t('Logout')}
               </button>
             </div>
           </div>
