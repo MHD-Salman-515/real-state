@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api from "../../api/axios";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -7,6 +8,7 @@ import { useToast } from "../../components/ToastProvider";
 
 export default function CostAllocation() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [rows, setRows] = useState([]);
 
   const load = async () => {
@@ -21,7 +23,7 @@ export default function CostAllocation() {
 
       setRows(serviceInvoices);
     } catch (err) {
-      toast.error("Failed to load cost allocation data");
+      toast.error(t("Failed to load cost allocation data"));
     }
   };
 
@@ -31,17 +33,17 @@ export default function CostAllocation() {
 
   const columns = [
     { key: "id", header: "#" },
-    { key: "property", header: "Property", render: (i) => i.property?.title || "-" },
-    { key: "client", header: "Client", render: (i) => i.client?.fullName || "-" },
-    { key: "expenses", header: "Expense Count", render: (i) => (i.expenses ?? []).length },
+    { key: "property", header: t("Property"), render: (i) => i.property?.title || "-" },
+    { key: "client", header: t("Client"), render: (i) => i.client?.fullName || "-" },
+    { key: "expenses", header: t("Expense Count"), render: (i) => (i.expenses ?? []).length },
     {
       key: "total",
-      header: "Total Expenses",
+      header: t("Total Expenses"),
       render: (i) => (i.expenses ?? []).reduce((sum, ex) => sum + ex.amount, 0).toFixed(2) + " $",
     },
     {
       key: "status",
-      header: "Status",
+      header: t("Status"),
       render: (i) => (
         <span
           className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${
@@ -61,7 +63,7 @@ export default function CostAllocation() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Cost Allocation"
+        title={t("Cost Allocation")}
         subtitle="Service invoices automatically linked to maintenance expenses."
         actions={
           <button
@@ -78,7 +80,7 @@ export default function CostAllocation() {
           <h3 className="text-sm font-semibold text-white md:text-base">Service Invoice Allocation</h3>
           <p className="mt-1 text-xs text-slate-300">Summary view of expense distribution per service invoice.</p>
         </div>
-        <Table columns={columns} rows={rows} emptyText="No service invoices linked to expenses" />
+        <Table columns={columns} rows={rows} emptyText={t("No service invoices linked to expenses")} />
       </Card>
 
       <div className="space-y-4">

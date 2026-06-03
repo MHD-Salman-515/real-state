@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import api from "../../api/axios";
@@ -7,6 +8,7 @@ import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function AdminMaintenance() {
   const toast = useToast();
+  const { t: tr } = useTranslation();
 
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,7 @@ export default function AdminMaintenance() {
       setTickets(res.data);
     } catch (err) {
       console.error("Load tickets error:", err.response?.data || err.message);
-      toast.error("Failed to load tickets");
+      toast.error(tr("Failed to load tickets"));
     } finally {
       setLoading(false);
     }
@@ -49,13 +51,13 @@ export default function AdminMaintenance() {
   const updateStatus = async (id, status) => {
     try {
       await api.put(`/tickets/${id}/status/${status}`);
-      notifyCrudSuccess("Ticket status updated", "Operation successful", {
+      notifyCrudSuccess(tr("Ticket status updated"), tr("Operation successful"), {
         href: "/admin/maintenance",
       });
       await load();
     } catch (err) {
       console.error("Update status error:", err.response?.data || err.message);
-      notifyCrudError("Failed to update ticket status", "Operation failed", {
+      notifyCrudError(tr("Failed to update ticket status"), tr("Operation failed"), {
         href: "/admin/maintenance",
       });
     }
@@ -66,13 +68,13 @@ export default function AdminMaintenance() {
 
     try {
       await api.delete(`/tickets/${id}`);
-      notifyCrudSuccess("Ticket deleted", "Operation successful", {
+      notifyCrudSuccess(tr("Ticket deleted"), tr("Operation successful"), {
         href: "/admin/maintenance",
       });
       await load();
     } catch (err) {
       console.error("Delete ticket error:", err.response?.data || err.message);
-      notifyCrudError("Failed to delete ticket", "Operation failed", {
+      notifyCrudError(tr("Failed to delete ticket"), tr("Operation failed"), {
         href: "/admin/maintenance",
       });
     }
@@ -87,7 +89,7 @@ export default function AdminMaintenance() {
       setShowWorkerModal(true);
     } catch (err) {
       console.error("Load workers error:", err.response?.data || err.message);
-      toast.error("Failed to load workers");
+      toast.error(tr("Failed to load workers"));
     }
   };
 
@@ -100,18 +102,18 @@ export default function AdminMaintenance() {
       setShowSupplierModal(true);
     } catch (err) {
       console.error("Load suppliers error:", err.response?.data || err.message);
-      toast.error("Failed to load suppliers");
+      toast.error(tr("Failed to load suppliers"));
     }
   };
 
   const assignWorker = async () => {
     if (!currentTicket || !selectedWorker) {
-      return toast.error("Select a worker first");
+      return toast.error(tr("Select a worker first"));
     }
 
     try {
       await api.put(`/tickets/${currentTicket.id}/assign-worker/${selectedWorker}`);
-      notifyCrudSuccess("Worker assigned to ticket", "Operation successful", {
+      notifyCrudSuccess(tr("Worker assigned to ticket"), tr("Operation successful"), {
         href: "/admin/maintenance",
       });
       setShowWorkerModal(false);
@@ -120,7 +122,7 @@ export default function AdminMaintenance() {
       await load();
     } catch (err) {
       console.error("Assign worker error:", err.response?.data || err.message);
-      notifyCrudError("Failed to assign worker", "Operation failed", {
+      notifyCrudError(tr("Failed to assign worker"), tr("Operation failed"), {
         href: "/admin/maintenance",
       });
     }
@@ -128,12 +130,12 @@ export default function AdminMaintenance() {
 
   const assignSupplier = async () => {
     if (!currentTicket || !selectedSupplier) {
-      return toast.error("Select a supplier first");
+      return toast.error(tr("Select a supplier first"));
     }
 
     try {
       await api.put(`/tickets/${currentTicket.id}/assign-supplier/${selectedSupplier}`);
-      notifyCrudSuccess("Supplier assigned to ticket", "Operation successful", {
+      notifyCrudSuccess(tr("Supplier assigned to ticket"), tr("Operation successful"), {
         href: "/admin/maintenance",
       });
       setShowSupplierModal(false);
@@ -142,7 +144,7 @@ export default function AdminMaintenance() {
       await load();
     } catch (err) {
       console.error("Assign supplier error:", err.response?.data || err.message);
-      notifyCrudError("Failed to assign supplier", "Operation failed", {
+      notifyCrudError(tr("Failed to assign supplier"), tr("Operation failed"), {
         href: "/admin/maintenance",
       });
     }
@@ -151,8 +153,8 @@ export default function AdminMaintenance() {
   return (
     <section className="space-y-6">
       <PageHeader
-        title="Maintenance Tickets"
-        subtitle="Manage ticket status and assignment workflow."
+        title={tr("Maintenance Tickets")}
+        subtitle={tr("Manage ticket status and assignment workflow.")}
       />
 
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">

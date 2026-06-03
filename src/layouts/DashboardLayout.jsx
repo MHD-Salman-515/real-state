@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import Logo from "../components/brand/Logo.jsx";
 
 const DEFAULT_ITEMS = [
@@ -16,6 +17,7 @@ export default function DashboardLayout({
   subtitle = "Centralized Real Estate Operations",
   items = DEFAULT_ITEMS,
 }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -72,7 +74,7 @@ export default function DashboardLayout({
               className={sideLinkClass}
             >
               <span className="inline-flex h-2 w-2 rounded-full bg-white/10" />
-              {!sidebarCollapsed && <span>{item.label}</span>}
+              {!sidebarCollapsed && <span>{t(item.label)}</span>}
             </NavLink>
           ))}
         </nav>

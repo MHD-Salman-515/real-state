@@ -1,5 +1,6 @@
 // src/pages/admin/Finance.jsx
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import api from "../../api/axios";
@@ -14,6 +15,7 @@ function KpiSkeleton() {
 }
 
 export default function AdminFinance() {
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,7 +28,7 @@ export default function AdminFinance() {
       setInvoices(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
-      setError("Failed to load finance invoices");
+      setError(t("Failed to load finance invoices"));
     } finally {
       setLoading(false);
     }
@@ -89,11 +91,11 @@ export default function AdminFinance() {
       type,
       label:
         type === "RENT"
-          ? "Rent"
+          ? t("Rent")
           : type === "SALE"
-            ? "Sale"
+            ? t("Sale")
             : type === "SERVICE"
-              ? "Service"
+              ? t("Service")
               : type,
       count: info.count,
       amount: info.amount,

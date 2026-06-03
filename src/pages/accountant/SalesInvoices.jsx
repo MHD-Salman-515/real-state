@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api from "../../api/axios";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -16,6 +17,7 @@ const initialForm = {
 
 export default function SalesInvoices() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [rows, setRows] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(initialForm);
@@ -34,7 +36,7 @@ export default function SalesInvoices() {
       const p = await api.get("/properties");
       setProperties(p.data);
     } catch (err) {
-      toast.error("Failed to load sales invoices");
+      toast.error(t("Failed to load sales invoices"));
     }
   };
 
@@ -46,7 +48,7 @@ export default function SalesInvoices() {
     e.preventDefault();
 
     if (!form.clientId || !form.propertyId || !form.totalAmount || !form.dueDate) {
-      return toast.error("All required fields must be filled");
+      return toast.error(t("All required fields must be filled"));
     }
 
     api
@@ -59,7 +61,7 @@ export default function SalesInvoices() {
         dueDate: form.dueDate,
       })
       .then(() => {
-        notifyCrudSuccess("Sales invoice created", "Operation successful", {
+        notifyCrudSuccess(t("Sales invoice created"), t("Operation successful"), {
           href: "/accountant/sales-invoices",
         });
         setShowForm(false);
@@ -67,7 +69,7 @@ export default function SalesInvoices() {
         load();
       })
       .catch(() =>
-        notifyCrudError("Failed to create sales invoice", "Operation failed", {
+        notifyCrudError(t("Failed to create sales invoice"), t("Operation failed"), {
           href: "/accountant/sales-invoices",
         })
       );
@@ -78,13 +80,13 @@ export default function SalesInvoices() {
     api
       .delete(`/invoices/${id}`)
       .then(() => {
-        notifyCrudSuccess("Invoice deleted", "Operation successful", {
+        notifyCrudSuccess(t("Invoice deleted"), t("Operation successful"), {
           href: "/accountant/sales-invoices",
         });
         load();
       })
       .catch(() =>
-        notifyCrudError("Failed to delete invoice", "Operation failed", {
+        notifyCrudError(t("Failed to delete invoice"), t("Operation failed"), {
           href: "/accountant/sales-invoices",
         })
       );
@@ -92,13 +94,13 @@ export default function SalesInvoices() {
 
   const columns = [
     { key: "id", header: "#" },
-    { key: "client", header: "Client", render: (i) => i.client?.fullName || "-" },
-    { key: "property", header: "Property", render: (i) => i.property?.title || "-" },
-    { key: "amount", header: "Total", render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
-    { key: "tax", header: "Tax", render: (i) => `${Number(i.tax || 0).toFixed(2)} $` },
+    { key: "client", header: t("Client"), render: (i) => i.client?.fullName || "-" },
+    { key: "property", header: t("Property"), render: (i) => i.property?.title || "-" },
+    { key: "amount", header: t("Total"), render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
+    { key: "tax", header: t("Tax"), render: (i) => `${Number(i.tax || 0).toFixed(2)} $` },
     {
       key: "status",
-      header: "Status",
+      header: t("Status"),
       render: (i) => (
         <span
           className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${
@@ -115,12 +117,12 @@ export default function SalesInvoices() {
     },
     {
       key: "dueDate",
-      header: "Due Date",
+      header: t("Due Date"),
       render: (i) => (i.dueDate ? new Date(i.dueDate).toLocaleDateString() : "-"),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("Actions"),
       render: (i) => (
         <button
           className="inline-flex h-8 items-center justify-center rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 text-xs text-rose-200 transition hover:bg-rose-500/20"
@@ -139,7 +141,7 @@ export default function SalesInvoices() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Sales Invoices"
+        title={t("Sales Invoices")}
         subtitle="Manage property sales invoices and payment status."
         actions={
           <button
@@ -156,7 +158,7 @@ export default function SalesInvoices() {
           <h3 className="text-sm font-semibold text-white md:text-base">Sales Invoice Records</h3>
           <p className="mt-1 text-xs text-slate-300">Create, review, and remove sales invoices.</p>
         </div>
-        <Table columns={columns} rows={rows} emptyText="No sales invoices found" />
+        <Table columns={columns} rows={rows} emptyText={t("No sales invoices found")} />
       </Card>
 
       {showForm ? (

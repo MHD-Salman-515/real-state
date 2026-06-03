@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api from "../../api/axios";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -7,6 +8,7 @@ import { useToast } from "../../components/ToastProvider";
 
 export default function SupplierInvoices() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +20,7 @@ export default function SupplierInvoices() {
         setData(res.data);
       } catch (err) {
         console.error(err);
-        toast.error("Failed to load supplier invoices");
+        toast.error(t("Failed to load supplier invoices"));
       } finally {
         setLoading(false);
       }
@@ -28,20 +30,20 @@ export default function SupplierInvoices() {
   }, []);
 
   const columns = [
-    { key: "id", header: "Expense ID" },
-    { key: "invoiceId", header: "Invoice", render: (r) => `#${r.invoice?.id ?? "-"}` },
-    { key: "type", header: "Type", render: (r) => r.invoice?.type || "-" },
-    { key: "amount", header: "Amount", render: (r) => `${r.amount ?? 0} $` },
-    { key: "invoiceStatus", header: "Invoice Status", render: (r) => r.invoice?.status || "-" },
-    { key: "supplier", header: "Supplier", render: (r) => r.contractor?.fullName || "-" },
-    { key: "ticket", header: "Ticket", render: (r) => r.ticket?.description || "-" },
-    { key: "property", header: "Property", render: (r) => r.ticket?.property?.title || "-" },
+    { key: "id", header: t("Expense ID") },
+    { key: "invoiceId", header: t("Invoice"), render: (r) => `#${r.invoice?.id ?? "-"}` },
+    { key: "type", header: t("Type"), render: (r) => r.invoice?.type || "-" },
+    { key: "amount", header: t("Amount"), render: (r) => `${r.amount ?? 0} $` },
+    { key: "invoiceStatus", header: t("Invoice Status"), render: (r) => r.invoice?.status || "-" },
+    { key: "supplier", header: t("Supplier"), render: (r) => r.contractor?.fullName || "-" },
+    { key: "ticket", header: t("Ticket"), render: (r) => r.ticket?.description || "-" },
+    { key: "property", header: t("Property"), render: (r) => r.ticket?.property?.title || "-" },
   ];
 
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Supplier Invoices"
+        title={t("Supplier Invoices")}
         subtitle="Track supplier-related expenses linked to tickets and invoices."
       />
 
@@ -59,7 +61,7 @@ export default function SupplierInvoices() {
             <h3 className="text-sm font-semibold text-white md:text-base">Supplier Expense Records</h3>
             <p className="mt-1 text-xs text-slate-300">All supplier expenses and linked ticket context.</p>
           </div>
-          <Table columns={columns} rows={data} emptyText="No supplier invoices available" />
+          <Table columns={columns} rows={data} emptyText={t("No supplier invoices available")} />
         </Card>
       )}
     </section>

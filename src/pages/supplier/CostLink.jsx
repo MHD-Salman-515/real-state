@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import { useToast } from "../../components/ToastProvider.jsx";
@@ -7,6 +8,7 @@ import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function CostLink() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [tickets, setTickets] = useState([]);
   const [loadingTickets, setLoadingTickets] = useState(true);
 
@@ -36,7 +38,7 @@ export default function CostLink() {
       setTickets(valid);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load your related tickets");
+      toast.error(t("Failed to load your related tickets"));
     } finally {
       setLoadingTickets(false);
     }
@@ -59,11 +61,11 @@ export default function CostLink() {
     setSaveError("");
 
     if (!form.ticketId) {
-      toast.error("Please choose a ticket");
+      toast.error(t("Please choose a ticket"));
       return;
     }
     if (!form.amount || isNaN(form.amount)) {
-      toast.error("Please enter a valid amount");
+      toast.error(t("Please enter a valid amount"));
       return;
     }
 
@@ -76,7 +78,7 @@ export default function CostLink() {
     try {
       setSubmitting(true);
       await api.post("/expenses", payload);
-      notifyCrudSuccess("Expense linked to ticket successfully", "Operation successful", {
+      notifyCrudSuccess(t("Expense linked to ticket successfully"), t("Operation successful"), {
         href: "/supplier/cost-link",
       });
 
@@ -91,10 +93,10 @@ export default function CostLink() {
       const message =
         err?.response?.data?.message ||
         err?.message ||
-        "Failed to save expense";
+        t("Failed to save expense");
       console.error("[supplier/cost-link] save failed", { status, message, err });
       setSaveError(`Save failed: ${message}`);
-      notifyCrudError("Failed to save expense", "Operation failed", {
+      notifyCrudError(t("Failed to save expense"), t("Operation failed"), {
         href: "/supplier/cost-link",
       });
     } finally {
@@ -106,7 +108,7 @@ export default function CostLink() {
     () =>
       tickets.map((t) => ({
         id: t.id,
-        label: `#${t.id} - ${t.property?.title || "Property"} - ${t.category}`,
+        label: `#${t.id} - ${t.property?.title || t("Property")} - ${t.category}`,
       })),
     [tickets]
   );
@@ -114,7 +116,7 @@ export default function CostLink() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Cost Link"
+        title={t("Cost Link")}
         subtitle="Log your expenses and link each cost to a maintenance ticket."
       />
 
@@ -125,7 +127,7 @@ export default function CostLink() {
               Linked Ticket
             </label>
             {loadingTickets ? (
-              <p className="text-xs text-slate-400">Loading tickets...</p>
+              <p className="text-xs text-slate-400">{t("Loading tickets...")}</p>
             ) : ticketOptions.length === 0 ? (
               <p className="text-xs text-slate-400">
                 No accepted or in-progress tickets are assigned to you.
@@ -175,7 +177,7 @@ export default function CostLink() {
               onChange={handleChange}
               className={textareaClass}
               rows={3}
-              placeholder="Example: materials and helper labor"
+              placeholder={t("Example: materials and helper labor")}
             />
           </div>
 
@@ -185,7 +187,7 @@ export default function CostLink() {
               disabled={submitting || loadingTickets}
               className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md shadow-white/10 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {submitting ? "Saving..." : "Save Expense"}
+              {submitting ? t("Saving...") : t("Save Expense")}
             </button>
           </div>
           {saveError ? (

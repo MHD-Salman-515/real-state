@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getProperty } from "../../lib/api";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 import api, { resolveApiAssetUrl, extractApiErrorMessage } from "../../api/axios";
@@ -37,6 +38,7 @@ function Section({ title, subtitle, children, className = "" }) {
 }
 
 export default function OwnerPropertyEdit() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const nav = useNavigate();
   const [model, setModel] = useState(empty);
@@ -105,19 +107,19 @@ export default function OwnerPropertyEdit() {
         data: fd,
       });
 
-      setMsg("تم الحفظ بنجاح.");
+      setMsg(t("Operation successful"));
       notifyCrudSuccess(
-        id ? "Property updated successfully" : "Property added successfully",
-        "Operation successful",
+        t(id ? "Property updated successfully" : "Property added successfully"),
+        t("Operation successful"),
         {
           href: id ? `/owner/properties/${id}/edit` : "/owner/properties",
         }
       );
       setTimeout(() => nav("/owner/properties"), 600);
     } catch (err) {
-      const message = extractApiErrorMessage(err, "خطأ أثناء الحفظ");
+      const message = extractApiErrorMessage(err, t("Failed to save property"));
       setMsg(message);
-      notifyCrudError("Failed to save property", "Operation failed", {
+      notifyCrudError(t("Failed to save property"), t("Operation failed"), {
         href: id ? `/owner/properties/${id}/edit` : "/owner/properties",
       });
     } finally {
@@ -145,18 +147,18 @@ export default function OwnerPropertyEdit() {
     <form onSubmit={onSubmit} className="space-y-4 pb-24">
       <header className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-xl">
         <h1 className="text-xl font-bold text-white md:text-2xl">
-          {id ? "تعديل عقار" : "إضافة عقار"}
+          {id ? t("Edit Property") : t("Add Property")}
         </h1>
         <p className="mt-1 text-sm text-slate-400">
-          أدخل بيانات العقار الأساسية بدقة ثم قم بالحفظ.
+          {t("Enter the core property information accurately, then save your changes.")}
         </p>
 
         {msg && (
           <div
             className={`mt-4 rounded-xl border px-4 py-2 text-sm ${
-              msg.includes("خطأ")
-                ? "border-rose-400/25 bg-rose-500/10 text-rose-200"
-                : "border-white/15 bg-white/10 text-white/90"
+              msg === t("Operation successful")
+                ? "border-white/15 bg-white/10 text-white/90"
+                : "border-rose-400/25 bg-rose-500/10 text-rose-200"
             }`}
           >
             {msg}
@@ -165,9 +167,9 @@ export default function OwnerPropertyEdit() {
       </header>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Section title="Basic Info" subtitle="Title and property category.">
+        <Section title={t("Basic Info")} subtitle={t("Title and property category.")}>
           <div className="space-y-4">
-            <Field label="العنوان" hint="اسم واضح يميز العقار في القوائم.">
+            <Field label={t("Property title")} hint={t("A clear name that distinguishes the listing.")}>
               <input
                 className={inputClass}
                 value={model.title}
@@ -175,25 +177,25 @@ export default function OwnerPropertyEdit() {
               />
             </Field>
 
-            <Field label="النوع" hint="اختر نوع العقار المناسب.">
+            <Field label={t("Property type")} hint={t("Choose the appropriate property type.")}>
               <select
                 className={inputClass}
                 value={model.type}
                 onChange={(e) => setModel({ ...model, type: e.target.value })}
               >
-                <option value="APARTMENT">شقة</option>
-                <option value="HOUSE">منزل</option>
-                <option value="VILLA">فيلا</option>
-                <option value="STUDIO">ستوديو</option>
-                <option value="LAND">أرض</option>
+                <option value="APARTMENT">{t("Apartment")}</option>
+                <option value="HOUSE">{t("House")}</option>
+                <option value="VILLA">{t("Villa")}</option>
+                <option value="STUDIO">{t("Studio")}</option>
+                <option value="LAND">{t("Land")}</option>
               </select>
             </Field>
           </div>
         </Section>
 
-        <Section title="Location" subtitle="City and full address details.">
+        <Section title={t("Location")} subtitle={t("City and full address details.")}>
           <div className="space-y-4">
-            <Field label="المدينة" hint="المدينة التي يقع بها العقار.">
+            <Field label={t("City")} hint={t("The city where the property is located.")}>
               <input
                 className={inputClass}
                 value={model.city}
@@ -201,7 +203,7 @@ export default function OwnerPropertyEdit() {
               />
             </Field>
 
-            <Field label="العنوان التفصيلي" hint="أضف وصفا دقيقا للموقع.">
+            <Field label={t("Detailed address")} hint={t("Add a precise location description.")}>
               <input
                 className={inputClass}
                 value={model.address}
@@ -211,9 +213,9 @@ export default function OwnerPropertyEdit() {
           </div>
         </Section>
 
-        <Section title="Specs" subtitle="Area and pricing details.">
+        <Section title={t("Specs")} subtitle={t("Area and pricing details.")}>
           <div className="grid gap-4 md:grid-cols-2">
-            <Field label="المساحة (م²)" hint="أرقام فقط.">
+            <Field label={t("Area (m2)")} hint={t("Numbers only.")}>
               <input
                 className={inputClass}
                 inputMode="numeric"
@@ -222,7 +224,7 @@ export default function OwnerPropertyEdit() {
               />
             </Field>
 
-            <Field label="السعر (USD)" hint="أرقام فقط.">
+            <Field label={t("Price (USD)")} hint={t("Numbers only.")}>
               <input
                 className={inputClass}
                 inputMode="numeric"
@@ -233,9 +235,9 @@ export default function OwnerPropertyEdit() {
           </div>
         </Section>
 
-        <Section title="Media" subtitle="Upload a primary listing image.">
+        <Section title={t("Media")} subtitle={t("Upload a primary listing image.")}>
           <div className="space-y-4">
-            <Field label="صورة العقار" hint="أفضل حجم عرض 16:9.">
+            <Field label={t("Property image")} hint={t("Recommended display ratio 16:9.")}>
               <input
                 type="file"
                 accept="image/*"
@@ -246,19 +248,19 @@ export default function OwnerPropertyEdit() {
 
             {previewSrc ? (
               <div className="overflow-hidden rounded-xl border border-white/10 bg-black/25">
-                <img src={previewSrc} alt="Property preview" className="h-48 w-full object-cover" />
+                <img src={previewSrc} alt={t("Property preview")} className="h-48 w-full object-cover" />
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-white/15 bg-black/20 p-4 text-sm text-slate-400">
-                No image selected.
+                {t("No image selected.")}
               </div>
             )}
           </div>
         </Section>
       </div>
 
-      <Section title="Description" subtitle="Add key details and highlights.">
-        <Field label="الوصف" hint="وصف مختصر يوضح المميزات الأساسية.">
+      <Section title={t("Additional Details")} subtitle={t("Add key details and highlights.")}>
+        <Field label={t("Description")} hint={t("Add key details and highlights.")}>
           <textarea
             className={inputClass}
             rows={5}
@@ -275,13 +277,13 @@ export default function OwnerPropertyEdit() {
             className="rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-sm text-slate-100 transition duration-200 hover:bg-white/10"
             onClick={() => nav("/owner/properties")}
           >
-            إلغاء
+            {t("Cancel")}
           </button>
           <button
             className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition duration-200 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-70"
             disabled={saving}
           >
-            {saving ? "جارٍ الحفظ..." : id ? "Update" : "Save"}
+            {saving ? t("Saving...") : id ? t("Update") : t("Save")}
           </button>
         </div>
       </div>

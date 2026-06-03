@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api from "../../api/axios";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -16,6 +17,7 @@ const initialForm = {
 
 export default function RentInvoices() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [rows, setRows] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(initialForm);
@@ -34,7 +36,7 @@ export default function RentInvoices() {
       const p = await api.get("/properties");
       setProperties(p.data);
     } catch (err) {
-      toast.error("Failed to load rent invoices");
+      toast.error(t("Failed to load rent invoices"));
     }
   };
 
@@ -46,7 +48,7 @@ export default function RentInvoices() {
     e.preventDefault();
 
     if (!form.clientId || !form.propertyId || !form.totalAmount || !form.dueDate) {
-      return toast.error("All required fields must be filled");
+      return toast.error(t("All required fields must be filled"));
     }
 
     api
@@ -59,7 +61,7 @@ export default function RentInvoices() {
         dueDate: form.dueDate,
       })
       .then(() => {
-        notifyCrudSuccess("Rent invoice created", "Operation successful", {
+        notifyCrudSuccess(t("Rent invoice created"), t("Operation successful"), {
           href: "/accountant/rent-invoices",
         });
         setShowForm(false);
@@ -67,7 +69,7 @@ export default function RentInvoices() {
         load();
       })
       .catch(() =>
-        notifyCrudError("Failed to create rent invoice", "Operation failed", {
+        notifyCrudError(t("Failed to create rent invoice"), t("Operation failed"), {
           href: "/accountant/rent-invoices",
         })
       );
@@ -78,13 +80,13 @@ export default function RentInvoices() {
     api
       .delete(`/invoices/${id}`)
       .then(() => {
-        notifyCrudSuccess("Invoice deleted", "Operation successful", {
+        notifyCrudSuccess(t("Invoice deleted"), t("Operation successful"), {
           href: "/accountant/rent-invoices",
         });
         load();
       })
       .catch(() =>
-        notifyCrudError("Failed to delete invoice", "Operation failed", {
+        notifyCrudError(t("Failed to delete invoice"), t("Operation failed"), {
           href: "/accountant/rent-invoices",
         })
       );
@@ -92,9 +94,9 @@ export default function RentInvoices() {
 
   const columns = [
     { key: "id", header: "#" },
-    { key: "client", header: "Client", render: (i) => i.client?.fullName || "-" },
-    { key: "property", header: "Property", render: (i) => i.property?.title || "-" },
-    { key: "amount", header: "Amount", render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
+    { key: "client", header: t("Client"), render: (i) => i.client?.fullName || "-" },
+    { key: "property", header: t("Property"), render: (i) => i.property?.title || "-" },
+    { key: "amount", header: t("Amount"), render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
     {
       key: "status",
       header: "Status",
@@ -134,7 +136,7 @@ export default function RentInvoices() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Rent Invoices"
+        title={t("Rent Invoices")}
         subtitle="Manage rent billing records for tenants."
         actions={
           <button
@@ -151,7 +153,7 @@ export default function RentInvoices() {
           <h3 className="text-sm font-semibold text-white md:text-base">Rent Invoice Records</h3>
           <p className="mt-1 text-xs text-slate-300">Track tenant invoices and overdue payments.</p>
         </div>
-        <Table columns={columns} rows={rows} emptyText="No rent invoices found" />
+        <Table columns={columns} rows={rows} emptyText={t("No rent invoices found")} />
       </Card>
 
       {showForm ? (

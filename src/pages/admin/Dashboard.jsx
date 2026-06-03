@@ -1,13 +1,5 @@
-﻿import StarterDashboard from "../../components/dashboard/StarterDashboard.jsx";
-
-const KPI = [
-  { label: "Platform Health", value: "99.2%", change: "+0.4%" },
-  { label: "Open Incidents", value: "12", change: "-3.1%" },
-  { label: "New Users", value: "84", change: "+6.8%" },
-  { label: "Compliance", value: "96%", change: "+1.1%" },
-];
-
-const ACTIONS = ["Manage Users", "Review Permissions", "Broadcast Notice", "Export Audit"];
+import { useTranslation } from 'react-i18next';
+import StarterDashboard from "../../components/dashboard/StarterDashboard.jsx";
 
 const TASKS = [
   { title: "Approve role change requests", due: "Today" },
@@ -24,10 +16,18 @@ const ACTIVITY = [
 ];
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
+  const KPI = [
+    { label: t("Platform Health"), value: "99.2%", change: "+0.4%" },
+    { label: t("Open Incidents"), value: "12", change: "-3.1%" },
+    { label: t("New Users"), value: "84", change: "+6.8%" },
+    { label: t("Compliance"), value: "96%", change: "+1.1%" },
+  ];
+  const ACTIONS = [t("Manage Users"), "Review Permissions", "Broadcast Notice", "Export Audit"];
   return (
     <StarterDashboard
-      roleLabel="Admin"
-      title="Admin Control Dashboard"
+      roleLabel={t("admin")}
+      title={t("Admin Control Dashboard")}
       subtitle="Monitor system health, users, and operational governance from one control center."
       kpis={KPI}
       actions={ACTIONS}

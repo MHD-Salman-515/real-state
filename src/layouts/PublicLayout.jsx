@@ -1,6 +1,7 @@
 // src/layouts/PublicLayout.jsx
 import { Outlet, Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import Logo from "../components/brand/Logo.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { getRoleLandingPath } from "../utils/roleLanding.js";
@@ -11,16 +12,8 @@ const AUTH_BG_IMAGES = [
   "https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1600&q=80",
 ];
 
-const PUBLIC_NAV_ITEMS = [
-  // ✅ IMPORTANT: removed `end: true` so Home does not behave differently across "/" vs "/home"
-  { label: "Home", to: "/home" },
-  { label: "Properties", to: "/properties" },
-  { label: "Services", to: "/services" },
-  { label: "About", to: "/about" },
-  { label: "Contact", to: "/contact" },
-];
-
 export default function PublicLayout() {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [brandMenuOpen, setBrandMenuOpen] = useState(false);
 
@@ -28,6 +21,13 @@ export default function PublicLayout() {
   const navigate = useNavigate();
   const { user, token, logout } = useAuth();
   const isAuthenticated = Boolean(user || token);
+  const publicNavItems = [
+    { label: t("Home"), to: "/home" },
+    { label: t("Properties"), to: "/properties" },
+    { label: t("Services"), to: "/services" },
+    { label: t("About"), to: "/about" },
+    { label: t("Contact"), to: "/contact" },
+  ];
 
   const brandMenuRef = useRef(null);
 
@@ -129,7 +129,7 @@ export default function PublicLayout() {
               >
                 <span className="block text-base font-semibold tracking-[0.18em] text-white">CREOS</span>
                 <span className="hidden text-[10px] text-slate-300/90 sm:block">
-                  Centralized Real Estate Operations System
+                  {t("Centralized Real Estate Operations System")}
                 </span>
               </button>
 
@@ -144,7 +144,7 @@ export default function PublicLayout() {
                     <p className="truncate text-sm font-medium text-slate-100">
                       {user?.fullName ||
                         user?.name ||
-                        (user?.email ? String(user.email).split("@")[0] : "User")}
+                        (user?.email ? String(user.email).split("@")[0] : t("Unspecified"))}
                     </p>
                     <p className="text-xs uppercase tracking-wide text-slate-400">{user?.role || "guest"}</p>
                   </div>
@@ -155,7 +155,7 @@ export default function PublicLayout() {
                     role="menuitem"
                     className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90 focus:outline-none focus-visible:bg-white/10"
                   >
-                    Profile Settings
+                    {t("Profile Settings")}
                   </Link>
 
                   <Link
@@ -164,7 +164,7 @@ export default function PublicLayout() {
                     role="menuitem"
                     className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90 focus:outline-none focus-visible:bg-white/10"
                   >
-                    Favorites
+                    {t("Favorites")}
                   </Link>
 
                   <Link
@@ -173,7 +173,7 @@ export default function PublicLayout() {
                     role="menuitem"
                     className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90 focus:outline-none focus-visible:bg-white/10"
                   >
-                    Appointments
+                    {t("Appointments")}
                   </Link>
 
                   {isAuthenticated ? (
@@ -183,7 +183,7 @@ export default function PublicLayout() {
                       role="menuitem"
                       className="mt-1 block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
                     >
-                      Log out
+                      {t("Log out")}
                     </button>
                   ) : (
                     <Link
@@ -192,7 +192,7 @@ export default function PublicLayout() {
                       role="menuitem"
                       className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
                     >
-                      Log in
+                      {t("Log in")}
                     </Link>
                   )}
                 </div>
@@ -200,7 +200,7 @@ export default function PublicLayout() {
             </div>
 
             <nav className="hidden items-center gap-7 md:flex">
-              {PUBLIC_NAV_ITEMS.map((item) => (
+              {publicNavItems.map((item) => (
                 <NavLink key={item.label} to={item.to} className={desktopNavClass}>
                   {item.label}
                 </NavLink>
@@ -214,7 +214,7 @@ export default function PublicLayout() {
                   onClick={handleLogout}
                   className="text-sm text-slate-200/90 transition hover:text-white"
                 >
-                  Log out
+                  {t("Log out")}
                 </button>
               ) : (
                 <NavLink
@@ -224,22 +224,22 @@ export default function PublicLayout() {
                     `text-sm transition ${isActive ? "text-white" : "text-slate-200/90 hover:text-white"}`
                   }
                 >
-                  Login
-                </NavLink>
+                    {t("Login")}
+                  </NavLink>
               )}
 
               <Link
                 to="/properties"
                 className="inline-flex items-center rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/10"
               >
-                Explore Properties
+                {t("Explore Properties")}
               </Link>
             </div>
 
             <button
               type="button"
               onClick={() => setMobileMenuOpen((v) => !v)}
-              aria-label="Open menu"
+              aria-label={t("Menu")}
               aria-expanded={mobileMenuOpen}
               className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-transparent text-white transition hover:bg-white/10 md:hidden"
             >
@@ -261,10 +261,10 @@ export default function PublicLayout() {
               }`}
             >
               <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-                <div className="text-sm font-semibold text-white">Menu</div>
+                <div className="text-sm font-semibold text-white">{t("Menu")}</div>
                 <button
                   type="button"
-                  aria-label="Close menu"
+                  aria-label={t("Close")}
                   onClick={() => setMobileMenuOpen(false)}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-black/30 text-white transition hover:bg-white/10"
                 >
@@ -273,7 +273,7 @@ export default function PublicLayout() {
               </div>
 
               <nav className="flex flex-col gap-1 px-4 py-4">
-                {PUBLIC_NAV_ITEMS.map((item) => (
+                {publicNavItems.map((item) => (
                   <NavLink
                     key={item.label}
                     to={item.to}
@@ -290,7 +290,7 @@ export default function PublicLayout() {
                     onClick={handleLogout}
                     className="rounded-lg px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10 hover:text-white"
                   >
-                    Log out
+                    {t("Log out")}
                   </button>
                 ) : (
                   <NavLink
@@ -303,7 +303,7 @@ export default function PublicLayout() {
                       }`
                     }
                   >
-                    Login
+                    {t("Login")}
                   </NavLink>
                 )}
 
@@ -312,7 +312,7 @@ export default function PublicLayout() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="mt-2 inline-flex items-center justify-center rounded-lg bg-white/10 px-3 py-2 text-sm font-semibold text-black transition hover:bg-white/10"
                 >
-                  Explore Properties
+                  {t("Explore Properties")}
                 </Link>
               </nav>
             </aside>

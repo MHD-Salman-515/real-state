@@ -1,30 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PageHeader from "../../components/PageHeader.jsx";
 import Toolbar from "../../components/Toolbar.jsx";
 import Card from "../../components/Card.jsx";
 import api from "../../api/axios";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
-const ROLE_FILTERS = [
-  { value: "", label: "All roles" },
-  { value: "ADMIN", label: "System Admin" },
-  { value: "ACCOUNTANT", label: "Accountant" },
-  { value: "WORKER", label: "Worker" },
-  { value: "SUPPLIER", label: "Supplier" },
-  { value: "OWNER", label: "Owner" },
-  { value: "CLIENT", label: "Client" },
-];
-
 const FALLBACK_ROLES = ["ADMIN", "ACCOUNTANT", "WORKER", "SUPPLIER", "OWNER", "CLIENT"];
-
-const ROLE_LABELS = {
-  ADMIN: "System Admin",
-  ACCOUNTANT: "Accountant",
-  WORKER: "Worker",
-  SUPPLIER: "Supplier",
-  OWNER: "Property Owner",
-  CLIENT: "Client",
-};
 
 const ROLE_BADGE = {
   ADMIN: "bg-white/10 text-white/90 border-white/15",
@@ -50,6 +32,21 @@ export default function AdminUsers({
   pageTitle = "Users",
   pageSubtitle = "Manage users, roles, and permissions for operations",
 }) {
+  const { t } = useTranslation();
+  const ROLE_FILTERS = [
+    { value: "", label: t("All roles") },
+    { value: "ADMIN", label: t("System Admin") },
+    { value: "ACCOUNTANT", label: t("accountant") },
+    { value: "WORKER", label: t("worker") },
+    { value: "SUPPLIER", label: t("supplier") },
+    { value: "OWNER", label: t("owner") },
+    { value: "CLIENT", label: t("client") },
+  ];
+  const ROLE_LABELS = {
+    ADMIN: t("System Admin"), ACCOUNTANT: t("accountant"),
+    WORKER: t("worker"), SUPPLIER: t("supplier"),
+    OWNER: t("Property Owner"), CLIENT: t("client"),
+  };
   const [rows, setRows] = useState([]);
   const [roleFilter, setRoleFilter] = useState("");
 
@@ -123,13 +120,13 @@ export default function AdminUsers({
         role: "WORKER",
       });
       await loadUsers();
-      notifyCrudSuccess("User created successfully", "Operation successful", {
+      notifyCrudSuccess(t("User created successfully"), t("Operation successful"), {
         href: "/admin/users",
       });
     } catch (err) {
       console.error(err);
-      const message = err.response?.data?.message || "Failed to create user";
-      notifyCrudError(message, "Operation failed", {
+      const message = err.response?.data?.message || t("Failed to create user");
+      notifyCrudError(message, t("Operation failed"), {
         href: "/admin/users",
       });
     }
@@ -147,14 +144,14 @@ export default function AdminUsers({
 
     try {
       await api.delete(`/users/${id}`);
-      notifyCrudSuccess("User deleted", "Operation successful", {
+      notifyCrudSuccess(t("User deleted"), t("Operation successful"), {
         href: "/admin/users",
       });
       await loadUsers();
     } catch (err) {
       console.error(err);
       const message = err.response?.data?.message || "Error: cannot delete user";
-      notifyCrudError(message, "Operation failed", {
+      notifyCrudError(message, t("Operation failed"), {
         href: "/admin/users",
       });
     }
@@ -164,13 +161,13 @@ export default function AdminUsers({
     try {
       await api.put(`/users/${id}`, { role });
       await loadUsers();
-      notifyCrudSuccess("User role updated", "Operation successful", {
+      notifyCrudSuccess(t("User role updated"), t("Operation successful"), {
         href: "/admin/users",
       });
     } catch (err) {
       console.error(err);
-      const message = err.response?.data?.message || "Role update failed";
-      notifyCrudError(message, "Operation failed", {
+      const message = err.response?.data?.message || t("Role update failed");
+      notifyCrudError(message, t("Operation failed"), {
         href: "/admin/users",
       });
     }
@@ -178,7 +175,7 @@ export default function AdminUsers({
 
   return (
     <section className="space-y-4">
-      <PageHeader title={pageTitle} subtitle={pageSubtitle} />
+      <PageHeader title={t(pageTitle)} subtitle={pageSubtitle} />
       <p className="text-xs text-slate-400">Workforce & Suppliers</p>
 
       <Toolbar className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">

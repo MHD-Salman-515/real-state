@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api from "../../api/axios";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -9,6 +10,7 @@ const BUCKETS = ["0-30 days", "31-60 days", "61-90 days", "90+ days"];
 
 export default function ARAging() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [rows, setRows] = useState([]);
 
   const load = async () => {
@@ -40,7 +42,7 @@ export default function ARAging() {
 
       setRows(enriched);
     } catch (err) {
-      toast.error("Failed to load A/R aging report");
+      toast.error(t("Failed to load aging data"));
     }
   };
 
@@ -50,28 +52,28 @@ export default function ARAging() {
 
   const columns = [
     { key: "id", header: "#" },
-    { key: "client", header: "Client", render: (i) => i.client?.fullName || "-" },
-    { key: "property", header: "Property", render: (i) => i.property?.title || "-" },
-    { key: "amount", header: "Amount", render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
+    { key: "client", header: t("Client"), render: (i) => i.client?.fullName || "-" },
+    { key: "property", header: t("Property"), render: (i) => i.property?.title || "-" },
+    { key: "amount", header: t("Amount"), render: (i) => `${Number(i.totalAmount || 0).toFixed(2)} $` },
     {
       key: "dueDate",
-      header: "Due Date",
+      header: t("Due Date"),
       render: (i) => (i.dueDate ? new Date(i.dueDate).toLocaleDateString() : "-"),
     },
     {
       key: "daysLate",
-      header: "Days Late",
+      header: t("Days Late"),
       render: (i) => (
         <span className={i.daysLate > 0 ? "text-rose-300" : "text-white/80"}>{i.daysLate}</span>
       ),
     },
-    { key: "bucket", header: "Bucket" },
+    { key: "bucket", header: t("Bucket") },
   ];
 
   return (
     <section className="space-y-4">
       <PageHeader
-        title="A/R Aging"
+        title={t("A/R Aging")}
         subtitle="Analyze unpaid invoices by aging buckets."
         actions={
           <button
@@ -88,7 +90,7 @@ export default function ARAging() {
           <h3 className="text-sm font-semibold text-white md:text-base">A/R Aging List</h3>
           <p className="mt-1 text-xs text-slate-300">Open receivables and aging status by invoice.</p>
         </div>
-        <Table columns={columns} rows={rows} emptyText="No unpaid invoices found" />
+        <Table columns={columns} rows={rows} emptyText={t("No unpaid invoices found")} />
       </Card>
 
       <div className="grid gap-3 md:grid-cols-4">

@@ -23,7 +23,7 @@ export default function LanguageToggle({ className = "" }) {
       }}
       title={isAr ? 'Switch to English' : 'التبديل للعربية'}
     >
-      <span>{isAr ? '🇬🇧 EN' : '🇸🇦 ع'}</span>
+      <span>{isAr ? '🇬🇧 EN' : '🇸🇾 ع'}</span>
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api from "../../api/axios";
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
@@ -6,6 +7,7 @@ import Toolbar from "../../components/Toolbar.jsx";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function Commissions() {
+  const { t } = useTranslation();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -14,11 +16,11 @@ export default function Commissions() {
       setLoading(true);
       const res = await api.get("/commissions");
       setRows(res.data);
-      notifyCrudSuccess("Record refreshed", "Operation successful", {
+      notifyCrudSuccess(t("Record refreshed"), t("Operation successful"), {
         href: "/admin/commissions",
       });
     } catch (err) {
-      notifyCrudError("Failed to load commission records", "Operation failed", {
+      notifyCrudError(t("Failed to load commission records"), t("Operation failed"), {
         href: "/admin/commissions",
       });
     } finally {
@@ -32,7 +34,7 @@ export default function Commissions() {
 
   return (
     <section className="space-y-4">
-      <PageHeader title="Commissions" subtitle="Track invoice-based commission records and updates." />
+      <PageHeader title={t("Commissions")} subtitle={t("Track invoice-based commission records and updates.")} />
 
       <Toolbar className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -47,10 +49,10 @@ export default function Commissions() {
             {loading ? (
               <>
                 <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/15 border-t-transparent" />
-                Refreshing...
+                {t("Loading...")}
               </>
             ) : (
-              "Refresh"
+              t("Refresh")
             )}
           </button>
         </div>

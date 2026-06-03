@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import api from "../../api/axios";
 import Card from "../../components/Card";
 import PageHeader from "../../components/PageHeader";
@@ -6,6 +7,7 @@ import { useToast } from "../../components/ToastProvider";
 
 export default function Income() {
   const toast = useToast();
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState([]);
   const [payments, setPayments] = useState([]);
 
@@ -21,7 +23,7 @@ export default function Income() {
       }
       setPayments(paymentList);
     } catch (err) {
-      toast.error("Failed to load income data");
+      toast.error(t("Failed to load income data"));
     }
   };
 
@@ -45,7 +47,7 @@ export default function Income() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Income"
+        title={t("Income")}
         subtitle="Summary of collected income across invoice types."
         actions={
           <button

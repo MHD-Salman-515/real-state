@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import Table from "../../components/Table.jsx";
@@ -7,6 +8,7 @@ import api, { AUTH_ME_PATH } from "../../api/axios";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function WorkerDashboard() {
+  const { t } = useTranslation();
   const [tickets, setTickets] = useState([]);
   const [logs, setLogs] = useState([]);
   const [user, setUser] = useState(null);
@@ -53,13 +55,13 @@ export default function WorkerDashboard() {
     api
       .put(`/tickets/${ticketId}/status/${status}`)
       .then(() => {
-        notifyCrudSuccess(`Ticket #${ticketId} status updated`, "Operation successful", {
+        notifyCrudSuccess(t("Ticket status updated"), t("Operation successful"), {
           href: "/worker",
         });
         api.get("/tickets/assigned-to/me").then((res) => setTickets(res.data));
       })
       .catch(() =>
-        notifyCrudError(`Failed to update ticket #${ticketId}`, "Operation failed", {
+        notifyCrudError(t("Failed to update ticket status"), t("Operation failed"), {
           href: "/worker",
         })
       );
@@ -76,7 +78,7 @@ export default function WorkerDashboard() {
         action: `${form.maintType} — ${form.description} — ${form.amount || 0} $`,
       })
       .then(() => {
-        notifyCrudSuccess(`Maintenance log added for ticket #${form.ticketId}`, "Operation successful", {
+        notifyCrudSuccess(t("Save"), t("Operation successful"), {
           href: "/worker",
         });
         loadLogs(form.ticketId);
@@ -84,7 +86,7 @@ export default function WorkerDashboard() {
         setForm({ ticketId: "", description: "", maintType: "", amount: "" });
       })
       .catch(() =>
-        notifyCrudError("Failed to add maintenance log", "Operation failed", {
+        notifyCrudError(t("Failed to add maintenance log"), t("Operation failed"), {
           href: "/worker",
         })
       );
@@ -166,8 +168,8 @@ export default function WorkerDashboard() {
     <section className="space-y-6">
 
       <PageHeader
-        title="لوحة الفني / العامل"
-        subtitle="تذاكر الصيانة المسندة إليك"
+        title={t("Worker Dashboard / Worker")}
+        subtitle={t("Assigned maintenance tickets")}
       />
 
       {/* ===== جدول التذاكر ===== */}
@@ -175,14 +177,14 @@ export default function WorkerDashboard() {
         <Table
           columns={ticketColumns}
           rows={tickets}
-          emptyText="لا توجد تذاكر مسندة إليك."
+          emptyText={t("No assigned tickets found.")}
         />
       </Card>
 
       {/* ===== جدول السجلات ===== */}
       <Card className="bg-white/5 border-white/10 backdrop-blur-xl text-white">
         <h2 className="px-4 pt-4 pb-2 text-sm font-semibold text-slate-100">
-          سجلات التذكرة المختارة
+          {t("Selected ticket logs")}
         </h2>
 
         <Table
@@ -192,7 +194,7 @@ export default function WorkerDashboard() {
             { key: "action", header: "الإجراء" },
           ]}
           rows={logs}
-          emptyText="لا توجد سجلات."
+          emptyText={t("No logs found.")}
         />
       </Card>
 
@@ -201,31 +203,31 @@ export default function WorkerDashboard() {
         <Card className="p-4 bg-white/10 backdrop-blur-xl rounded-xl text-white">
           <form className="grid gap-3" onSubmit={handleSubmit}>
             <div>
-              <label className="text-xs">وصف الصيانة</label>
+              <label className="text-xs">{t("Maintenance description")}</label>
               <input
                 value={form.description}
                 onChange={(e) =>
                   setForm((p) => ({ ...p, description: e.target.value }))
                 }
-                placeholder="مثال: تبديل صنبور…"
+                placeholder={t("Maintenance description")}
                 className="input"
               />
             </div>
 
             <div>
-              <label className="text-xs">نوع الصيانة</label>
+              <label className="text-xs">{t("Maintenance type")}</label>
               <input
                 value={form.maintType}
                 onChange={(e) =>
                   setForm((p) => ({ ...p, maintType: e.target.value }))
                 }
-                placeholder="سباكة / كهرباء / تبريد…"
+                placeholder={t("Maintenance type")}
                 className="input"
               />
             </div>
 
             <div>
-              <label className="text-xs">التكلفة</label>
+              <label className="text-xs">{t("Cost")}</label>
               <input
                 type="number"
                 value={form.amount}
@@ -236,7 +238,7 @@ export default function WorkerDashboard() {
               />
             </div>
 
-            <button className="btn-primary w-fit">حفظ السجل</button>
+            <button className="btn-primary w-fit">{t("Save log")}</button>
           </form>
         </Card>
       )}

@@ -26,6 +26,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 const IS_DEV = import.meta.env.DEV;
 const AUTH_PERF_LABEL = "[AuthPerf]";
 
@@ -371,11 +372,6 @@ const GitHubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-const modalSteps = [
-  { message: "Creating your account...", icon: <Loader className="h-12 w-12 text-white/80" /> },
-  { message: "Welcome Aboard!", icon: <PartyPopper className="h-12 w-12 text-white/80" /> },
-];
-
 const DefaultLogo = () => (
   <div className="rounded-md bg-white/10 p-1.5 text-white">
     <Gem className="h-4 w-4" />
@@ -454,12 +450,13 @@ const RegisterStepContent = memo(function RegisterStepContent({
   loading,
 }: RegisterStepContentProps) {
   void lowPerfMode;
+  const { t } = useTranslation();
   const renderStep = () => {
     if (authStep === "email") {
       return (
         <div key="email-step" className="space-y-3">
           <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-email">
-            Email
+            {t("Email")}
           </label>
           <div className="glass-input-wrap">
             <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
@@ -475,7 +472,7 @@ const RegisterStepContent = memo(function RegisterStepContent({
           </div>
           <GlassButton type="button" onClick={handleSendOtp} className="w-full" disabled={!isEmailValid || requestingOtp}>
             <span className="inline-flex items-center gap-2">
-              {requestingOtp ? "Sending OTP..." : "Send OTP"}
+              {requestingOtp ? t("Sending OTP...") : t("Send OTP")}
               <ArrowRight className="h-4 w-4" />
             </span>
           </GlassButton>
@@ -487,7 +484,7 @@ const RegisterStepContent = memo(function RegisterStepContent({
       return (
         <div key="otp-step" className="space-y-3">
           <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-otp">
-            Enter OTP Code
+            {t("Enter OTP Code")}
           </label>
           <div className="glass-input-wrap">
             <ShieldCheck className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
@@ -508,17 +505,17 @@ const RegisterStepContent = memo(function RegisterStepContent({
 
           <div className="grid grid-cols-2 gap-2">
             <GlassButton type="button" onClick={handleVerifyOtp} disabled={!isOtpValid || verifyingOtp} className="w-full">
-              {verifyingOtp ? "Verifying..." : "Verify OTP"}
+              {verifyingOtp ? t("Verifying...") : t("Verify OTP")}
             </GlassButton>
             <GlassButton type="button" onClick={handleResendOtp} disabled={resendCooldown > 0 || requestingOtp} className="w-full">
-              {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend OTP"}
+              {resendCooldown > 0 ? `${t("Resend OTP")} (${resendCooldown}s)` : t("Resend OTP")}
             </GlassButton>
           </div>
 
           <GlassButton type="button" size="sm" onClick={handleGoBack} className="w-full">
             <span className="inline-flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {t("Back")}
             </span>
           </GlassButton>
         </div>
@@ -528,7 +525,7 @@ const RegisterStepContent = memo(function RegisterStepContent({
     return (
       <div key="details-step" className="space-y-3">
         <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-name">
-          Full Name
+          {t("Full Name")}
         </label>
         <input
           id="signup-name"
@@ -539,7 +536,7 @@ const RegisterStepContent = memo(function RegisterStepContent({
         />
 
         <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-phone">
-          Phone (Optional)
+          {t("Phone (Optional)")}
         </label>
         <input
           id="signup-phone"
@@ -550,7 +547,7 @@ const RegisterStepContent = memo(function RegisterStepContent({
         />
 
         <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-password">
-          Password
+          {t("Password")}
         </label>
         <div className="glass-input-wrap">
           <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
@@ -561,21 +558,21 @@ const RegisterStepContent = memo(function RegisterStepContent({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="new-password"
-            placeholder="At least 6 characters"
+            placeholder={t("Password")}
             className="glass-input py-3 pl-11 pr-11 text-sm"
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white"
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={t("Password")}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
 
         <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-confirm-password">
-          Confirm Password
+          {t("Confirm Password")}
         </label>
         <div className="glass-input-wrap">
           <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
@@ -586,14 +583,14 @@ const RegisterStepContent = memo(function RegisterStepContent({
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             autoComplete="new-password"
-            placeholder="Retype your password"
+            placeholder={t("Confirm Password")}
             className="glass-input py-3 pl-11 pr-11 text-sm"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white"
-            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+            aria-label={t("Confirm Password")}
           >
             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -605,7 +602,7 @@ const RegisterStepContent = memo(function RegisterStepContent({
           </GlassButton>
           <GlassButton type="submit" className="w-full" disabled={!canSubmit}>
             <span className="inline-flex items-center gap-2">
-              {loading ? "Creating..." : "Create account"}
+              {loading ? t("Creating...") : t("Create account")}
               <ArrowRight className="h-4 w-4" />
             </span>
           </GlassButton>
@@ -626,6 +623,11 @@ type AuthModalProps = {
 const AuthModal = memo(function AuthModal({ modalStatus, closeModal, mergedError, lowPerfMode }: AuthModalProps) {
   if (modalStatus === "closed") return null;
   void lowPerfMode;
+  const { t } = useTranslation();
+  const modalSteps = [
+    { message: t("Creating your account..."), icon: <Loader className="h-12 w-12 text-white/80" /> },
+    { message: t("Welcome Aboard!"), icon: <PartyPopper className="h-12 w-12 text-white/80" /> },
+  ];
 
   const loadingNode = (
     <div key="loading" className="flex flex-col items-center gap-4">
@@ -654,9 +656,9 @@ const AuthModal = memo(function AuthModal({ modalStatus, closeModal, mergedError
       {modalStatus === "error" && (
         <>
           <AlertCircle className="h-12 w-12 text-destructive" />
-          <p className="text-center text-lg font-medium text-foreground">{mergedError || "Registration failed."}</p>
+          <p className="text-center text-lg font-medium text-foreground">{mergedError || t("Registration failed.")}</p>
           <GlassButton onClick={closeModal} size="sm" className="mt-2">
-            Close
+            {t("Close")}
           </GlassButton>
         </>
       )}
@@ -687,6 +689,7 @@ export const AuthComponent = ({
   onRememberChange,
 }: AuthComponentProps) => {
   useRenderCount(`AuthComponent:${mode}`);
+  const { t } = useTranslation();
   const renderSeq = useRef(0);
   renderSeq.current += 1;
   const renderLabel = `AuthComponent:${mode}:render#${renderSeq.current}`;
@@ -767,7 +770,7 @@ export const AuthComponent = ({
     perfStart("handleSendOtp");
     setLocalError("");
     if (!isEmailValid) {
-      setLocalError("Enter a valid email address before requesting OTP.");
+      setLocalError(t("Enter a valid email address before requesting OTP."));
       perfEnd("handleSendOtp");
       return;
     }
@@ -778,7 +781,7 @@ export const AuthComponent = ({
       setAuthStep("otp");
       setResendCooldown(30);
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Failed to send OTP.");
+      setLocalError(err instanceof Error ? err.message : t("Failed to send OTP."));
     } finally {
       setRequestingOtp(false);
       perfEnd("handleSendOtp");
@@ -795,7 +798,7 @@ export const AuthComponent = ({
     setLocalError("");
 
     if (!isOtpValid) {
-      setLocalError("Enter the 6-digit verification code.");
+      setLocalError(t("Enter the 6-digit verification code."));
       perfEnd("handleVerifyOtp");
       return;
     }
@@ -809,7 +812,7 @@ export const AuthComponent = ({
       setOtpToken(data.otpToken);
       setAuthStep("details");
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "OTP verification failed.");
+      setLocalError(err instanceof Error ? err.message : t("OTP verification failed."));
     } finally {
       setVerifyingOtp(false);
       perfEnd("handleVerifyOtp");
@@ -823,13 +826,13 @@ export const AuthComponent = ({
       setLocalError("");
 
       if (password !== confirmPassword) {
-        setLocalError("Passwords do not match.");
+        setLocalError(t("Passwords do not match."));
         perfEnd("handleFinalSubmit");
         return;
       }
 
       if (!otpToken) {
-        setLocalError("Please verify OTP first.");
+        setLocalError(t("Please verify OTP first."));
         perfEnd("handleFinalSubmit");
         return;
       }
@@ -847,7 +850,7 @@ export const AuthComponent = ({
         setModalStatus("success");
       } catch (err) {
         setModalStatus("error");
-        setLocalError(err instanceof Error ? err.message : "Registration failed.");
+        setLocalError(err instanceof Error ? err.message : t("Registration failed."));
       } finally {
         perfEnd("handleFinalSubmit");
       }
@@ -906,9 +909,9 @@ export const AuthComponent = ({
             className={cn("relative z-10 mx-auto flex w-[320px] flex-col items-center gap-6 p-4 sm:w-[380px]", blurCardClass)}
           >
             <BlurFade className="w-full text-center" delay={0.04} disabled={blurFadeDisabled}>
-              <p className="text-xs uppercase tracking-[0.22em] text-white/80">Sign in</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Welcome back to {brandName}</h2>
-              <p className="mt-2 text-sm text-white/80">Access your account securely.</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-white/80">{t("Sign in")}</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{`${t("Welcome back to")} ${brandName}`}</h2>
+              <p className="mt-2 text-sm text-white/80">{t("Access your account securely.")}</p>
             </BlurFade>
 
             {!!loginError ? (
@@ -919,7 +922,7 @@ export const AuthComponent = ({
 
             <div className="w-full space-y-3">
               <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signin-email">
-                Email
+                {t("Email")}
               </label>
               <div className="glass-input-wrap">
                 <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
@@ -939,7 +942,7 @@ export const AuthComponent = ({
               </div>
 
               <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signin-password">
-                Password
+                {t("Password")}
               </label>
               <div className="glass-input-wrap">
                 <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
@@ -978,11 +981,11 @@ export const AuthComponent = ({
                     }}
                     className="h-4 w-4 rounded border border-white/15 bg-black/40 text-white/90 focus:ring-white/30"
                   />
-                  Remember me
+                  {t("Remember me")}
                 </label>
 
                 <Link to="/auth/register" className="text-white/90 hover:underline">
-                  Create account
+                  {t("Create account")}
                 </Link>
               </div>
 
@@ -993,7 +996,7 @@ export const AuthComponent = ({
                 onClick={handleLoginSubmit}
               >
                 <span className="inline-flex items-center gap-2">
-                  {loginLoading ? "Signing in..." : "Sign in"}
+                  {loginLoading ? t("Signing in...") : t("Sign in")}
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </GlassButton>
@@ -1001,7 +1004,7 @@ export const AuthComponent = ({
 
             <div className="w-full text-center">
               <Link to="/home" className="text-sm text-slate-100 hover:text-white/90 hover:underline">
-                Back to site
+                {t("Back to site")}
               </Link>
             </div>
           </fieldset>
@@ -1026,9 +1029,9 @@ export const AuthComponent = ({
           className={cn("relative z-10 mx-auto flex w-[320px] flex-col items-center gap-6 p-4 sm:w-[380px]", blurCardClass)}
         >
             <BlurFade className="w-full text-center" delay={0.04} disabled={blurFadeDisabled}>
-              <p className="text-xs uppercase tracking-[0.22em] text-white/80">Create account</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">Welcome to {brandName}</h2>
-              <p className="mt-2 text-sm text-white/80">Secure signup with real email OTP verification.</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-white/80">{t("Create account")}</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{`${t("Welcome to")} ${brandName}`}</h2>
+              <p className="mt-2 text-sm text-white/80">{t("Secure signup with real email OTP verification.")}</p>
             </BlurFade>
 
             {!!mergedError && modalStatus !== "error" ? (

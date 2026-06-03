@@ -1,6 +1,7 @@
 // src/layouts/OwnerLayout.jsx
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useAuth } from "../context/AuthContext";
 import NotificationBell from "../components/NotificationBell.jsx";
 import Logo from "../components/brand/Logo.jsx";
@@ -26,6 +27,7 @@ function Item({ to, label, onClick }) {
 
 export default function OwnerLayout() {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const role = user?.role?.toLowerCase();
   const [open, setOpen] = useState(false);
@@ -73,21 +75,21 @@ export default function OwnerLayout() {
         <p className="text-[11px] uppercase tracking-[0.16em] text-white/90">
           CREOS Owner
         </p>
-        <h2 className="mt-1 text-lg font-semibold text-white">Operations Panel</h2>
+        <h2 className="mt-1 text-lg font-semibold text-white">{t('Operations Panel')}</h2>
         <div className="mt-2 text-[11px] text-slate-300">
-          User: <strong className="text-white/90">{displayName}</strong>{" "}
-          <span className="text-slate-500">|</span> Role:{" "}
+          {t('User:')} <strong className="text-white/90">{displayName}</strong>{" "}
+          <span className="text-slate-500">|</span> {t('Role:')}{" "}
           <strong className="text-slate-100">{role || "-"}</strong>
         </div>
       </div>
 
       <nav className="space-y-2 p-3">
-        <Item to="/owner" label="Dashboard" onClick={onNav} />
-        <Item to="/owner/appointments" label="Appointments" onClick={onNav} />
-        <Item to="/owner/properties" label="Properties" onClick={onNav} />
-        <Item to="/owner/market-watch" label="Market Watch" onClick={onNav} />
-        <Item to="/owner/decision-simulator" label="Decision Simulator" onClick={onNav} />
-        <Item to="/owner/chat" label="AI Chat" onClick={onNav} />
+        <Item to="/owner" label={t('Dashboard')} onClick={onNav} />
+        <Item to="/owner/appointments" label={t('Appointments')} onClick={onNav} />
+        <Item to="/owner/properties" label={t('Properties')} onClick={onNav} />
+        <Item to="/owner/market-watch" label={t('Market Watch')} onClick={onNav} />
+        <Item to="/owner/decision-simulator" label={t('Decision Simulator')} onClick={onNav} />
+        <Item to="/owner/chat" label={t('AI Chat')} onClick={onNav} />
 
         <hr className="my-3 border-white/10" />
 
@@ -96,7 +98,7 @@ export default function OwnerLayout() {
           onClick={onNav}
           className="block rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
         >
-          Back to Site
+          {t('Back to Site')}
         </Link>
       </nav>
     </aside>
@@ -148,14 +150,14 @@ export default function OwnerLayout() {
                       onClick={() => setBrandMenuOpen(false)}
                       className="mt-1 block rounded-xl px-3 py-2 text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
                     >
-                      Profile Settings
+                      {t('Profile Settings')}
                     </Link>
                     <button
                       type="button"
                       onClick={handleDropdownLogout}
                       className="mt-1 block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-100 transition hover:bg-white/10 hover:text-white/90"
                     >
-                      Log out
+                      {t('Log out')}
                     </button>
                   </div>
                 ) : null}
@@ -183,7 +185,7 @@ export default function OwnerLayout() {
                 className="rounded-xl border border-white/20 px-3 py-1.5 text-xs text-slate-100 transition hover:bg-white/10 md:text-sm"
                 onClick={logout}
               >
-                Logout
+                {t('Logout')}
               </button>
 
               <div

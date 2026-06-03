@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import Toolbar from "../../components/Toolbar.jsx";
 import api from "../../api/axios";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
-
-const STATUS_LABELS = {
-  PENDING: "Pending",
-  APPROVED: "Approved",
-  COMPLETED: "Completed",
-  CANCELLED: "Cancelled",
-};
 
 const STATUS_COLORS = {
   PENDING: "bg-white/10 text-white/80 border-white/15",
@@ -31,6 +25,11 @@ function TrashIcon() {
 }
 
 export default function AdminAppointments() {
+  const { t } = useTranslation();
+  const STATUS_LABELS = {
+    PENDING: t("Pending"), APPROVED: t("Approved"),
+    COMPLETED: t("Completed"), CANCELLED: t("Cancelled"),
+  };
   const [rows, setRows] = useState([]);
   const [allRows, setAllRows] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
@@ -55,7 +54,7 @@ export default function AdminAppointments() {
       setRows(list);
     } catch (err) {
       console.error(err);
-      alert("Failed to load appointments");
+      alert(t("Failed to load appointments"));
     } finally {
       setLoading(false);
     }
@@ -77,13 +76,13 @@ export default function AdminAppointments() {
   const updateStatus = async (id, status) => {
     try {
       await api.patch(`/appointments/${id}`, { status });
-      notifyCrudSuccess("Appointment status updated", "Operation successful", {
+      notifyCrudSuccess(t("Appointment status updated"), t("Operation successful"), {
         href: "/admin/appointments",
       });
       load();
     } catch (err) {
       console.error(err);
-      notifyCrudError("Failed to update appointment status", "Operation failed", {
+      notifyCrudError(t("Failed to update appointment status"), t("Operation failed"), {
         href: "/admin/appointments",
       });
     }
@@ -94,13 +93,13 @@ export default function AdminAppointments() {
 
     try {
       await api.delete(`/appointments/${id}`);
-      notifyCrudSuccess("Appointment deleted", "Operation successful", {
+      notifyCrudSuccess(t("Appointment deleted"), t("Operation successful"), {
         href: "/admin/appointments",
       });
       load();
     } catch (err) {
       console.error(err);
-      notifyCrudError("Failed to delete appointment", "Operation failed", {
+      notifyCrudError(t("Failed to delete appointment"), t("Operation failed"), {
         href: "/admin/appointments",
       });
     }
@@ -108,7 +107,7 @@ export default function AdminAppointments() {
 
   return (
     <section className="space-y-4">
-      <PageHeader title="Appointments" subtitle="Manage, update, and clean appointment records." />
+      <PageHeader title={t("Appointments")} subtitle={t("Manage, update, and clean appointment records.")} />
 
       <Toolbar className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
         <div className="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-between">

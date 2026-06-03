@@ -1,13 +1,5 @@
-﻿import StarterDashboard from "../../components/dashboard/StarterDashboard.jsx";
-
-const KPI = [
-  { label: "Active Leads", value: "57", change: "+5.2%" },
-  { label: "Scheduled Tours", value: "24", change: "+3.4%" },
-  { label: "Conversion Rate", value: "31%", change: "+2.0%" },
-  { label: "Pipeline Value", value: "$860K", change: "+4.9%" },
-];
-
-const ACTIONS = ["Add Lead", "Link Operation", "Send Follow-up", "Create Brief"];
+import { useTranslation } from 'react-i18next';
+import StarterDashboard from "../../components/dashboard/StarterDashboard.jsx";
 
 const TASKS = [
   { title: "Prioritize warm leads", due: "Today" },
@@ -17,10 +9,18 @@ const TASKS = [
 ];
 
 export default function AgentDashboard() {
+  const { t } = useTranslation();
+  const KPI = [
+    { label: t("Active Leads"), value: "57", change: "+5.2%" },
+    { label: t("Scheduled Tours"), value: "24", change: "+3.4%" },
+    { label: t("Conversion Rate"), value: "31%", change: "+2.0%" },
+    { label: t("Pipeline Value"), value: "$860K", change: "+4.9%" },
+  ];
+  const ACTIONS = ["Add Lead", "Link Operation", "Send Follow-up", "Create Brief"];
   return (
     <StarterDashboard
-      roleLabel="Agent"
-      title="Agent Execution Dashboard"
+      roleLabel={t("agent")}
+      title={t("Agent Execution Dashboard")}
       subtitle="Coordinate leads, tours, and follow-ups with a focused operations workflow."
       kpis={KPI}
       actions={ACTIONS}

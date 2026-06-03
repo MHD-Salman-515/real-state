@@ -173,7 +173,10 @@ export default function TopBar() {
               </button>
 
               {profileOpen ? (
-                <div className="absolute right-0 z-[95] mt-3 w-[92vw] max-w-[280px] overflow-hidden rounded-2xl border border-white/10 bg-black/70 shadow-2xl backdrop-blur-xl">
+                <div
+                  className="absolute z-[95] mt-3 w-[92vw] max-w-[280px] overflow-hidden rounded-2xl border border-white/10 bg-black/70 shadow-2xl backdrop-blur-xl"
+                  style={{ [document.documentElement.dir === 'rtl' ? 'left' : 'right']: 0 }}
+                >
                   <div className="border-b border-white/10 px-4 py-3">
                     <p className="truncate text-sm font-semibold text-white">{displayName}</p>
                     <p className="text-xs text-white/60">{role}</p>

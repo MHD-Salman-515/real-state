@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import PageHeader from "../../components/PageHeader.jsx";
 import Toolbar from "../../components/Toolbar.jsx";
 import Card from "../../components/Card.jsx";
@@ -25,14 +26,6 @@ const EMPTY_FORM = {
   area: "",
   imageFile: null,
 };
-
-const PROPERTY_TYPES = [
-  { value: "APARTMENT", label: "Apartment" },
-  { value: "HOUSE", label: "House" },
-  { value: "VILLA", label: "Villa" },
-  { value: "STUDIO", label: "Studio" },
-  { value: "LAND", label: "Land" },
-];
 
 function EditIcon() {
   return (
@@ -91,10 +84,18 @@ function onlyNumbers(value) {
 }
 
 function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, onSubmit, onChange, onFileChange }) {
+  const { t } = useTranslation();
   if (!open) return null;
 
-  const modalTitle = mode === "edit" ? "Edit Property" : "Add Property";
-  const actionLabel = saving ? "Saving..." : mode === "edit" ? "Update" : "Create";
+  const propertyTypes = [
+    { value: "APARTMENT", label: t("Apartment") },
+    { value: "HOUSE", label: t("House") },
+    { value: "VILLA", label: t("Villa") },
+    { value: "STUDIO", label: t("Studio") },
+    { value: "LAND", label: t("Land") },
+  ];
+  const modalTitle = mode === "edit" ? t("Edit Property") : t("Add Property");
+  const actionLabel = saving ? t("Saving...") : mode === "edit" ? t("Update") : t("Create");
   const inputClass =
     "w-full rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-white/15";
 
@@ -104,14 +105,14 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">{modalTitle}</h2>
-            <p className="mt-1 text-xs text-slate-400">Manage admin property records using the existing dashboard workflow.</p>
+            <p className="mt-1 text-xs text-slate-400">{t("Manage admin property records using the existing dashboard workflow.")}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-white/20 px-2 py-1 text-xs text-slate-300 transition hover:bg-white/10"
           >
-            Close
+            {t("Close")}
           </button>
         </div>
 
@@ -124,7 +125,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
 
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-xs text-slate-300">Owner ID</label>
+              <label className="text-xs text-slate-300">{t("Owner ID")}</label>
               <input
                 className={inputClass}
                 value={form.ownerId}
@@ -134,13 +135,13 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs text-slate-300">Type</label>
+              <label className="text-xs text-slate-300">{t("Type")}</label>
               <select
                 className={inputClass}
                 value={form.type}
                 onChange={(e) => onChange("type", e.target.value)}
               >
-                {PROPERTY_TYPES.map((option) => (
+                {propertyTypes.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -149,7 +150,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1 md:col-span-2">
-              <label className="text-xs text-slate-300">Title</label>
+              <label className="text-xs text-slate-300">{t("Title")}</label>
               <input
                 className={inputClass}
                 value={form.title}
@@ -159,7 +160,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs text-slate-300">City</label>
+              <label className="text-xs text-slate-300">{t("City")}</label>
               <input
                 className={inputClass}
                 value={form.city}
@@ -169,7 +170,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs text-slate-300">Address</label>
+              <label className="text-xs text-slate-300">{t("Address")}</label>
               <input
                 className={inputClass}
                 value={form.address}
@@ -178,7 +179,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs text-slate-300">Area</label>
+              <label className="text-xs text-slate-300">{t("Area")}</label>
               <input
                 className={inputClass}
                 value={form.area}
@@ -188,7 +189,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs text-slate-300">Price</label>
+              <label className="text-xs text-slate-300">{t("Price")}</label>
               <input
                 className={inputClass}
                 value={form.price}
@@ -198,7 +199,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1 md:col-span-2">
-              <label className="text-xs text-slate-300">Description</label>
+              <label className="text-xs text-slate-300">{t("Description")}</label>
               <textarea
                 className={inputClass}
                 rows={4}
@@ -208,7 +209,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             </div>
 
             <div className="space-y-1 md:col-span-2">
-              <label className="text-xs text-slate-300">Image</label>
+              <label className="text-xs text-slate-300">{t("Image")}</label>
               <input
                 type="file"
                 accept="image/*"
@@ -220,11 +221,11 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
             <div className="md:col-span-2">
               {previewSrc ? (
                 <div className="overflow-hidden rounded-xl border border-white/10 bg-black/25">
-                  <img src={previewSrc} alt="Property preview" className="h-48 w-full object-cover" />
+                  <img src={previewSrc} alt={t("Property preview")} className="h-48 w-full object-cover" />
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-white/15 bg-black/20 p-4 text-sm text-slate-400">
-                  No image selected.
+                  {t("No image selected.")}
                 </div>
               )}
             </div>
@@ -236,7 +237,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
               onClick={onClose}
               className="rounded-xl border border-white/20 px-3 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
             >
-              Cancel
+              {t("Cancel")}
             </button>
             <button
               type="submit"
@@ -253,6 +254,7 @@ function PropertyModal({ open, mode, form, previewSrc, saving, error, onClose, o
 }
 
 export default function AdminProperties() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const pageFromUrl = Number(searchParams.get("page") || "1");
   const page = Number.isFinite(pageFromUrl) && pageFromUrl > 0 ? pageFromUrl : 1;
@@ -287,7 +289,7 @@ export default function AdminProperties() {
         totalPages: result.totalPages,
       });
     } catch (err) {
-      setError(extractApiErrorMessage(err, "Failed to load properties"));
+      setError(extractApiErrorMessage(err, t("Failed to load properties")));
     } finally {
       setLoading(false);
     }
@@ -347,11 +349,11 @@ export default function AdminProperties() {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!String(form.title || "").trim()) {
-      setFormError("Title is required.");
+      setFormError(t("Title is required."));
       return;
     }
     if (!String(form.city || "").trim()) {
-      setFormError("City is required.");
+      setFormError(t("City is required."));
       return;
     }
 
@@ -360,12 +362,12 @@ export default function AdminProperties() {
     try {
       if (modalMode === "edit" && editingRow?.id != null) {
         await updateAdminProperty(editingRow.id, form);
-        notifyCrudSuccess("Property updated successfully", "Operation successful", {
+        notifyCrudSuccess(t("Property updated successfully"), t("Operation successful"), {
           href: "/admin/properties",
         });
       } else {
         await createAdminProperty(form);
-        notifyCrudSuccess("Property created successfully", "Operation successful", {
+        notifyCrudSuccess(t("Property created successfully"), t("Operation successful"), {
           href: "/admin/properties",
         });
       }
@@ -373,9 +375,9 @@ export default function AdminProperties() {
       closeModal(true);
       await load(page);
     } catch (err) {
-      const message = extractApiErrorMessage(err, "Failed to save property");
+      const message = extractApiErrorMessage(err, t("Failed to save property"));
       setFormError(message);
-      notifyCrudError(message, "Operation failed", {
+      notifyCrudError(message, t("Operation failed"), {
         href: "/admin/properties",
       });
     } finally {
@@ -384,11 +386,11 @@ export default function AdminProperties() {
   };
 
   const onDelete = async (row) => {
-    if (!confirm(`Delete property ${row?.title || `#${row?.id}`}? This action cannot be undone.`)) return;
+    if (!confirm(`${t("Delete property")} ${row?.title || `#${row?.id}`}?`)) return;
 
     try {
       await deleteAdminProperty(row.id);
-      notifyCrudSuccess("Property deleted", "Operation successful", {
+      notifyCrudSuccess(t("Property deleted"), t("Operation successful"), {
         href: "/admin/properties",
       });
 
@@ -403,9 +405,9 @@ export default function AdminProperties() {
       const status = err?.response?.status;
       const message =
         status === 404
-          ? "Property no longer exists on the server."
-          : extractApiErrorMessage(err, "Failed to delete property");
-      notifyCrudError(message, "Operation failed", {
+          ? t("Property no longer exists on the server.")
+          : extractApiErrorMessage(err, t("Failed to delete property"));
+      notifyCrudError(message, t("Operation failed"), {
         href: "/admin/properties",
       });
     }
@@ -417,16 +419,16 @@ export default function AdminProperties() {
   return (
     <section className="space-y-4">
       <PageHeader
-        title="Properties"
-        subtitle="Manage all property records from the admin dashboard."
+        title={t("Properties")}
+        subtitle={t("Manage all property records from the admin dashboard.")}
       />
 
       <Toolbar className="rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-xl">
         <div className="flex w-full flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="text-xs text-slate-300">
-            Page {pageMeta.page}
-            {pageMeta.totalPages ? ` of ${pageMeta.totalPages}` : ""}
-            {pageMeta.total != null ? ` • ${pageMeta.total} total` : ""}
+            {t("Page")} {pageMeta.page}
+            {pageMeta.totalPages ? ` ${t("of")} ${pageMeta.totalPages}` : ""}
+            {pageMeta.total != null ? ` • ${pageMeta.total} ${t("total")}` : ""}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -435,14 +437,14 @@ export default function AdminProperties() {
               onClick={() => load(page)}
               className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90"
             >
-              Refresh
+              {t("Refresh")}
             </button>
             <button
               type="button"
               onClick={openCreate}
               className="rounded-xl bg-white/10 px-3 py-2 text-xs font-medium text-black transition hover:bg-white/10"
             >
-              Add Property
+              {t("Add Property")}
             </button>
           </div>
         </div>
@@ -450,8 +452,8 @@ export default function AdminProperties() {
 
       <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="border-b border-white/10 px-4 py-3 md:px-5">
-          <h3 className="text-sm font-semibold text-white md:text-base">All Properties</h3>
-          <p className="mt-1 text-xs text-slate-300 md:text-sm">Create, update, and remove listings using admin endpoints.</p>
+          <h3 className="text-sm font-semibold text-white md:text-base">{t("All Properties")}</h3>
+          <p className="mt-1 text-xs text-slate-300 md:text-sm">{t("Create, update, and remove listings using admin endpoints.")}</p>
         </div>
 
         {loading ? (
@@ -465,29 +467,29 @@ export default function AdminProperties() {
           </div>
         ) : error ? (
           <div className="p-8 text-center">
-            <h4 className="text-base font-semibold text-white">Unable to load properties</h4>
+            <h4 className="text-base font-semibold text-white">{t("Unable to load properties")}</h4>
             <p className="mt-2 text-sm text-red-300">{error}</p>
           </div>
         ) : rows.length === 0 ? (
           <div className="p-8 text-center">
-            <h4 className="text-base font-semibold text-white">No properties found</h4>
-            <p className="mt-2 text-sm text-slate-300">Use the add action to create the first admin-managed property.</p>
+            <h4 className="text-base font-semibold text-white">{t("No properties found")}</h4>
+            <p className="mt-2 text-sm text-slate-300">{t("Use the add action to create the first admin-managed property.")}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-[1280px] text-sm leading-5 text-slate-100">
               <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
                 <tr className="border-b border-white/10">
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Image</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Image")}</th>
                   <th className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300 tabular-nums">ID</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Title</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">City</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Type</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Price</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Area</th>
-                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Owner</th>
-                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">Created</th>
-                  <th className="w-[140px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] font-semibold uppercase tracking-wide text-slate-300">Actions</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Title")}</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("City")}</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Type")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Price")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Area")}</th>
+                  <th className="px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Owner")}</th>
+                  <th className="whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Created")}</th>
+                  <th className="w-[140px] whitespace-nowrap px-4 py-3 align-middle text-center text-[11px] font-semibold uppercase tracking-wide text-slate-300">{t("Actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
@@ -496,7 +498,7 @@ export default function AdminProperties() {
                     <td className="px-4 py-3 align-middle">
                       <img
                         src={resolveImageSrc(row)}
-                        alt={row.title || "Property"}
+                        alt={row.title || t("Property")}
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = PLACEHOLDER_SRC;
@@ -511,7 +513,7 @@ export default function AdminProperties() {
                     <td className="max-w-[160px] truncate px-4 py-3 align-middle" title={row.city || "—"}>
                       {row.city || "—"}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 align-middle">{row.type || "—"}</td>
+                    <td className="whitespace-nowrap px-4 py-3 align-middle">{row.type ? t(row.type.charAt(0) + row.type.slice(1).toLowerCase()) : "—"}</td>
                     <td className="whitespace-nowrap px-4 py-3 align-middle">
                       {row.price != null && row.price !== ""
                         ? Number(row.price).toLocaleString("en-US", { maximumFractionDigits: 0 })
@@ -532,8 +534,8 @@ export default function AdminProperties() {
                           type="button"
                           onClick={() => openEdit(row)}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
-                          title="Edit property"
-                          aria-label="Edit property"
+                          title={t("Edit property")}
+                          aria-label={t("Edit property")}
                         >
                           <EditIcon />
                         </button>
@@ -541,8 +543,8 @@ export default function AdminProperties() {
                           type="button"
                           onClick={() => onDelete(row)}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/40 bg-red-500/10 text-red-300 transition duration-200 hover:bg-red-500/20"
-                          title="Delete property"
-                          aria-label="Delete property"
+                          title={t("Delete property")}
+                          aria-label={t("Delete property")}
                         >
                           <TrashIcon />
                         </button>
@@ -564,16 +566,16 @@ export default function AdminProperties() {
             onClick={() => setPage(page - 1)}
             className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Previous
+            {t("Previous")}
           </button>
-          <span className="text-xs text-slate-300">Page {page}</span>
+          <span className="text-xs text-slate-300">{t("Page")} {page}</span>
           <button
             type="button"
             disabled={!canGoNext}
             onClick={() => setPage(page + 1)}
             className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Next
+            {t("Next")}
           </button>
         </div>
       </Toolbar>

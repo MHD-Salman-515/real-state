@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
 import api from "../../api/axios";
 import { notifyCrudError, notifyCrudSuccess } from "../../utils/notify.js";
 
 export default function RecordPayments() {
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState([]);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [amount, setAmount] = useState("");
@@ -23,12 +25,12 @@ export default function RecordPayments() {
     e.preventDefault();
 
     if (!selectedInvoice) {
-      alert("Please select an invoice first");
+      alert(t("Please select an invoice first"));
       return;
     }
 
     if (!amount || Number(amount) <= 0) {
-      alert("Please enter a valid amount");
+      alert(t("Please enter a valid amount"));
       return;
     }
 
@@ -40,7 +42,7 @@ export default function RecordPayments() {
         amount: Number(amount),
       });
 
-      notifyCrudSuccess("Payment recorded successfully", "Operation successful", {
+      notifyCrudSuccess(t("Payment recorded successfully"), t("Operation successful"), {
         href: "/accountant/record-payments",
       });
 
@@ -49,7 +51,7 @@ export default function RecordPayments() {
       await loadInvoices();
     } catch (err) {
       console.error(err);
-      notifyCrudError("Failed to record payment", "Operation failed", {
+      notifyCrudError(t("Failed to record payment"), t("Operation failed"), {
         href: "/accountant/record-payments",
       });
     } finally {
@@ -59,7 +61,7 @@ export default function RecordPayments() {
 
   return (
     <section className="space-y-4">
-      <PageHeader title="Record Payments" subtitle="Settle invoices and update balances." />
+      <PageHeader title={t("Record Payments")} subtitle={t("Settle invoices and update balances.")} />
 
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
         <form onSubmit={submitPayment} className="space-y-4">
@@ -98,7 +100,7 @@ export default function RecordPayments() {
             disabled={loading}
             className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "Saving..." : "Record Payment"}
+            {loading ? t("Saving...") : t("Record Payment")}
           </button>
         </form>
       </Card>
