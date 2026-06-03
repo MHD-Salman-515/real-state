@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext.jsx";
 import api, { AUTH_ME_PATH, extractApiErrorMessage } from "../../api/axios";
 
@@ -18,6 +19,7 @@ function roleDestination(role) {
 }
 
 export default function OAuthCallback() {
+  const { t } = useTranslation();
   const nav = useNavigate();
   const { hydrateAuth } = useAuth();
   const [error, setError] = useState("");
@@ -28,7 +30,7 @@ export default function OAuthCallback() {
       const token = params.get("token") || params.get("accessToken");
 
       if (!token) {
-        setError("OAuth token is missing.");
+        setError(t("OAuth token is missing."));
         return;
       }
 
@@ -39,22 +41,22 @@ export default function OAuthCallback() {
         const user = res.data;
 
         if (!user) {
-          throw new Error("Unable to load user profile.");
+          throw new Error(t("Unable to load user profile."));
         }
 
         hydrateAuth(token, user);
         nav(roleDestination(user.role), { replace: true });
       } catch (err) {
-        setError(extractApiErrorMessage(err, "OAuth login failed."));
+        setError(extractApiErrorMessage(err, t("OAuth login failed.")));
       }
     };
 
     run();
-  }, [hydrateAuth, nav]);
+  }, [hydrateAuth, nav, t]);
 
   return (
     <div className="mx-auto w-full max-w-md rounded-2xl border border-white/10 bg-black/60 p-6 text-center text-white shadow-2xl backdrop-blur-sm">
-      {!error ? <p className="text-white/80">Completing OAuth sign-in...</p> : null}
+      {!error ? <p className="text-white/80">{t("Completing OAuth sign-in...")}</p> : null}
       {error ? <p className="text-red-300">{error}</p> : null}
     </div>
   );

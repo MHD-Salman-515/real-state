@@ -1,4 +1,5 @@
 import type { ChatMessage } from "@/types/chat";
+import { useTranslation } from "react-i18next";
 
 interface OwnerChatMessagesProps {
   messages: ChatMessage[];
@@ -13,6 +14,8 @@ function timeLabel(value?: string): string {
 }
 
 export default function OwnerChatMessages({ messages, loading }: OwnerChatMessagesProps) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="space-y-3 p-6">
@@ -27,9 +30,9 @@ export default function OwnerChatMessages({ messages, loading }: OwnerChatMessag
     return (
       <div className="grid h-full min-h-[400px] place-items-center p-8 text-center">
         <div className="max-w-lg rounded-3xl border border-white/10 bg-black/40 px-6 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-          <p className="text-sm font-medium text-white">Start your first owner conversation</p>
+          <p className="text-sm font-medium text-white">{t("Start your first owner conversation")}</p>
           <p className="mt-2 text-sm text-white/60">
-            Ask about portfolio strategy, pricing, market comparisons, or operational actions.
+            {t("Ask about portfolio strategy, pricing, market comparisons, or operational actions.")}
           </p>
         </div>
       </div>
@@ -53,10 +56,10 @@ export default function OwnerChatMessages({ messages, loading }: OwnerChatMessag
               }`}
             >
               <div className="mb-1 flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] opacity-70">
-                <span>{isUser ? "Owner" : isTool ? "Market Tool" : "Assistant"}</span>
+                <span>{isUser ? t("Owner") : isTool ? t("Market Tool") : t("Assistant")}</span>
                 <span>{timeLabel(msg.createdAt)}</span>
               </div>
-              <p className="whitespace-pre-wrap text-sm leading-6">{msg.content || "No content returned."}</p>
+              <p className="whitespace-pre-wrap text-sm leading-6">{msg.content || t("No content returned.")}</p>
             </article>
           </div>
         );

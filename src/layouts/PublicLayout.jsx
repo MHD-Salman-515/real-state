@@ -113,7 +113,7 @@ export default function PublicLayout() {
                 type="button"
                 onClick={handleLogoNavigate}
                 className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-transparent transition hover:border-white/15 hover:bg-white/10"
-                aria-label="Go to dashboard home"
+                aria-label={t("Go to dashboard home")}
               >
                 <Logo className="h-5 w-5 text-white/90" />
               </button>

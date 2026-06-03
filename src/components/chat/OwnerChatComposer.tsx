@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp, BarChart3, Lightbulb, TrendingUp } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "react-i18next";
 
 interface OwnerChatComposerProps {
   sending: boolean;
@@ -8,6 +9,7 @@ interface OwnerChatComposerProps {
 }
 
 export default function OwnerChatComposer({ sending, onSend }: OwnerChatComposerProps) {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -27,19 +29,19 @@ export default function OwnerChatComposer({ sending, onSend }: OwnerChatComposer
 
   const quickActions = [
     {
-      label: "Evaluate Price",
+      label: t("Evaluate Price"),
       icon: <BarChart3 className="h-3.5 w-3.5" />,
-      prompt: "Evaluate the expected listing price for my property based on current market conditions.",
+      prompt: t("Evaluate the expected listing price for my property based on current market conditions."),
     },
     {
-      label: "Market Snapshot",
+      label: t("Market Snapshot"),
       icon: <TrendingUp className="h-3.5 w-3.5" />,
-      prompt: "Give me a concise market snapshot and price trend for this area.",
+      prompt: t("Give me a concise market snapshot and price trend for this area."),
     },
     {
-      label: "Strategy Advice",
+      label: t("Strategy Advice"),
       icon: <Lightbulb className="h-3.5 w-3.5" />,
-      prompt: "Recommend a pricing and negotiation strategy to improve conversion for my listing.",
+      prompt: t("Recommend a pricing and negotiation strategy to improve conversion for my listing."),
     },
   ];
 
@@ -57,7 +59,7 @@ export default function OwnerChatComposer({ sending, onSend }: OwnerChatComposer
             }
           }}
           rows={2}
-          placeholder="Ask about valuation, market trends, pricing strategy, or your portfolio performance..."
+          placeholder={t("Ask about valuation, market trends, pricing strategy, or your portfolio performance...")}
           className="min-h-[58px] resize-none border-none bg-transparent px-2 py-2 text-[15px] leading-6 placeholder:text-white/40 focus-visible:ring-0"
           disabled={sending}
         />
@@ -83,7 +85,7 @@ export default function OwnerChatComposer({ sending, onSend }: OwnerChatComposer
             onClick={submit}
             disabled={sending || !text.trim()}
             className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Send message"
+            aria-label={t("Send message")}
           >
             <ArrowUp className="h-4 w-4" />
           </button>

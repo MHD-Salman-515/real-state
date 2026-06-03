@@ -212,7 +212,7 @@ export default function AdminLayout() {
               <div className="relative flex items-center gap-2" ref={brandMenuRef}>
                 <button type="button" onClick={handleLogoNavigate}
                   className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-black/30 transition hover:border-white/15 hover:bg-white/10"
-                  aria-label="Go to dashboard home"><Logo className="h-5 w-5 text-white/90" /></button>
+                  aria-label={t("Go to dashboard home")}><Logo className="h-5 w-5 text-white/90" /></button>
                 <button type="button" onClick={() => setBrandMenuOpen((v) => !v)}
                   className="text-sm font-semibold tracking-[0.14em] text-white"
                   aria-haspopup="menu" aria-expanded={brandMenuOpen}>CREOS</button>
@@ -305,7 +305,7 @@ export default function AdminLayout() {
                 <div className="flex items-center gap-2">
                   <button type="button" onClick={() => setUserMenuOpen((v) => !v)}
                     className="inline-flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/20 bg-white/5 px-2.5 text-xs text-slate-100 transition hover:bg-white/10"
-                    aria-label="open user menu">{initials}</button>
+                    aria-label={t("Open user menu")}>{initials}</button>
                   <div className="hidden text-right md:block">
                     <p className="max-w-[130px] truncate text-xs text-slate-200">{displayName}</p>
                     <p className="text-[11px] text-slate-400">{t('System Admin')}</p>

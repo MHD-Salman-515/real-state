@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import api from "../../api/axios";
 import PageHeader from "../../components/PageHeader.jsx";
 import Card from "../../components/Card.jsx";
@@ -8,6 +9,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import StatusDot from "../../components/StatusDot.jsx";
 
 export default function OwnerAppointments() {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   const [rows, setRows] = useState([]);
@@ -96,9 +98,9 @@ export default function OwnerAppointments() {
           <button
             type="button"
             className="self-start rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90 md:self-auto"
-            title="Refresh UI"
+            title={t("Refresh")}
           >
-            Refresh
+            {t("Refresh")}
           </button>
         </div>
       </Toolbar>
@@ -121,9 +123,9 @@ export default function OwnerAppointments() {
       ) : (
         <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
           <div className="border-b border-white/10 px-4 py-3 md:px-5">
-            <h3 className="text-sm font-semibold text-white md:text-base">Appointments</h3>
+            <h3 className="text-sm font-semibold text-white md:text-base">{t("Appointments")}</h3>
             <p className="mt-1 text-xs text-slate-300 md:text-sm">
-              Review scheduled visits and monitor their current status.
+              {t("Review scheduled visits and monitor their current status.")}
             </p>
           </div>
 

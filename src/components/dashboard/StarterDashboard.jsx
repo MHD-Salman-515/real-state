@@ -49,16 +49,18 @@ export default function StarterDashboard({
   tasks = DEFAULT_TASKS,
   activity = DEFAULT_ACTIVITY,
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-xl md:p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] uppercase tracking-wide text-white/90">
-              {roleLabel}
+              {t(roleLabel)}
             </span>
-            <h1 className="mt-3 text-2xl font-bold text-white md:text-3xl">{title}</h1>
-            <p className="mt-2 max-w-3xl text-sm text-slate-300 md:text-base">{subtitle}</p>
+            <h1 className="mt-3 text-2xl font-bold text-white md:text-3xl">{t(title)}</h1>
+            <p className="mt-2 max-w-3xl text-sm text-slate-300 md:text-base">{t(subtitle)}</p>
           </div>
         </div>
       </section>
@@ -69,7 +71,7 @@ export default function StarterDashboard({
             key={kpi.label}
             className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl transition duration-300 hover:border-white/15 hover:bg-white/10"
           >
-            <p className="text-xs uppercase tracking-wide text-slate-400">{kpi.label}</p>
+            <p className="text-xs uppercase tracking-wide text-slate-400">{t(kpi.label)}</p>
             <p className="mt-2 text-3xl font-bold text-white">{kpi.value}</p>
             <p className="mt-2 text-xs text-white/90">{kpi.change}</p>
           </article>
@@ -77,7 +79,7 @@ export default function StarterDashboard({
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
-        <div className="mb-3 text-sm font-semibold text-white">Quick Actions</div>
+        <div className="mb-3 text-sm font-semibold text-white">{t("Quick Actions")}</div>
         <div className="flex flex-wrap gap-2">
           {actions.map((action) => (
             <button
@@ -85,7 +87,7 @@ export default function StarterDashboard({
               type="button"
               className="rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-xs text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
             >
-              {action}
+              {t(action)}
             </button>
           ))}
         </div>
@@ -94,23 +96,23 @@ export default function StarterDashboard({
       <section className="grid gap-4 lg:grid-cols-[1.8fr_1fr]">
         <article className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="text-sm font-semibold text-white">Recent Activity</div>
+            <div className="text-sm font-semibold text-white">{t("Recent Activity")}</div>
             <button
               type="button"
               className="rounded-lg border border-white/15 bg-black/20 px-2.5 py-1 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90"
             >
-              View all
+              {t("View all")}
             </button>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-400">
-                  <th className="px-2 py-2">ID</th>
-                  <th className="px-2 py-2">Item</th>
-                  <th className="px-2 py-2">Owner</th>
-                  <th className="px-2 py-2">Status</th>
-                  <th className="px-2 py-2">Time</th>
+                  <th className="px-2 py-2">{t("ID")}</th>
+                  <th className="px-2 py-2">{t("Item")}</th>
+                  <th className="px-2 py-2">{t("Owner")}</th>
+                  <th className="px-2 py-2">{t("Status")}</th>
+                  <th className="px-2 py-2">{t("Time")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -121,10 +123,10 @@ export default function StarterDashboard({
                     <td className="px-2 py-2">{row.owner}</td>
                     <td className="px-2 py-2">
                       <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs ${statusClass(row.status)}`}>
-                        {row.status}
+                        {t(row.status)}
                       </span>
                     </td>
-                    <td className="px-2 py-2 text-slate-400">{row.time}</td>
+                    <td className="px-2 py-2 text-slate-400">{t(row.time)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -133,10 +135,10 @@ export default function StarterDashboard({
         </article>
 
         <aside className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
-          <div className="mb-3 text-sm font-semibold text-white">Tasks & Reminders</div>
+          <div className="mb-3 text-sm font-semibold text-white">{t("Tasks & Reminders")}</div>
           {tasks.length === 0 ? (
             <div className="rounded-xl border border-dashed border-white/15 bg-black/20 p-4 text-sm text-slate-400">
-              No reminders yet.
+              {t("No reminders yet.")}
             </div>
           ) : (
             <div className="space-y-2">
@@ -145,8 +147,8 @@ export default function StarterDashboard({
                   key={`${task.title}-${task.due}`}
                   className="rounded-xl border border-white/10 bg-black/25 p-3 transition duration-200 hover:border-white/15 hover:bg-black/35"
                 >
-                  <p className="text-sm text-slate-100">{task.title}</p>
-                  <p className="mt-1 text-xs text-white/90">{task.due}</p>
+                  <p className="text-sm text-slate-100">{t(task.title)}</p>
+                  <p className="mt-1 text-xs text-white/90">{t(task.due)}</p>
                 </div>
               ))}
             </div>
@@ -156,3 +158,4 @@ export default function StarterDashboard({
     </div>
   );
 }
+import { useTranslation } from "react-i18next";

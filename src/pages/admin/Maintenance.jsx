@@ -191,9 +191,9 @@ export default function AdminMaintenance() {
           <table className="min-w-[1120px] text-sm leading-5 text-slate-100">
             <thead className="sticky top-0 z-10 border-b border-white/10 bg-black/40 backdrop-blur-xl">
               <tr>
-                <th className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300 tabular-nums">ID</th>
-                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Property</th>
-                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">Client</th>
+                <th className="min-w-[90px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300 tabular-nums">{tr("ID")}</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("Property")}</th>
+                <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("Client")}</th>
                 <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("worker")}</th>
                 <th className="px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("Supplier")}</th>
                 <th className="w-[160px] whitespace-nowrap px-4 py-3 align-middle text-left text-[11px] uppercase tracking-wide text-slate-300">{tr("Status")}</th>

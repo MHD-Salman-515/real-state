@@ -95,7 +95,7 @@ export default function CostLink() {
         err?.message ||
         t("Failed to save expense");
       console.error("[supplier/cost-link] save failed", { status, message, err });
-      setSaveError(`Save failed: ${message}`);
+      setSaveError(`${t("Save failed:")} ${message}`);
       notifyCrudError(t("Failed to save expense"), t("Operation failed"), {
         href: "/supplier/cost-link",
       });
@@ -117,20 +117,20 @@ export default function CostLink() {
     <section className="space-y-4">
       <PageHeader
         title={t("Cost Link")}
-        subtitle="Log your expenses and link each cost to a maintenance ticket."
+        subtitle={t("Log your expenses and link each cost to a maintenance ticket.")}
       />
 
       <Card className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-100">
-              Linked Ticket
+              {t("Linked Ticket")}
             </label>
             {loadingTickets ? (
               <p className="text-xs text-slate-400">{t("Loading tickets...")}</p>
             ) : ticketOptions.length === 0 ? (
               <p className="text-xs text-slate-400">
-                No accepted or in-progress tickets are assigned to you.
+                {t("No accepted or in-progress tickets are assigned to you.")}
               </p>
             ) : (
               <select
@@ -140,7 +140,7 @@ export default function CostLink() {
                 className={selectClass}
               >
                 <option className={optionClass} value="">
-                  Select ticket...
+                  {t("Select ticket...")}
                 </option>
                 {ticketOptions.map((t) => (
                   <option key={t.id} className={optionClass} value={t.id}>
@@ -153,7 +153,7 @@ export default function CostLink() {
 
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-100">
-              Expense Amount
+              {t("Expense Amount")}
             </label>
             <input
               type="number"
@@ -163,13 +163,13 @@ export default function CostLink() {
               className={inputClass}
               min="0"
               step="0.01"
-              placeholder="Example: 150"
+              placeholder={t("Example: 150")}
             />
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-100">
-              Expense Description
+              {t("Expense Description")}
             </label>
             <textarea
               name="description"
@@ -196,7 +196,7 @@ export default function CostLink() {
         </form>
 
         <p className="mt-3 text-[11px] text-slate-400">
-          After saving expenses, accounting can review and link them to supplier invoices.
+          {t("After saving expenses, accounting can review and link them to supplier invoices.")}
         </p>
       </Card>
     </section>

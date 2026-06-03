@@ -120,7 +120,7 @@ export default function MapPickerPage() {
             <input
               value={manualLon}
               onChange={e => setManualLon(e.target.value)}
-              placeholder="خط الطول (Lon)"
+              placeholder="خط الطول"
               className="flex-1 px-3 py-2 text-sm outline-none"
               style={{
                 background: "rgba(255,255,255,0.04)",
@@ -131,7 +131,7 @@ export default function MapPickerPage() {
             <input
               value={manualLat}
               onChange={e => setManualLat(e.target.value)}
-              placeholder="خط العرض (Lat)"
+              placeholder="خط العرض"
               className="flex-1 px-3 py-2 text-sm outline-none"
               style={{
                 background: "rgba(255,255,255,0.04)",

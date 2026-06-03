@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import PageHeader from "../../components/PageHeader.jsx";
 import Toolbar from "../../components/Toolbar.jsx";
@@ -41,6 +42,7 @@ function TrashIcon() {
 }
 
 export default function OwnerProperties() {
+  const { t } = useTranslation();
   const toast = useToast();
   const nav = useNavigate();
   const { user } = useAuth();
@@ -78,8 +80,8 @@ export default function OwnerProperties() {
         setRows(mapped);
       } catch (err) {
         console.error(err);
-        setError("فشل تحميل العقارات من الخادم");
-        toast.error("تعذر تحميل عقاراتك");
+        setError(t("Failed to load properties from the server"));
+        toast.error(t("Unable to load your properties"));
       } finally {
         setLoading(false);
       }
@@ -95,7 +97,7 @@ export default function OwnerProperties() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("هل أنت متأكد من حذف هذا العقار؟")) {
+    if (!window.confirm(t("Are you sure you want to delete this property?"))) {
       return;
     }
 
@@ -103,12 +105,12 @@ export default function OwnerProperties() {
       await api.delete(`/properties/${id}`);
       setRows((prev) => prev.filter((r) => r.id !== id));
       setAllRows((prev) => prev.filter((r) => r.id !== id));
-      notifyCrudSuccess(`Property deleted (${id})`, "Operation successful", {
+      notifyCrudSuccess(t("Property deleted ({{id}})", { id }), t("Operation successful"), {
         href: "/owner/properties",
       });
     } catch (err) {
       console.error(err);
-      notifyCrudError("Failed to delete property", "Operation failed", {
+      notifyCrudError(t("Failed to delete property"), t("Operation failed"), {
         href: "/owner/properties",
       });
     }
@@ -138,7 +140,7 @@ export default function OwnerProperties() {
             e.currentTarget.src = placeholderSrc;
           }}
           className="h-14 w-20 rounded-lg border border-white/10 object-cover"
-          alt="Property"
+          alt={t("Property")}
         />
       ),
     },
@@ -150,16 +152,16 @@ export default function OwnerProperties() {
           <button
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
             onClick={() => handleEdit(r.id)}
-            title="Edit property"
-            aria-label="Edit property"
+            title={t("Edit property")}
+            aria-label={t("Edit property")}
           >
             <EditIcon />
           </button>
           <button
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-rose-300 transition duration-200 hover:border-rose-300/40 hover:bg-rose-500/10 hover:text-rose-200"
             onClick={() => handleDelete(r.id)}
-            title="Delete property"
-            aria-label="Delete property"
+            title={t("Delete property")}
+            aria-label={t("Delete property")}
           >
             <TrashIcon />
           </button>
@@ -229,7 +231,7 @@ export default function OwnerProperties() {
             className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition duration-200 hover:bg-white/10"
             onClick={handleAdd}
           >
-            Add Property
+            {t("Add Property")}
           </button>
         }
       />
@@ -258,14 +260,14 @@ export default function OwnerProperties() {
               className="rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
               onClick={handleClearSearch}
             >
-              Clear
+              {t("Clear")}
             </button>
             <button
               type="button"
               className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-sm text-white/90 transition duration-200 hover:bg-white/10"
               onClick={handleAdd}
             >
-              Add Property
+              {t("Add Property")}
             </button>
           </div>
         </div>
@@ -273,9 +275,9 @@ export default function OwnerProperties() {
 
       {rows.length === 0 ? (
         <Card className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl">
-          <h3 className="text-lg font-semibold text-white">No properties found</h3>
+          <h3 className="text-lg font-semibold text-white">{t("No properties found")}</h3>
           <p className="mt-2 text-sm text-slate-300">
-            Try adjusting your search or add a new property.
+            {t("Try adjusting your search or add a new property.")}
           </p>
           <div className="mt-5">
             <button
@@ -283,7 +285,7 @@ export default function OwnerProperties() {
               onClick={handleAdd}
               className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 transition duration-200 hover:bg-white/10"
             >
-              Add Property
+              {t("Add Property")}
             </button>
           </div>
         </Card>
@@ -291,9 +293,9 @@ export default function OwnerProperties() {
         <Card className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
           <div className="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3 md:px-5">
             <div>
-              <h3 className="text-sm font-semibold text-white md:text-base">Your Properties</h3>
+              <h3 className="text-sm font-semibold text-white md:text-base">{t("Your Properties")}</h3>
               <p className="mt-1 text-xs text-slate-300 md:text-sm">
-                Manage, edit, and track your listings.
+                {t("Manage, edit, and track your listings.")}
               </p>
             </div>
           </div>

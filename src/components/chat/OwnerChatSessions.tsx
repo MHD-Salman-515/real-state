@@ -1,4 +1,5 @@
 import type { ChatSession } from "@/types/chat";
+import { useTranslation } from "react-i18next";
 
 interface OwnerChatSessionsProps {
   sessions: ChatSession[];
@@ -22,16 +23,18 @@ export default function OwnerChatSessions({
   onSelect,
   onNew,
 }: OwnerChatSessionsProps) {
+  const { t } = useTranslation();
+
   return (
     <aside className="rounded-3xl border border-white/10 bg-black/45 p-3 backdrop-blur-xl">
       <div className="mb-3 flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-white/70">Sessions</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-white/70">{t("Sessions")}</h2>
         <button
           type="button"
           onClick={onNew}
           className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/15"
         >
-          + New
+          {t("+ New")}
         </button>
       </div>
 
@@ -43,7 +46,7 @@ export default function OwnerChatSessions({
         </div>
       ) : sessions.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-white/60">
-          No sessions yet. Start a new conversation.
+          {t("No sessions yet. Start a new conversation.")}
         </div>
       ) : (
         <ul className="max-h-[620px] space-y-2 overflow-y-auto pr-1">
@@ -60,9 +63,9 @@ export default function OwnerChatSessions({
                       : "border-white/10 bg-black/25 text-white/80 hover:bg-white/5"
                   }`}
                 >
-                  <p className="truncate text-sm font-medium">{session.title || "Untitled session"}</p>
+                  <p className="truncate text-sm font-medium">{session.title || t("Untitled session")}</p>
                   <div className="mt-1 flex items-center justify-between text-xs text-white/45">
-                    <span className="truncate">{session.preview || "No preview yet"}</span>
+                    <span className="truncate">{session.preview || t("No preview yet")}</span>
                     <span>{formatDate(session.updatedAt || session.createdAt)}</span>
                   </div>
                 </button>

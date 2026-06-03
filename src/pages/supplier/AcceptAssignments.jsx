@@ -72,7 +72,7 @@ export default function AcceptAssignments() {
     <section className="space-y-4">
       <PageHeader
         title={t("Tasks")}
-        subtitle="Assigned maintenance requests that need your response."
+        subtitle={t("Assigned maintenance requests that need your response.")}
       />
 
       {loading ? (
@@ -91,7 +91,7 @@ export default function AcceptAssignments() {
               className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl"
             >
               <div className="flex items-center justify-between gap-2">
-                <h3 className="text-base font-semibold text-white">Ticket #{ticket.id}</h3>
+                <h3 className="text-base font-semibold text-white">{t("Ticket #{{id}}", { id: ticket.id })}</h3>
                 <span className="rounded-full border border-white/15 bg-white/10 px-2 py-1 text-xs text-white/80">
                   {ticket.priority}
                 </span>

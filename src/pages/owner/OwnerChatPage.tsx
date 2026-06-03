@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Command, MessageSquareDashed, Sparkles, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 import ChatMessageList from "@/components/owner-chat/ChatMessageList";
 import ChatComposer from "@/components/owner-chat/ChatComposer";
@@ -10,6 +11,7 @@ import { useOwnerChatUi } from "@/hooks/chat/useOwnerChatUi";
 import { useToast } from "@/components/ToastProvider.jsx";
 
 export default function OwnerChatPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const params = useParams();
   const sessionIdFromRoute = params.sessionId;
@@ -59,38 +61,38 @@ export default function OwnerChatPage() {
         if (sessionIdFromRoute) navigate(target, { replace: true });
         return;
       }
-      toast.warning("Session created, but no session id was returned.");
+      toast.warning(t("Session created, but no session id was returned."));
     } catch (err: any) {
       console.error("[OwnerChat] createSession failed", err?.response?.data || err);
-      toast.error(err?.response?.data?.message || err?.message || "Failed to start a new session.");
+      toast.error(err?.response?.data?.message || err?.message || t("Failed to start a new session."));
     }
   };
 
   const onDeleteSession = async (id: string) => {
     try {
       await deleteSession(id);
-      toast.success("Session deleted.");
+      toast.success(t("Session deleted."));
       if (activeSessionId === id) navigate("/owner/chat", { replace: true });
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Delete failed.");
+      toast.error(err?.response?.data?.message || err?.message || t("Delete failed."));
     }
   };
 
   const onArchive = async () => {
     try {
       await archiveActive();
-      toast.success("Session archived.");
+      toast.success(t("Session archived."));
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Archive failed.");
+      toast.error(err?.response?.data?.message || err?.message || t("Archive failed."));
     }
   };
 
   const onPatchContext = async () => {
     try {
       await patchContext({ uiUpdatedAt: new Date().toISOString() });
-      toast.success("Context patched.");
+      toast.success(t("Context patched."));
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || err?.message || "Patch context failed.");
+      toast.error(err?.response?.data?.message || err?.message || t("Patch context failed."));
     }
   };
 
@@ -111,12 +113,12 @@ export default function OwnerChatPage() {
         <div className="text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs text-white/75 backdrop-blur-xl">
             <MessageSquareDashed className="h-3.5 w-3.5" />
-            Owner Workspace
+            {t("Owner Workspace")}
           </div>
           <h1 className="mt-4 bg-gradient-to-r from-white/90 to-white/40 bg-clip-text pb-1 text-3xl font-medium tracking-tight text-transparent">
-            How can I help today?
+            {t("How can I help today?")}
           </h1>
-          <p className="mt-2 text-sm text-white/40">Type a command or ask a question</p>
+          <p className="mt-2 text-sm text-white/40">{t("Type a command or ask a question")}</p>
         </div>
 
         {error ? (
@@ -135,7 +137,7 @@ export default function OwnerChatPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2">
                 <Sparkles className="h-4 w-4 text-white/70" />
-                <p className="truncate text-sm font-medium text-white/85">{activeSession?.title || "Conversation"}</p>
+                <p className="truncate text-sm font-medium text-white/85">{activeSession?.title || t("Conversation")}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -143,7 +145,7 @@ export default function OwnerChatPage() {
                   onClick={onNewSession}
                   className="rounded-lg border border-white/15 bg-white/10 px-3 py-1.5 text-xs text-white transition hover:bg-white/15"
                 >
-                  New Session
+                  {t("New Session")}
                 </button>
                 {activeSessionId ? (
                   <button
@@ -152,7 +154,7 @@ export default function OwnerChatPage() {
                     className="inline-flex items-center gap-1 rounded-lg border border-red-400/30 px-2.5 py-1.5 text-xs text-red-200 hover:bg-red-500/10"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                    Delete
+                    {t("Delete")}
                   </button>
                 ) : null}
               </div>
@@ -173,11 +175,11 @@ export default function OwnerChatPage() {
                         : "border-white/10 bg-black/30 text-white/70 hover:bg-white/5 hover:text-white"
                     }`}
                   >
-                    {s.title || "Session"}
+                    {s.title || t("Session")}
                   </button>
                 ))
               ) : (
-                <p className="text-xs text-white/45">No sessions yet</p>
+                <p className="text-xs text-white/45">{t("No sessions yet")}</p>
               )}
             </div>
           </div>

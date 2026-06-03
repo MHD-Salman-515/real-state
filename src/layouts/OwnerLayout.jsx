@@ -126,7 +126,7 @@ export default function OwnerLayout() {
                   type="button"
                   onClick={handleLogoNavigate}
                   className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-black/30 transition hover:border-white/15 hover:bg-white/10"
-                  aria-label="Go to dashboard home"
+                  aria-label={t("Go to dashboard home")}
                 >
                   <Logo className="h-5 w-5 text-white/90" />
                 </button>

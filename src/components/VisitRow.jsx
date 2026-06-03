@@ -10,7 +10,7 @@ export default function VisitRow({ row, onChange, onDelete }) {
       <td className="px-3 py-2">
         <input
           className={inputCls}
-          placeholder="ID العقار"
+          placeholder="معرّف العقار"
           value={row.property_id}
           onChange={(e) => onChange({ property_id: e.target.value })}
         />

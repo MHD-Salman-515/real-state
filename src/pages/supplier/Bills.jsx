@@ -68,16 +68,16 @@ export default function Bills() {
     <section className="space-y-4">
       <PageHeader
         title={t("Bills")}
-        subtitle="All logged supplier expenses and invoice status tracking."
+        subtitle={t("All logged supplier expenses and invoice status tracking.")}
       />
 
       {loading ? (
         <Card className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm backdrop-blur-xl">
-          Loading data...
+          {t("Loading data...")}
         </Card>
       ) : data.length === 0 ? (
         <Card className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm backdrop-blur-xl">
-          No expenses have been added yet.
+          {t("No expenses have been added yet.")}
           <div className="mt-2 text-xs text-slate-400">
             {t("Start from Cost Link to add expenses for assigned tickets.")}
           </div>
@@ -87,7 +87,7 @@ export default function Bills() {
           <div className="mb-3">
             <h3 className="text-sm font-semibold text-white md:text-base">{t("Supplier Expense Records")}</h3>
             <p className="mt-1 text-xs text-slate-300">
-              Review your expense entries and related invoice status.
+              {t("Review your expense entries and related invoice status.")}
             </p>
           </div>
           <Table columns={columns} rows={data} />
