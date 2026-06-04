@@ -79,7 +79,7 @@ export default function PropertyDetails() {
     if (store.isFav(key)) {
       store.removeFav(key);
       setIsFav(false);
-      toast.info("تم إزالة العقار من المفضلة");
+      toast.info(t("Removed from favorites"));
       notify({
         type: "properties",
         title: t("Removed from favorites"),
@@ -88,7 +88,7 @@ export default function PropertyDetails() {
     } else {
       store.addFav(key);
       setIsFav(true);
-      toast.success("تمت إضافة العقار إلى المفضلة");
+      toast.success(t("Saved to favorites"));
       notify({
         type: "properties",
         title: t("Saved to favorites"),
@@ -103,7 +103,7 @@ export default function PropertyDetails() {
       return;
     }
     store.saveDraft({ propId: String(id), when: "", note: "" });
-    toast.info("تم إنشاء مسودة حجز للعقار");
+    toast.info(t("Draft saved"));
     notify({
       type: "system",
       title: t("Draft saved"),

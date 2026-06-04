@@ -227,11 +227,11 @@ export default function Search() {
   const quickBook = (prop) => {
     if (!requireAuthOrRedirect({ isAuthenticated, nav: navigate, loc, nextPath: "/client/book-visit" })) return;
     store.saveDraft({ propId: String(prop.id), when: "", note: "" });
-    toast.success(`تم تجهيز مسودة حجز للعقار رقم ${prop.id}`);
+    toast.success(t("Draft saved"));
     notify({
       type: "system",
-      title: "Draft saved",
-      message: "Your visit request draft was saved.",
+      title: t("Draft saved"),
+      message: t("Your visit request draft was saved."),
     });
     navigate("/client/book-visit");
   };

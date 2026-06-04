@@ -384,6 +384,7 @@ const ar = {
   "Search applied": "تم تطبيق البحث",
   "Search reset": "تم إعادة تعيين البحث",
   "Draft saved": "تم حفظ المسودة",
+  "Your visit request draft was saved.": "تم حفظ مسودة طلب الزيارة الخاص بك.",
   "Profile updated": "تم تحديث الملف الشخصي",
   "Operation successful": "تمت العملية بنجاح",
   "Operation failed": "فشلت العملية",
