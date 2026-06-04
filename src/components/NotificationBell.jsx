@@ -79,7 +79,7 @@ export default function NotificationBell() {
     <div className="relative" ref={rootRef}>
       <button
         type="button"
-        className="relative inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
+        className="dashboard-icon-btn relative h-9 w-9"
         onClick={() => setOpen((v) => !v)}
         title={t("Notifications")}
         aria-label={t("Notifications")}
@@ -91,7 +91,7 @@ export default function NotificationBell() {
           <path d="M9 17a3 3 0 0 0 6 0" />
         </svg>
         {notifications.length > 0 ? (
-          <span className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-white/10 px-1 text-center text-[10px] font-bold leading-[18px] text-black">
+          <span className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-[var(--creos-accent)] px-1 text-center text-[10px] font-bold leading-[18px] text-[#3c2f00]">
             {notifications.length}
           </span>
         ) : null}
@@ -101,16 +101,16 @@ export default function NotificationBell() {
         <div
           ref={panelRef}
           tabIndex={-1}
-          className="absolute right-0 z-[9998] mt-2 w-[340px] rounded-2xl border border-white/10 bg-[#050912]/95 backdrop-blur"
+          className="dashboard-dropdown absolute end-0 z-[9998] mt-2 w-[340px]"
           role="dialog"
           aria-label={t("Notifications panel")}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <h3 className="text-sm font-semibold text-white">{t("Notifications")}</h3>
+          <div className="flex items-center justify-between border-b border-[var(--creos-border-soft)] px-4 py-3">
+            <h3 className="text-sm font-semibold text-[color:var(--creos-text)]">{t("Notifications")}</h3>
             <button
               type="button"
               disabled
-              className="cursor-not-allowed rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-slate-500"
+              className="cursor-not-allowed rounded-xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.55)] px-2.5 py-1 text-xs text-[color:rgb(var(--creos-text-rgb)/0.45)]"
               title={t("Mark all as read is not available")}
             >
               {t("Mark all as read")}
@@ -119,7 +119,7 @@ export default function NotificationBell() {
 
           <div className="max-h-80 overflow-auto">
             {notifications.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-slate-400">لا توجد إشعارات</div>
+              <div className="px-4 py-8 text-center text-sm text-[color:rgb(var(--creos-text-rgb)/0.56)]">لا توجد إشعارات</div>
             ) : (
               <ul className="divide-y divide-white/5">
                 {notifications.map((n) => {
@@ -138,12 +138,12 @@ export default function NotificationBell() {
                       <span className="mt-1 h-2.5 w-2.5 flex-none rounded-full bg-white/10" />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-300">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--creos-muted)]">
                             {titleFromType(n.type, t)}
                           </p>
-                          <span className="text-[11px] text-slate-500">{formatTime(n.at)}</span>
+                          <span className="text-[11px] text-[color:rgb(var(--creos-text-rgb)/0.45)]">{formatTime(n.at)}</span>
                         </div>
-                        <p className="mt-1 text-sm text-slate-100">{n.message}</p>
+                        <p className="mt-1 text-sm text-[color:var(--creos-text)]">{n.message}</p>
                         {isClickable ? (
                           <button
                             type="button"
@@ -151,7 +151,7 @@ export default function NotificationBell() {
                               e.stopPropagation();
                               handleNotificationClick(n);
                             }}
-                            className="mt-2 text-xs font-medium text-white/90 transition hover:text-white/90"
+                            className="mt-2 text-xs font-medium text-[color:var(--creos-accent-bright)] transition hover:text-[color:var(--creos-accent)]"
                           >
                             {n.hrefLabel || t("Open")}
                           </button>
@@ -165,11 +165,11 @@ export default function NotificationBell() {
             )}
           </div>
 
-          <div className="border-t border-white/10 p-3">
+          <div className="border-t border-[var(--creos-border-soft)] p-3">
             <button
               type="button"
               onClick={clearHistory}
-              className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200 transition duration-200 hover:border-rose-300/35 hover:bg-rose-500/10 hover:text-rose-100"
+              className="w-full rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.55)] px-3 py-2 text-sm text-[color:var(--creos-text)] transition duration-200 hover:border-rose-300/35 hover:bg-rose-500/10 hover:text-rose-100"
             >
               {t("Clear notifications")}
             </button>

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 const DEFAULT_KPIS = [
   { label: "Active Listings", value: "148", change: "+8.2%" },
   { label: "Open Appointments", value: "37", change: "+2.4%" },
@@ -31,12 +33,12 @@ function statusClass(status) {
   switch (status.toLowerCase()) {
     case "approved":
     case "updated":
-      return "text-white/90 bg-white/10 border-white/15";
+      return "text-[color:var(--creos-text)] bg-[rgb(var(--creos-accent-rgb)/0.16)] border-[rgb(var(--creos-accent-rgb)/0.22)]";
     case "scheduled":
     case "reviewed":
-      return "text-slate-200 bg-white/10 border-white/20";
+      return "text-[color:var(--creos-text)] bg-[rgb(var(--creos-surface-max-rgb)/0.72)] border-[var(--creos-border-soft)]";
     default:
-      return "text-white/80 bg-white/10 border-white/15";
+      return "text-[color:var(--creos-text)] bg-[rgb(var(--creos-surface-rgb)/0.62)] border-[var(--creos-border-soft)]";
   }
 }
 
@@ -53,14 +55,14 @@ export default function StarterDashboard({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-xl md:p-6">
+      <section className="card-glass rounded-3xl p-5 md:p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
-            <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] uppercase tracking-wide text-white/90">
+            <span className="dashboard-pill inline-flex px-2.5 py-1 text-[11px] uppercase tracking-[0.16em]">
               {t(roleLabel)}
             </span>
-            <h1 className="mt-3 text-2xl font-bold text-white md:text-3xl">{t(title)}</h1>
-            <p className="mt-2 max-w-3xl text-sm text-slate-300 md:text-base">{t(subtitle)}</p>
+            <h1 className="mt-3 text-2xl font-bold text-[color:var(--creos-text)] md:text-3xl">{t(title)}</h1>
+            <p className="mt-2 max-w-3xl text-sm text-[color:rgb(var(--creos-text-rgb)/0.72)] md:text-base">{t(subtitle)}</p>
           </div>
         </div>
       </section>
@@ -69,23 +71,23 @@ export default function StarterDashboard({
         {kpis.map((kpi) => (
           <article
             key={kpi.label}
-            className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl transition duration-300 hover:border-white/15 hover:bg-white/10"
+            className="card-glass hover-card-pop rounded-3xl p-4"
           >
-            <p className="text-xs uppercase tracking-wide text-slate-400">{t(kpi.label)}</p>
-            <p className="mt-2 text-3xl font-bold text-white">{kpi.value}</p>
-            <p className="mt-2 text-xs text-white/90">{kpi.change}</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-[color:var(--creos-muted)]">{t(kpi.label)}</p>
+            <p className="mt-2 text-3xl font-bold text-[color:var(--creos-accent-bright)]">{kpi.value}</p>
+            <p className="mt-2 text-xs text-[color:rgb(var(--creos-text-rgb)/0.82)]">{kpi.change}</p>
           </article>
         ))}
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
-        <div className="mb-3 text-sm font-semibold text-white">{t("Quick Actions")}</div>
+      <section className="card-glass rounded-3xl p-4">
+        <div className="mb-3 text-sm font-semibold text-[color:var(--creos-text)]">{t("Quick Actions")}</div>
         <div className="flex flex-wrap gap-2">
           {actions.map((action) => (
             <button
               key={action}
               type="button"
-              className="rounded-lg border border-white/20 bg-black/30 px-3 py-2 text-xs text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90"
+              className="btn-glass px-3 py-2 text-xs"
             >
               {t(action)}
             </button>
@@ -94,31 +96,31 @@ export default function StarterDashboard({
       </section>
 
       <section className="grid gap-4 lg:grid-cols-[1.8fr_1fr]">
-        <article className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+        <article className="card-glass rounded-3xl p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="text-sm font-semibold text-white">{t("Recent Activity")}</div>
+            <div className="text-sm font-semibold text-[color:var(--creos-text)]">{t("Recent Activity")}</div>
             <button
               type="button"
-              className="rounded-lg border border-white/15 bg-black/20 px-2.5 py-1 text-xs text-slate-300 transition duration-200 hover:border-white/15 hover:text-white/90"
+              className="btn-glass px-2.5 py-1 text-xs"
             >
               {t("View all")}
             </button>
           </div>
-          <div className="overflow-x-auto">
+          <div className="table-creos">
             <table className="min-w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-xs uppercase tracking-wide text-slate-400">
-                  <th className="px-2 py-2">{t("ID")}</th>
-                  <th className="px-2 py-2">{t("Item")}</th>
-                  <th className="px-2 py-2">{t("Owner")}</th>
-                  <th className="px-2 py-2">{t("Status")}</th>
-                  <th className="px-2 py-2">{t("Time")}</th>
+                <tr>
+                  <th className="px-2 py-2 text-left">{t("ID")}</th>
+                  <th className="px-2 py-2 text-left">{t("Item")}</th>
+                  <th className="px-2 py-2 text-left">{t("Owner")}</th>
+                  <th className="px-2 py-2 text-left">{t("Status")}</th>
+                  <th className="px-2 py-2 text-left">{t("Time")}</th>
                 </tr>
               </thead>
               <tbody>
                 {activity.map((row) => (
-                  <tr key={row.id} className="border-b border-white/5 text-slate-200 transition duration-200 hover:bg-white/5">
-                    <td className="px-2 py-2 text-slate-400">{row.id}</td>
+                  <tr key={row.id}>
+                    <td className="px-2 py-2 text-[color:rgb(var(--creos-text-rgb)/0.54)]">{row.id}</td>
                     <td className="px-2 py-2">{row.item}</td>
                     <td className="px-2 py-2">{row.owner}</td>
                     <td className="px-2 py-2">
@@ -126,7 +128,7 @@ export default function StarterDashboard({
                         {t(row.status)}
                       </span>
                     </td>
-                    <td className="px-2 py-2 text-slate-400">{t(row.time)}</td>
+                    <td className="px-2 py-2 text-[color:rgb(var(--creos-text-rgb)/0.54)]">{t(row.time)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -134,10 +136,10 @@ export default function StarterDashboard({
           </div>
         </article>
 
-        <aside className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
-          <div className="mb-3 text-sm font-semibold text-white">{t("Tasks & Reminders")}</div>
+        <aside className="card-glass rounded-3xl p-4">
+          <div className="mb-3 text-sm font-semibold text-[color:var(--creos-text)]">{t("Tasks & Reminders")}</div>
           {tasks.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-white/15 bg-black/20 p-4 text-sm text-slate-400">
+            <div className="dashboard-empty">
               {t("No reminders yet.")}
             </div>
           ) : (
@@ -145,10 +147,10 @@ export default function StarterDashboard({
               {tasks.map((task) => (
                 <div
                   key={`${task.title}-${task.due}`}
-                  className="rounded-xl border border-white/10 bg-black/25 p-3 transition duration-200 hover:border-white/15 hover:bg-black/35"
+                  className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.52)] p-3 transition duration-200 hover:bg-[rgb(var(--creos-surface-hi-rgb)/0.68)]"
                 >
-                  <p className="text-sm text-slate-100">{t(task.title)}</p>
-                  <p className="mt-1 text-xs text-white/90">{t(task.due)}</p>
+                  <p className="text-sm text-[color:var(--creos-text)]">{t(task.title)}</p>
+                  <p className="mt-1 text-xs text-[color:var(--creos-muted)]">{t(task.due)}</p>
                 </div>
               ))}
             </div>
@@ -158,4 +160,3 @@ export default function StarterDashboard({
     </div>
   );
 }
-import { useTranslation } from "react-i18next";

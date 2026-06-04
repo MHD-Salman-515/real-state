@@ -10,10 +10,7 @@ function Item({ to, label, onClick }) {
       end
       onClick={onClick}
       className={({ isActive }) =>
-        "block px-3 py-2 rounded-lg text-sm border transition " +
-        (isActive
-          ? "bg-white/10 text-black border-white/15 shadow-soft"
-          : "bg-white/5 hover:bg-white/10 border-white/15 text-slate-100")
+        "dashboard-nav-link " + (isActive ? "dashboard-nav-link-active" : "")
       }
     >
       {label}
@@ -62,16 +59,16 @@ export default function AgentLayout() {
   };
 
   const Sidebar = ({ onNav }) => (
-    <aside className="flex flex-col h-full border-e border-white/10 bg-white/5 backdrop-blur-xl card-glass">
+    <aside className="dashboard-sidebar flex h-full flex-col">
       {/* رأس اللوحة */}
-      <div className="px-4 py-4 border-b border-white/10">
+      <div className="border-b border-[var(--creos-border-soft)] px-4 py-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-white/10 shadow-soft shadow-white/10" />
+          <div className="h-8 w-8 rounded-full bg-[rgb(var(--creos-accent-rgb)/0.18)] shadow-gold" />
           <div className="font-semibold">
-            <span className="text-white/90">{t("Agent")}</span> {t("Panel")}
+            <span className="text-[color:var(--creos-text)]">{t("Agent")}</span> {t("Panel")}
           </div>
         </div>
-        <div className="text-[11px] text-slate-300 mt-1">
+        <div className="mt-1 text-[11px] text-[color:rgb(var(--creos-text-rgb)/0.72)]">
           الواجهة الخاصة بالوكيل العقاري لإدارة المواعيد والارتباطات.
         </div>
       </div>
@@ -81,12 +78,12 @@ export default function AgentLayout() {
         <Item to="/agent/appointments" label="مواعيدي" onClick={onNav} />
         <Item to="/agent/link-ops" label="ربط العمليات" onClick={onNav} />
 
-        <hr className="my-3 border-white/10" />
+        <hr className="my-3 border-[var(--creos-border-soft)]" />
 
         <Link
           to="/"
           onClick={onNav}
-          className="block px-3 py-2 rounded-lg text-sm border border-transparent text-slate-200 hover:text-white/90 hover:border-white/15 hover:bg-white/10 transition"
+          className="btn-glass block px-3 py-2 text-sm"
         >
           ← العودة للموقع
         </Link>
@@ -95,7 +92,7 @@ export default function AgentLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-luxury text-white grid lg:grid-cols-[260px_1fr]">
+    <div className="dashboard-shell grid lg:grid-cols-[260px_1fr]">
       {/* Sidebar: Desktop */}
       <div className="hidden lg:block">
         <Sidebar />
@@ -162,7 +159,7 @@ export default function AgentLayout() {
               {notifOpen && (
                 <div
                   className="
-                    absolute right-0 mt-3 w-80 max-w-sm
+                    absolute end-0 mt-3 w-80 max-w-sm
                     rounded-2xl bg-[#050911]/95 border border-white/15
                     shadow-xl shadow-white/10 backdrop-blur-2xl z-30
                     origin-top-right animate-[fadeIn_.15s_ease-out]

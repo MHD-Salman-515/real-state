@@ -134,19 +134,19 @@ export default function WorkerDashboard() {
         <div className="flex gap-2">
           <button
             onClick={() => updateStatus(r.id, "IN_PROGRESS")}
-            className="text-white/80 text-xs"
+            className="btn-glass px-2 py-1 text-xs"
           >
             بدء
           </button>
           <button
             onClick={() => updateStatus(r.id, "COMPLETED")}
-            className="text-white/80 text-xs"
+            className="btn-gold px-2 py-1 text-xs"
           >
             إنهاء
           </button>
           <button
             onClick={() => loadLogs(r.id)}
-            className="text-white/80 text-xs"
+            className="btn-glass px-2 py-1 text-xs"
           >
             السجلات
           </button>
@@ -155,7 +155,7 @@ export default function WorkerDashboard() {
               setShowForm(true);
               setForm((prev) => ({ ...prev, ticketId: r.id }));
             }}
-            className="text-white/90 text-xs"
+            className="btn-glass px-2 py-1 text-xs"
           >
             + صيانة
           </button>
@@ -173,7 +173,7 @@ export default function WorkerDashboard() {
       />
 
       {/* ===== جدول التذاكر ===== */}
-      <Card className="bg-white/5 border-white/10 backdrop-blur-xl text-white">
+      <Card className="text-white">
         <Table
           columns={ticketColumns}
           rows={tickets}
@@ -182,8 +182,8 @@ export default function WorkerDashboard() {
       </Card>
 
       {/* ===== جدول السجلات ===== */}
-      <Card className="bg-white/5 border-white/10 backdrop-blur-xl text-white">
-        <h2 className="px-4 pt-4 pb-2 text-sm font-semibold text-slate-100">
+      <Card className="text-white">
+        <h2 className="px-4 pb-2 pt-4 text-sm font-semibold text-[color:var(--creos-text)]">
           {t("Selected ticket logs")}
         </h2>
 
@@ -200,10 +200,10 @@ export default function WorkerDashboard() {
 
       {/* ===== فورم تسجيل صيانة ===== */}
       {showForm && (
-        <Card className="p-4 bg-white/10 backdrop-blur-xl rounded-xl text-white">
+        <Card className="rounded-3xl p-4 text-white">
           <form className="grid gap-3" onSubmit={handleSubmit}>
             <div>
-              <label className="text-xs">{t("Maintenance description")}</label>
+              <label className="text-xs text-[color:var(--creos-muted)]">{t("Maintenance description")}</label>
               <input
                 value={form.description}
                 onChange={(e) =>
@@ -215,7 +215,7 @@ export default function WorkerDashboard() {
             </div>
 
             <div>
-              <label className="text-xs">{t("Maintenance type")}</label>
+              <label className="text-xs text-[color:var(--creos-muted)]">{t("Maintenance type")}</label>
               <input
                 value={form.maintType}
                 onChange={(e) =>
@@ -227,7 +227,7 @@ export default function WorkerDashboard() {
             </div>
 
             <div>
-              <label className="text-xs">{t("Cost")}</label>
+              <label className="text-xs text-[color:var(--creos-muted)]">{t("Cost")}</label>
               <input
                 type="number"
                 value={form.amount}
@@ -238,7 +238,7 @@ export default function WorkerDashboard() {
               />
             </div>
 
-            <button className="btn-primary w-fit">{t("Save log")}</button>
+            <button className="btn-gold w-fit">{t("Save log")}</button>
           </form>
         </Card>
       )}

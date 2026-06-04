@@ -13,10 +13,7 @@ function Item({ to, label, onClick }) {
   return (
     <NavLink to={to} end onClick={onClick}
       className={({ isActive }) =>
-        "block rounded-xl border px-3 py-2.5 text-sm font-medium transition duration-200 " +
-        (isActive
-          ? "border-white/15 bg-white/10 text-white/90 shadow-[0_0_0_1px_rgba(52,211,153,0.16)]"
-          : "border-white/10 bg-white/5 text-slate-200 hover:border-white/15 hover:bg-white/10 hover:text-white")
+        "dashboard-nav-link " + (isActive ? "dashboard-nav-link-active" : "")
       }>{label}</NavLink>
   );
 }
@@ -110,19 +107,19 @@ export default function WorkerLayout() {
   const handleDropdownLogout = () => { setBrandMenuOpen(false); logout(); navigate("/home", { replace: true }); };
 
   const Sidebar = ({ onNav }) => (
-    <aside className="flex h-full flex-col border-e border-white/10 bg-[#050912]/90 backdrop-blur-xl">
-      <div className="border-b border-white/10 px-4 py-5">
-        <p className="text-[11px] uppercase tracking-[0.16em] text-white/90">{t("CREOS Worker")}</p>
-        <h2 className="mt-1 text-lg font-semibold text-white">{t('Service Desk')}</h2>
-        <div className="mt-2 text-[11px] text-slate-300">
-          {t('User:')} <strong className="text-white/90">{displayName}</strong>
+    <aside className="dashboard-sidebar flex h-full flex-col">
+      <div className="border-b border-[var(--creos-border-soft)] px-4 py-5">
+        <p className="text-[11px] uppercase tracking-[0.16em] text-[color:var(--creos-muted)]">{t("CREOS Worker")}</p>
+        <h2 className="mt-1 text-lg font-semibold text-[color:var(--creos-text)]">{t('Service Desk')}</h2>
+        <div className="mt-2 text-[11px] text-[color:rgb(var(--creos-text-rgb)/0.72)]">
+          {t('User:')} <strong className="text-[color:var(--creos-text)]">{displayName}</strong>
         </div>
       </div>
       <nav className="space-y-2 p-3">
         {NAV_ITEMS.map((item) => <Item key={item.to} to={item.to} label={item.label} onClick={onNav} />)}
-        <hr className="my-3 border-white/10" />
+        <hr className="my-3 border-[var(--creos-border-soft)]" />
         <Link to="/home" onClick={onNav}
-          className="block rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-200 transition duration-200 hover:border-white/15 hover:bg-white/10 hover:text-white/90">
+          className="btn-glass block px-3 py-2.5 text-sm">
           {t('Back to Site')}
         </Link>
       </nav>
@@ -130,7 +127,7 @@ export default function WorkerLayout() {
   );
 
   return (
-    <div className="grid min-h-screen bg-[#030712] text-white lg:grid-cols-[280px_1fr]">
+    <div className="dashboard-shell grid lg:grid-cols-[280px_1fr]">
       <div className="hidden lg:block"><Sidebar /></div>
       <div className="min-w-0 flex flex-col">
         <header className="hidden">
@@ -145,7 +142,7 @@ export default function WorkerLayout() {
                 <button type="button" onClick={() => setBrandMenuOpen((v) => !v)}
                   className="text-sm font-semibold tracking-[0.14em] text-white" aria-haspopup="menu" aria-expanded={brandMenuOpen}>CREOS</button>
                 {brandMenuOpen ? (
-                  <div className="absolute left-0 top-full z-40 mt-2 w-64 rounded-2xl border border-white/10 bg-[#050912]/95 p-2 backdrop-blur-xl">
+                  <div className="absolute start-0 top-full z-40 mt-2 w-64 rounded-2xl border border-white/10 bg-[#050912]/95 p-2 backdrop-blur-xl">
                     <div className="border-b border-white/10 px-3 py-2">
                       <p className="truncate text-sm font-medium text-slate-100">{displayName}</p>
                       <p className="text-xs uppercase tracking-wide text-slate-400">{String(user?.role || t("worker"))}</p>
@@ -182,7 +179,7 @@ export default function WorkerLayout() {
                   ) : null}
                 </button>
                 {notifOpen ? (
-                  <div className="absolute right-0 z-30 mt-2 w-[340px] rounded-2xl border border-white/10 bg-[#050912]/95 backdrop-blur-xl">
+                  <div className="absolute end-0 z-30 mt-2 w-[340px] rounded-2xl border border-white/10 bg-[#050912]/95 backdrop-blur-xl">
                     <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                       <h3 className="text-sm font-semibold text-white">{t('Notifications')}</h3>
                       <div className="flex items-center gap-2">

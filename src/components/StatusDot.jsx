@@ -1,10 +1,10 @@
 // src/components/StatusDot.jsx
 export default function StatusDot({ color = "gray", label }) {
   const map = {
-    green:  "bg-white/10 shadow-[0_0_6px_rgba(16,185,129,0.6)]",
-    yellow: "bg-white/10 shadow-[0_0_6px_rgba(255,255,255,0.35)]",
+    green:  "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.45)]",
+    yellow: "bg-[var(--creos-accent)] shadow-[0_0_10px_rgba(212,175,55,0.4)]",
     red:    "bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.6)]",
-    blue:   "bg-white/10 shadow-[0_0_6px_rgba(34,211,238,0.6)]",
+    blue:   "bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.45)]",
     gray:   "bg-gray-400 shadow-[0_0_5px_rgba(156,163,175,0.5)]",
   };
 
@@ -17,7 +17,7 @@ export default function StatusDot({ color = "gray", label }) {
           backdrop-blur-sm
         `}
       />
-      {label && <span className="text-slate-300">{label}</span>}
+      {label && <span className="text-[color:rgb(var(--creos-text-rgb)/0.78)]">{label}</span>}
     </span>
   );
 }
