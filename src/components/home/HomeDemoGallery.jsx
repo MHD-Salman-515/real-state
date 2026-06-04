@@ -74,12 +74,12 @@ const FEATURED_PROPERTIES = [
 
 export default function HomeDemoGallery() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
-    <div className="bg-background min-h-[600px] text-foreground overflow-hidden rounded-lg border w-full">
+    <div className="card-glass min-h-[600px] w-full overflow-hidden rounded-[1.75rem] text-[color:var(--creos-text)]">
       <div className="h-[300px] flex flex-col items-center justify-center px-4 text-center">
-        <Badge variant="outline" className="mb-4 border-white/15 bg-white/10 text-[10px] tracking-[0.22em] uppercase">
+        <Badge variant="outline" className="mb-4 border-[rgb(var(--creos-accent-rgb)/0.2)] bg-[rgb(var(--creos-accent-rgb)/0.12)] text-[10px] tracking-[0.22em] uppercase text-[color:var(--creos-text)]">
           CREOS
         </Badge>
         <h2 className="text-3xl font-bold tracking-tight md:text-5xl">{t("Featured Properties")}</h2>
@@ -98,7 +98,8 @@ export default function HomeDemoGallery() {
             key={property.id}
             type="button"
             onClick={() => navigate("/properties")}
-            className="group w-[260px] overflow-hidden rounded-2xl border border-white/20 bg-black/35 text-left shadow-xl backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-white/15"
+            className="group w-[260px] overflow-hidden rounded-[1.5rem] border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.42)] shadow-glass backdrop-blur-glass transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-[rgb(var(--creos-accent-rgb)/0.22)]"
+            style={{ textAlign: i18n.dir() === "rtl" ? "right" : "left" }}
           >
             <div className="relative h-40 w-full overflow-hidden">
               <img

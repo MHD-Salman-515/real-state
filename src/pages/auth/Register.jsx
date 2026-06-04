@@ -110,8 +110,11 @@ export default function Register() {
         error={error}
       />
 
-      <p className="pointer-events-none fixed bottom-4 left-1/2 z-30 -translate-x-1/2 text-sm text-white/80">
-        {t("Already have an account?")} <Link to="/auth/login" className="pointer-events-auto underline">{t("Sign in")}</Link>
+      <p className="pointer-events-none fixed bottom-4 left-1/2 z-30 -translate-x-1/2 rounded-full border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.64)] px-4 py-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.84)] backdrop-blur-glass">
+        {t("Already have an account?")}{" "}
+        <Link to="/auth/login" className="pointer-events-auto text-[color:var(--creos-accent-bright)] underline">
+          {t("Sign in")}
+        </Link>
       </p>
     </>
   );

@@ -13,22 +13,22 @@ export default function HomeDemoFooter() {
   const { t } = useTranslation();
 
   return (
-    <footer className="mt-10 border-t bg-muted/30 px-4 py-8 text-muted-foreground">
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 text-sm md:flex-row">
+    <footer className="section-shell relative z-10 mt-6 pb-8">
+      <div className="card-glass flex w-full flex-col items-center justify-between gap-4 rounded-[1.75rem] px-5 py-6 text-sm text-[color:rgb(var(--creos-text-rgb)/0.72)] md:flex-row">
         <div className="flex flex-wrap items-center justify-center gap-4">
           {FOOTER_LINKS.map((link) =>
             link.isAnchor ? (
-              <a key={link.label} href={link.href} className="transition hover:text-foreground">
+              <a key={link.label} href={link.href} className="transition hover:text-[color:var(--creos-accent-bright)]">
                 {t(link.label)}
               </a>
             ) : (
-              <Link key={link.label} to={link.href} className="transition hover:text-foreground">
+              <Link key={link.label} to={link.href} className="transition hover:text-[color:var(--creos-accent-bright)]">
                 {t(link.label)}
               </Link>
             )
           )}
         </div>
-        <p className="text-xs">CREOS / UrbanX</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-[color:rgb(var(--creos-text-rgb)/0.56)]">CREOS / UrbanX</p>
       </div>
     </footer>
   );

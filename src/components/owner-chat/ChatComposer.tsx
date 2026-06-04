@@ -72,12 +72,12 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
   };
 
   return (
-    <div className="relative border-t border-white/[0.05] p-3">
-      <div className="relative rounded-2xl border border-white/[0.05] bg-white/[0.02] shadow-2xl backdrop-blur-2xl">
+    <div className="relative border-t border-[var(--creos-border-soft)] p-3">
+      <div className="chat-panel relative rounded-[1.75rem]">
         <AnimatePresence>
           {showCommandPalette ? (
             <motion.div
-              className="absolute inset-x-4 bottom-full z-20 mb-2 overflow-hidden rounded-lg border border-white/10 bg-black/90 shadow-lg"
+              className="dashboard-dropdown absolute inset-x-4 bottom-full z-20 mb-2 overflow-hidden rounded-2xl shadow-lg"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 6 }}
@@ -91,7 +91,7 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
                     onClick={() => selectCommand(i)}
                     className={cn(
                       "flex w-full items-center justify-between px-3 py-2 text-left text-xs transition-colors",
-                      activeSuggestion === i ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
+                      activeSuggestion === i ? "bg-[rgb(var(--creos-accent-rgb)/0.12)] text-[color:var(--creos-text)]" : "text-[color:rgb(var(--creos-text-rgb)/0.7)] hover:bg-white/5"
                     )}
                   >
                     <span>{t(cmd.label)}</span>
@@ -139,7 +139,7 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
               submit();
             }
           }}
-          className="min-h-[60px] w-full resize-none border-none bg-transparent px-4 py-3 text-sm text-white/90 placeholder:text-white/20 focus:border-none"
+          className="input-creos min-h-[60px] w-full resize-none border-none bg-transparent px-4 py-3 text-sm text-[color:var(--creos-text)] placeholder:text-[color:rgb(var(--creos-text-rgb)/0.32)] focus:border-none"
           placeholder={t("Ask zap a question...")}
         />
         </div>
@@ -155,13 +155,13 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
               {attachments.map((file, i) => (
                 <motion.div
                   key={`${file}-${i}`}
-                  className="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-1.5 text-xs text-white/70"
+                  className="flex items-center gap-2 rounded-full border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.48)] px-3 py-1.5 text-xs text-[color:rgb(var(--creos-text-rgb)/0.72)]"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                 >
                   <span>{file}</span>
-                  <button type="button" onClick={() => removeAttachment(i)} className="text-white/40 hover:text-white">
+                  <button type="button" onClick={() => removeAttachment(i)} className="text-[color:rgb(var(--creos-text-rgb)/0.4)] hover:text-[color:var(--creos-text)]">
                     <XIcon className="h-3 w-3" />
                   </button>
                 </motion.div>
@@ -170,12 +170,12 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
           ) : null}
         </AnimatePresence>
 
-        <div className="flex items-center justify-between gap-4 border-t border-white/[0.05] p-4">
+        <div className="flex items-center justify-between gap-4 border-t border-[var(--creos-border-soft)] p-4">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={attachMock}
-              className="rounded-lg p-2 text-white/40 transition-colors hover:text-white/90"
+              className="dashboard-icon-btn h-10 w-10 text-[color:rgb(var(--creos-text-rgb)/0.54)] hover:text-[color:var(--creos-text)]"
               aria-label={t("Attach file")}
             >
               <Paperclip className="h-4 w-4" />
@@ -184,14 +184,14 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
               type="button"
               onClick={() => setShowCommandPalette((prev) => !prev)}
               className={cn(
-                "rounded-lg p-2 text-white/40 transition-colors hover:text-white/90",
-                showCommandPalette && "bg-white/10 text-white/90"
+                "dashboard-icon-btn h-10 w-10 text-[color:rgb(var(--creos-text-rgb)/0.54)] hover:text-[color:var(--creos-text)]",
+                showCommandPalette && "bg-[rgb(var(--creos-accent-rgb)/0.12)] text-[color:var(--creos-text)]"
               )}
               aria-label={t("Command palette")}
             >
               <Command className="h-4 w-4" />
             </button>
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-[11px] text-white/60">
+            <span className="dashboard-pill text-[11px]">
               <Sparkles className="h-3.5 w-3.5" /> AI
             </span>
           </div>
@@ -203,8 +203,8 @@ export default function ChatComposer({ sending, onSend, onFocusChange }: Props) 
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             className={cn(
-              "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all",
-              text.trim() ? "bg-white text-[#0A0A0B] shadow-lg shadow-white/10" : "bg-white/[0.05] text-white/40"
+              "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all",
+              text.trim() ? "btn-gold" : "bg-[rgb(var(--creos-surface-rgb)/0.52)] text-[color:rgb(var(--creos-text-rgb)/0.4)]"
             )}
           >
             {sending ? <LoaderIcon className="h-4 w-4 animate-[spin_2s_linear_infinite]" /> : <SendIcon className="h-4 w-4" />}

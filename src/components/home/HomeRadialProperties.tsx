@@ -20,14 +20,16 @@ const PROPERTIES = [
 export default function HomeRadialProperties() {
   const navigate = useNavigate();
   const { notify } = useNotifications();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
-    <div id="quick-search" className="min-h-screen w-full bg-transparent overflow-x-hidden text-white">
-      <div className="h-[300px] flex flex-col items-center justify-center px-4 text-center">
-        <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">CREOS</p>
-        <h2 className="text-3xl font-bold tracking-tight md:text-5xl">{t("Featured Properties")}</h2>
-        <p className="mt-4 animate-bounce text-xs uppercase tracking-[0.25em] text-muted-foreground">{t("↓ Scroll")}</p>
+    <div id="quick-search" className="section-shell min-h-screen w-full overflow-x-hidden pt-20 text-white">
+      <div className="mx-auto flex min-h-[34vh] max-w-4xl flex-col items-center justify-center px-4 text-center">
+        <p className="badge-creos mb-4 text-[10px] uppercase tracking-[0.24em]">CREOS</p>
+        <h2 className="text-3xl font-bold tracking-tight text-[color:var(--creos-text)] md:text-5xl">{t("Featured Properties")}</h2>
+        <p className="mt-4 max-w-2xl text-sm text-[color:rgb(var(--creos-text-rgb)/0.72)] md:text-base">
+          {t("Discover more listings on the properties page.")}
+        </p>
       </div>
 
       <HorizontalDragGallery className="!min-h-screen">
@@ -38,12 +40,13 @@ export default function HomeRadialProperties() {
             onClick={() => {
               notify({
                 type: "properties",
-                title: "Property opened",
-                message: `You viewed ${property.title} • ${property.location}`,
+                title: t("Property opened"),
+                message: t("You viewed {{title}} • {{location}}", { title: property.title, location: property.location }),
               });
               navigate("/properties");
             }}
-            className="group relative w-[200px] h-[280px] sm:w-[240px] sm:h-[320px] overflow-hidden rounded-xl bg-black/35 border border-white/10 shadow-lg text-left"
+            className="group relative h-[300px] w-[210px] overflow-hidden rounded-[1.6rem] border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.4)] shadow-glass backdrop-blur-glass sm:h-[340px] sm:w-[248px]"
+            style={{ textAlign: i18n.dir() === "rtl" ? "right" : "left" }}
           >
             <img
               src={property.img}
@@ -52,28 +55,29 @@ export default function HomeRadialProperties() {
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[rgb(var(--creos-bg-rgb)/0.92)] via-[rgb(var(--creos-bg-rgb)/0.24)] to-transparent" />
+            <div className="absolute inset-0 bg-[linear-gradient(160deg,transparent_45%,rgb(var(--creos-accent-rgb)/0.14)_100%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
             <div className="absolute left-3 top-3">
-              <Badge variant="secondary" className="border-white/10 bg-white/15 text-[10px] uppercase tracking-wide text-white">
+              <Badge variant="secondary" className="border-[rgb(var(--creos-accent-rgb)/0.22)] bg-[rgb(var(--creos-accent-rgb)/0.12)] text-[10px] uppercase tracking-wide text-[color:var(--creos-text)]">
                 {t(property.cat)}
               </Badge>
             </div>
 
-            <div className="absolute right-3 top-3 rounded-full bg-background/90 p-1.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+            <div className="absolute right-3 top-3 rounded-full border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.74)] p-1.5 text-[color:var(--creos-accent-bright)] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
               <ArrowUpRight className="h-4 w-4" />
             </div>
 
             <div className="absolute inset-x-0 bottom-0 p-3">
-              <h3 className="line-clamp-1 text-base font-semibold text-white">{property.title}</h3>
-              <p className="mt-1 line-clamp-1 text-xs text-white/60">{property.location}</p>
-              <p className="mt-1 text-sm font-semibold text-white/90">{property.price}</p>
+              <h3 className="line-clamp-1 text-base font-semibold text-[color:var(--creos-text)]">{property.title}</h3>
+              <p className="mt-1 line-clamp-1 text-xs text-[color:rgb(var(--creos-text-rgb)/0.62)]">{property.location}</p>
+              <p className="mt-2 text-sm font-semibold text-[color:var(--creos-accent-bright)]">{property.price}</p>
             </div>
           </button>
         ))}
       </HorizontalDragGallery>
 
-      <div className="h-[300px]" />
+      <div className="h-24" />
     </div>
   );
 }

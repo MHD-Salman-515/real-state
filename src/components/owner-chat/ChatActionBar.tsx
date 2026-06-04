@@ -15,7 +15,7 @@ export default function ChatActionBar({ onArchive, onPatchContext, busy }: Props
         type="button"
         onClick={onPatchContext}
         disabled={busy}
-        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/80 disabled:opacity-50 hover:bg-white/10"
+        className="btn-glass px-3 py-1.5 text-xs disabled:opacity-50"
       >
         <DatabaseZap className="h-3.5 w-3.5" /> {t("Patch Context")}
       </button>
@@ -23,7 +23,7 @@ export default function ChatActionBar({ onArchive, onPatchContext, busy }: Props
         type="button"
         onClick={onArchive}
         disabled={busy}
-        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/80 disabled:opacity-50 hover:bg-white/10"
+        className="btn-glass px-3 py-1.5 text-xs disabled:opacity-50"
       >
         <Archive className="h-3.5 w-3.5" /> {t("Archive Session")}
       </button>

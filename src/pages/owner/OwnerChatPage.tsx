@@ -97,11 +97,11 @@ export default function OwnerChatPage() {
   };
 
   return (
-    <div className="lab-bg relative min-h-[calc(100vh-2rem)] w-full overflow-hidden px-4 py-6 text-white md:px-6">
+    <div className="chat-shell relative min-h-[calc(100vh-2rem)] w-full overflow-hidden px-4 py-6 md:px-6">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-violet-500/10 blur-[128px]" />
-        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-indigo-500/10 blur-[128px]" />
-        <div className="absolute right-1/3 top-1/4 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-[96px]" />
+        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-[rgb(var(--creos-accent-rgb)/0.08)] blur-[128px]" />
+        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-[rgb(var(--creos-navy-rgb)/0.26)] blur-[128px]" />
+        <div className="absolute right-1/3 top-1/4 h-64 w-64 rounded-full bg-[rgb(var(--creos-text-rgb)/0.06)] blur-[96px]" />
       </div>
 
       <motion.div
@@ -111,14 +111,14 @@ export default function OwnerChatPage() {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs text-white/75 backdrop-blur-xl">
+          <div className="badge-creos text-xs backdrop-blur-xl">
             <MessageSquareDashed className="h-3.5 w-3.5" />
             {t("Owner Workspace")}
           </div>
-          <h1 className="mt-4 bg-gradient-to-r from-white/90 to-white/40 bg-clip-text pb-1 text-3xl font-medium tracking-tight text-transparent">
+          <h1 className="mt-4 bg-gradient-to-r from-[color:var(--creos-text)] to-[color:rgb(var(--creos-text-rgb)/0.48)] bg-clip-text pb-1 text-3xl font-medium tracking-tight text-transparent">
             {t("How can I help today?")}
           </h1>
-          <p className="mt-2 text-sm text-white/40">{t("Type a command or ask a question")}</p>
+          <p className="mt-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.5)]">{t("Type a command or ask a question")}</p>
         </div>
 
         {error ? (
@@ -128,7 +128,7 @@ export default function OwnerChatPage() {
         ) : null}
 
         <motion.div
-          className="relative rounded-2xl border border-white/[0.05] bg-white/[0.02] shadow-2xl backdrop-blur-2xl"
+          className="chat-panel relative"
           initial={{ scale: 0.98 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.1 }}
@@ -143,7 +143,7 @@ export default function OwnerChatPage() {
                 <button
                   type="button"
                   onClick={onNewSession}
-                  className="rounded-lg border border-white/15 bg-white/10 px-3 py-1.5 text-xs text-white transition hover:bg-white/15"
+                  className="btn-gold px-3 py-1.5 text-xs"
                 >
                   {t("New Session")}
                 </button>
@@ -171,15 +171,15 @@ export default function OwnerChatPage() {
                     onClick={() => selectSession(s.id)}
                     className={`whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-xs transition ${
                       s.id === activeSessionId
-                        ? "border-white/25 bg-white/10 text-white"
-                        : "border-white/10 bg-black/30 text-white/70 hover:bg-white/5 hover:text-white"
+                        ? "border-[rgb(var(--creos-accent-rgb)/0.28)] bg-[rgb(var(--creos-accent-rgb)/0.14)] text-[color:var(--creos-text)]"
+                        : "border-white/10 bg-[rgb(var(--creos-surface-rgb)/0.42)] text-[color:rgb(var(--creos-text-rgb)/0.68)] hover:bg-white/5 hover:text-[color:var(--creos-text)]"
                     }`}
                   >
                     {s.title || t("Session")}
                   </button>
                 ))
               ) : (
-                <p className="text-xs text-white/45">{t("No sessions yet")}</p>
+                <p className="text-xs text-[color:rgb(var(--creos-text-rgb)/0.45)]">{t("No sessions yet")}</p>
               )}
             </div>
           </div>
@@ -198,7 +198,7 @@ export default function OwnerChatPage() {
             <button
               key={cmd}
               type="button"
-              className="flex items-center gap-2 rounded-lg bg-white/[0.02] px-3 py-2 text-sm text-white/60 transition-all hover:bg-white/[0.05] hover:text-white/90"
+            className="chat-chip text-sm"
             >
               <Command className="h-4 w-4" />
               <span>{cmd}</span>
@@ -209,7 +209,7 @@ export default function OwnerChatPage() {
 
       {inputFocused ? (
         <motion.div
-          className="pointer-events-none fixed z-0 h-[50rem] w-[50rem] rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-500 opacity-[0.02] blur-[96px]"
+          className="pointer-events-none fixed z-0 h-[50rem] w-[50rem] rounded-full bg-gradient-to-r from-[rgb(var(--creos-accent-rgb)/0.18)] via-[rgb(var(--creos-accent-bright-rgb)/0.12)] to-[rgb(var(--creos-navy-rgb)/0.18)] opacity-[0.08] blur-[96px]"
           animate={{
             x: mousePosition.x - 400,
             y: mousePosition.y - 400,

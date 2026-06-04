@@ -19,13 +19,13 @@ function ThinkingIndicator() {
   const { t } = useTranslation();
   return (
     <div className="flex justify-start px-4 pb-3">
-      <div className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 backdrop-blur-xl">
-        <div className="mb-1 text-[10px] uppercase tracking-[0.15em] text-white/60">{t("Assistant Thinking")}</div>
+      <div className="chat-message-assistant rounded-2xl px-4 py-3 backdrop-blur-xl">
+        <div className="mb-1 text-[10px] uppercase tracking-[0.15em] text-[color:rgb(var(--creos-text-rgb)/0.62)]">{t("Assistant Thinking")}</div>
         <div className="flex items-center gap-1.5">
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
-              className="h-2 w-2 rounded-full bg-white/70"
+              className="h-2 w-2 rounded-full bg-[color:var(--creos-accent-bright)]"
               animate={{ y: [0, -4, 0], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.12 }}
             />
@@ -54,12 +54,12 @@ export default function ChatMessageList({ messages, loading }: Props) {
             className={`flex ${user ? "justify-end" : "justify-start"}`}
           >
             <article
-              className={`max-w-[88%] rounded-2xl border px-4 py-3 shadow-[0_10px_35px_rgba(0,0,0,0.32)] backdrop-blur-xl ${
+              className={`max-w-[88%] rounded-2xl px-4 py-3 shadow-[0_10px_35px_rgba(0,0,0,0.32)] backdrop-blur-xl ${
                 user
-                  ? "border-white/20 bg-white text-black"
+                  ? "chat-message-user"
                   : tool
-                  ? "border-white/20 bg-black/60 text-white"
-                  : "border-white/10 bg-white/[0.07] text-white"
+                  ? "chat-message-tool"
+                  : "chat-message-assistant"
               }`}
             >
               <div className="mb-1 text-[10px] uppercase tracking-[0.15em] opacity-70">

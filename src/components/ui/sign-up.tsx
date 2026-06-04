@@ -95,33 +95,31 @@ const SIGN_UP_STYLES = `
 
   .glass-button {
     appearance: none;
-    border: 1px solid rgba(255,255,255,0.18);
+    border: 1px solid rgba(212,175,55,0.28);
     background:
-      linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06)),
-      linear-gradient(var(--glass-angle), rgba(255,255,255,0.24), rgba(255,255,255,0.04));
+      linear-gradient(180deg, rgba(242,202,80,0.98), rgba(212,175,55,0.96)),
+      linear-gradient(var(--glass-angle), rgba(255,224,136,0.35), rgba(212,175,55,0.08));
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.35),
-      inset 0 -1px 0 rgba(255,255,255,0.08),
-      0 8px 24px rgba(0,0,0,0.25);
-    backdrop-filter: blur(8px) saturate(135%);
-    -webkit-backdrop-filter: blur(8px) saturate(135%);
-    color: hsl(var(--foreground));
+      inset 0 1px 0 rgba(255,255,255,0.28),
+      inset 0 -1px 0 rgba(60,47,0,0.08),
+      0 16px 34px rgba(0,0,0,0.28);
+    color: #3c2f00;
     transform: translateY(0);
   }
 
   .glass-button:hover {
     --glass-angle: 220deg;
-    border-color: rgba(255,255,255,0.3);
+    border-color: rgba(242,202,80,0.38);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.42),
-      inset 0 -1px 0 rgba(255,255,255,0.12),
-      0 12px 30px rgba(0,0,0,0.3);
+      inset 0 1px 0 rgba(255,255,255,0.32),
+      inset 0 -1px 0 rgba(60,47,0,0.12),
+      0 18px 38px rgba(0,0,0,0.3);
   }
 
   .glass-button:active {
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.25),
-      inset 0 -1px 0 rgba(255,255,255,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.22),
+      inset 0 -1px 0 rgba(60,47,0,0.14),
       0 4px 16px rgba(0,0,0,0.2);
   }
 
@@ -130,7 +128,7 @@ const SIGN_UP_STYLES = `
     inset: 0;
     transform: translateY(10px) scale(0.98);
     filter: blur(18px);
-    background: radial-gradient(70% 80% at 50% 20%, rgba(255,255,255,0.35), rgba(0,0,0,0));
+    background: radial-gradient(70% 80% at 50% 20%, rgba(212,175,55,0.28), rgba(0,0,0,0));
     z-index: 0;
   }
 
@@ -140,27 +138,28 @@ const SIGN_UP_STYLES = `
 
   .glass-input {
     width: 100%;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.17);
-    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(255,255,255,0.07);
-    color: hsl(var(--foreground));
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255,255,255,0.12);
+    background:
+      linear-gradient(180deg, rgba(40,42,43,0.9), rgba(29,32,33,0.84)),
+      linear-gradient(135deg, rgba(212,175,55,0.05), rgba(10,17,40,0.18));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.18);
+    color: #e1e3e4;
     outline: none;
-    backdrop-filter: blur(8px) saturate(130%);
-    -webkit-backdrop-filter: blur(8px) saturate(130%);
+    backdrop-filter: blur(20px) saturate(130%);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
   }
 
   .glass-input::placeholder {
-    color: rgba(255,255,255,0.7);
+    color: rgba(225,227,228,0.46);
   }
 
   .glass-input:focus {
-    border-color: rgba(255,255,255,0.36);
+    border-color: rgba(212,175,55,0.56);
     box-shadow:
-      0 0 0 3px rgba(255,255,255,0.14),
-      inset 0 1px 0 rgba(255,255,255,0.28),
-      inset 0 -1px 0 rgba(255,255,255,0.1);
-    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
+      0 0 0 1px rgba(212,175,55,0.26),
+      0 0 0 4px rgba(212,175,55,0.12),
+      inset 0 1px 0 rgba(255,255,255,0.08);
   }
 
   .glass-input:-webkit-autofill,
@@ -172,16 +171,16 @@ const SIGN_UP_STYLES = `
   }
 
   .social-button {
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.08);
-    color: hsl(var(--foreground));
-    backdrop-filter: blur(6px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(180deg, rgba(40,42,43,0.76), rgba(29,32,33,0.7));
+    color: #e1e3e4;
+    backdrop-filter: blur(14px);
   }
 
   .social-button:hover {
-    background: rgba(255,255,255,0.14);
-    border-color: rgba(255,255,255,0.32);
+    background: linear-gradient(180deg, rgba(50,53,54,0.84), rgba(29,32,33,0.78));
+    border-color: rgba(212,175,55,0.22);
   }
 `;
 
@@ -323,7 +322,7 @@ const AuthBackground = memo(function AuthBackground({ lowPerfMode }: { lowPerfMo
         className="absolute inset-0 z-0"
         style={{
           background:
-            "radial-gradient(120% 90% at 10% 95%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 60%), radial-gradient(90% 85% at 90% 10%, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 65%), linear-gradient(180deg, rgba(5,8,18,0.92), rgba(6,10,20,0.97))",
+            "radial-gradient(90% 60% at 15% 0%, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0) 58%), radial-gradient(70% 60% at 90% 15%, rgba(191,197,228,0.12) 0%, rgba(191,197,228,0) 64%), linear-gradient(135deg, rgba(10,17,40,0.96), rgba(17,20,21,0.98) 52%, rgba(11,15,16,1))",
         }}
       />
     );
@@ -343,9 +342,9 @@ const HeaderBrand = memo(function HeaderBrand({
   brandName: string;
 }) {
   return (
-    <div className={cn("fixed left-4 top-4 z-20 flex items-center gap-2", "md:left-1/2 md:-translate-x-1/2")}>
+    <div className={cn("fixed left-4 top-4 z-20 flex items-center gap-2 rounded-full border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.58)] px-4 py-2 backdrop-blur-glass", "md:left-1/2 md:-translate-x-1/2")}>
       {logo}
-      <h1 className="text-base font-bold text-foreground">{brandName}</h1>
+      <h1 className="text-base font-bold text-[color:var(--creos-text)]">{brandName}</h1>
     </div>
   );
 });
@@ -455,19 +454,20 @@ const RegisterStepContent = memo(function RegisterStepContent({
     if (authStep === "email") {
       return (
         <div key="email-step" className="space-y-3">
-          <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-email">
+          <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signup-email">
             {t("Email")}
           </label>
           <div className="glass-input-wrap">
-            <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+            <Mail className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.66)]" style={{ insetInlineStart: "1rem" }} />
             <input
               id="signup-email"
               type="email"
               value={email}
               onChange={(e) => handleEmailChange(e.target.value)}
               autoComplete="email"
-              placeholder="name@example.com"
-              className="glass-input py-3 pl-11 pr-4 text-sm"
+              placeholder={t("name@example.com")}
+              className="glass-input py-3 text-sm"
+              style={{ paddingInlineStart: "2.75rem", paddingInlineEnd: "1rem" }}
             />
           </div>
           <GlassButton type="button" onClick={handleSendOtp} className="w-full" disabled={!isEmailValid || requestingOtp}>
@@ -483,11 +483,11 @@ const RegisterStepContent = memo(function RegisterStepContent({
     if (authStep === "otp") {
       return (
         <div key="otp-step" className="space-y-3">
-          <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-otp">
+          <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signup-otp">
             {t("Enter OTP Code")}
           </label>
           <div className="glass-input-wrap">
-            <ShieldCheck className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+            <ShieldCheck className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.66)]" style={{ insetInlineStart: "1rem" }} />
             <input
               id="signup-otp"
               ref={otpInputRef}
@@ -498,8 +498,9 @@ const RegisterStepContent = memo(function RegisterStepContent({
                 setOtpInputDraft(next);
                 setOtpCode(next);
               }}
-              placeholder="6 digits"
-              className="glass-input py-3 pl-11 pr-4 text-sm tracking-[0.35em]"
+              placeholder={t("6 digits")}
+              className="glass-input py-3 text-sm tracking-[0.35em]"
+              style={{ paddingInlineStart: "2.75rem", paddingInlineEnd: "1rem" }}
             />
           </div>
 
@@ -524,7 +525,7 @@ const RegisterStepContent = memo(function RegisterStepContent({
 
     return (
       <div key="details-step" className="space-y-3">
-        <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-name">
+        <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signup-name">
           {t("Full Name")}
         </label>
         <input
@@ -532,10 +533,10 @@ const RegisterStepContent = memo(function RegisterStepContent({
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           className="glass-input py-3 px-4 text-sm"
-          placeholder="Alex Morgan"
+          placeholder={t("Example: Alex Morgan")}
         />
 
-        <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-phone">
+        <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signup-phone">
           {t("Phone (Optional)")}
         </label>
         <input
@@ -543,14 +544,14 @@ const RegisterStepContent = memo(function RegisterStepContent({
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           className="glass-input py-3 px-4 text-sm"
-          placeholder="+1 555 123 4567"
+          placeholder={t("Phone example")}
         />
 
-        <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-password">
+        <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signup-password">
           {t("Password")}
         </label>
         <div className="glass-input-wrap">
-          <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+          <Lock className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.66)]" style={{ insetInlineStart: "1rem" }} />
           <input
             id="signup-password"
             ref={passwordInputRef}
@@ -559,23 +560,25 @@ const RegisterStepContent = memo(function RegisterStepContent({
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="new-password"
             placeholder={t("Password")}
-            className="glass-input py-3 pl-11 pr-11 text-sm"
+            className="glass-input py-3 text-sm"
+            style={{ paddingInlineStart: "2.75rem", paddingInlineEnd: "2.75rem" }}
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white"
-            aria-label={t("Password")}
+            className="absolute top-1/2 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.72)] hover:text-[color:var(--creos-text)]"
+            style={{ insetInlineEnd: "0.75rem" }}
+            aria-label={t(showPassword ? "Hide password" : "Show password")}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
 
-        <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signup-confirm-password">
+        <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signup-confirm-password">
           {t("Confirm Password")}
         </label>
         <div className="glass-input-wrap">
-          <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+          <Lock className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.66)]" style={{ insetInlineStart: "1rem" }} />
           <input
             id="signup-confirm-password"
             ref={confirmPasswordInputRef}
@@ -584,13 +587,15 @@ const RegisterStepContent = memo(function RegisterStepContent({
             onChange={(e) => setConfirmPassword(e.target.value)}
             autoComplete="new-password"
             placeholder={t("Confirm Password")}
-            className="glass-input py-3 pl-11 pr-11 text-sm"
+            className="glass-input py-3 text-sm"
+            style={{ paddingInlineStart: "2.75rem", paddingInlineEnd: "2.75rem" }}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white"
-            aria-label={t("Confirm Password")}
+            className="absolute top-1/2 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.72)] hover:text-[color:var(--creos-text)]"
+            style={{ insetInlineEnd: "0.75rem" }}
+            aria-label={t(showConfirmPassword ? "Hide password" : "Show password")}
           >
             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -670,7 +675,7 @@ const AuthModal = memo(function AuthModal({ modalStatus, closeModal, mergedError
 
 export const AuthComponent = ({
   logo = <DefaultLogo />,
-  brandName = "EaseMize",
+  brandName = "CREOS",
   mode = "register",
   onRequestOtp,
   onVerifyOtp,
@@ -807,7 +812,7 @@ export const AuthComponent = ({
       setVerifyingOtp(true);
       const data = await (onVerifyOtp as NonNullable<AuthComponentProps["onVerifyOtp"]>)(email.trim(), otpCode.trim());
       if (!data?.otpToken) {
-        throw new Error("Verification token was not returned.");
+        throw new Error(t("Verification token was not returned."));
       }
       setOtpToken(data.otpToken);
       setAuthStep("details");
@@ -896,22 +901,22 @@ export const AuthComponent = ({
 
   if (mode === "login") {
     return (
-      <div className="flex min-h-screen w-screen flex-col bg-background">
+      <div className="auth-shell flex min-h-screen w-screen flex-col">
         <style>{SIGN_UP_STYLES}</style>
 
         <HeaderBrand logo={logo} brandName={brandName} />
 
-        <div className="relative flex h-full w-full flex-1 items-center justify-center overflow-hidden bg-card">
+        <div className="relative flex h-full w-full flex-1 items-center justify-center overflow-hidden">
           <AuthBackground lowPerfMode={lowPerfMode} />
 
           <fieldset
             disabled={loginLoading}
-            className={cn("relative z-10 mx-auto flex w-[320px] flex-col items-center gap-6 p-4 sm:w-[380px]", blurCardClass)}
+            className={cn("auth-panel relative z-10 flex w-[min(100%,28rem)] flex-col items-center gap-6", blurCardClass)}
           >
             <BlurFade className="w-full text-center" delay={0.04} disabled={blurFadeDisabled}>
-              <p className="text-xs uppercase tracking-[0.22em] text-white/80">{t("Sign in")}</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{`${t("Welcome back to")} ${brandName}`}</h2>
-              <p className="mt-2 text-sm text-white/80">{t("Access your account securely.")}</p>
+              <p className="badge-creos mx-auto text-xs uppercase tracking-[0.22em]">{t("Sign in")}</p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[color:var(--creos-text)]">{`${t("Welcome back to")} ${brandName}`}</h2>
+              <p className="mt-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.74)]">{t("Access your account securely.")}</p>
             </BlurFade>
 
             {!!loginError ? (
@@ -921,11 +926,11 @@ export const AuthComponent = ({
             ) : null}
 
             <div className="w-full space-y-3">
-              <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signin-email">
+              <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signin-email">
                 {t("Email")}
               </label>
               <div className="glass-input-wrap">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+                <Mail className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.66)]" style={{ insetInlineStart: "1rem" }} />
                 <input
                   id="signin-email"
                   type="email"
@@ -936,16 +941,17 @@ export const AuthComponent = ({
                     onEmailChange?.(next);
                   }}
                   autoComplete="email"
-                  placeholder="name@example.com"
-                  className="glass-input py-3 pl-11 pr-4 text-sm"
+                  placeholder={t("name@example.com")}
+                  className="glass-input py-3 text-sm"
+                  style={{ paddingInlineStart: "2.75rem", paddingInlineEnd: "1rem" }}
                 />
               </div>
 
-              <label className="text-xs font-medium uppercase tracking-wide text-white/85" htmlFor="signin-password">
+              <label className="text-xs font-medium uppercase tracking-wide text-[color:rgb(var(--creos-text-rgb)/0.8)]" htmlFor="signin-password">
                 {t("Password")}
               </label>
               <div className="glass-input-wrap">
-                <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+                <Lock className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.66)]" style={{ insetInlineStart: "1rem" }} />
                 <input
                   id="signin-password"
                   type={loginShowPassword ? "text" : "password"}
@@ -956,20 +962,22 @@ export const AuthComponent = ({
                     onPasswordChange?.(next);
                   }}
                   autoComplete="current-password"
-                  placeholder="••••••••"
-                  className="glass-input py-3 pl-11 pr-11 text-sm"
+                  placeholder={t("Password")}
+                  className="glass-input py-3 text-sm"
+                  style={{ paddingInlineStart: "2.75rem", paddingInlineEnd: "2.75rem" }}
                 />
                 <button
                   type="button"
                   onClick={() => setLoginShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/80"
-                  aria-label={loginShowPassword ? "Hide password" : "Show password"}
+                  className="absolute top-1/2 -translate-y-1/2 text-[color:rgb(var(--creos-text-rgb)/0.72)]"
+                  style={{ insetInlineEnd: "0.75rem" }}
+                  aria-label={t(loginShowPassword ? "Hide password" : "Show password")}
                 >
                   {loginShowPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
 
-              <div className="flex items-center justify-between gap-3 pt-1 text-xs text-slate-100">
+              <div className="flex items-center justify-between gap-3 pt-1 text-xs text-[color:rgb(var(--creos-text-rgb)/0.82)]">
                 <label className="inline-flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -979,12 +987,12 @@ export const AuthComponent = ({
                       setLoginRemember(next);
                       onRememberChange?.(next);
                     }}
-                    className="h-4 w-4 rounded border border-white/15 bg-black/40 text-white/90 focus:ring-white/30"
+                    className="h-4 w-4 rounded border border-white/15 bg-black/40 text-[color:var(--creos-accent)] focus:ring-[rgb(var(--creos-accent-rgb)/0.3)]"
                   />
                   {t("Remember me")}
                 </label>
 
-                <Link to="/auth/register" className="text-white/90 hover:underline">
+                <Link to="/auth/register" className="text-[color:var(--creos-accent-bright)] hover:underline">
                   {t("Create account")}
                 </Link>
               </div>
@@ -1003,7 +1011,7 @@ export const AuthComponent = ({
             </div>
 
             <div className="w-full text-center">
-              <Link to="/home" className="text-sm text-slate-100 hover:text-white/90 hover:underline">
+              <Link to="/home" className="text-sm text-[color:rgb(var(--creos-text-rgb)/0.82)] hover:text-[color:var(--creos-accent-bright)] hover:underline">
                 {t("Back to site")}
               </Link>
             </div>
@@ -1014,24 +1022,24 @@ export const AuthComponent = ({
   }
 
   return (
-    <div className="flex min-h-screen w-screen flex-col bg-background">
+    <div className="auth-shell flex min-h-screen w-screen flex-col">
       <style>{SIGN_UP_STYLES}</style>
 
       <AuthModal modalStatus={modalStatus} closeModal={closeModal} mergedError={mergedError} lowPerfMode={lowPerfMode} />
 
       <HeaderBrand logo={logo} brandName={brandName} />
 
-      <div className="relative flex h-full w-full flex-1 items-center justify-center overflow-hidden bg-card">
+      <div className="relative flex h-full w-full flex-1 items-center justify-center overflow-hidden">
         <AuthBackground lowPerfMode={lowPerfMode} />
 
         <fieldset
           disabled={loading || modalStatus === "loading"}
-          className={cn("relative z-10 mx-auto flex w-[320px] flex-col items-center gap-6 p-4 sm:w-[380px]", blurCardClass)}
+          className={cn("auth-panel relative z-10 flex w-[min(100%,28rem)] flex-col items-center gap-6", blurCardClass)}
         >
             <BlurFade className="w-full text-center" delay={0.04} disabled={blurFadeDisabled}>
-              <p className="text-xs uppercase tracking-[0.22em] text-white/80">{t("Create account")}</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{`${t("Welcome to")} ${brandName}`}</h2>
-              <p className="mt-2 text-sm text-white/80">{t("Secure signup with real email OTP verification.")}</p>
+              <p className="badge-creos mx-auto text-xs uppercase tracking-[0.22em]">{t("Create account")}</p>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[color:var(--creos-text)]">{`${t("Welcome to")} ${brandName}`}</h2>
+              <p className="mt-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.74)]">{t("Secure signup with real email OTP verification.")}</p>
             </BlurFade>
 
             {!!mergedError && modalStatus !== "error" ? (
@@ -1077,10 +1085,8 @@ export const AuthComponent = ({
             </form>
 
             <BlurFade className="w-full" delay={0.08} disabled={blurFadeDisabled}>
-              <div className="flex items-center gap-3">
-                <span className="h-px flex-1 bg-white/25" />
-                <span className="text-xs uppercase tracking-[0.2em] text-white/75">or</span>
-                <span className="h-px flex-1 bg-white/25" />
+              <div className="auth-divider">
+                <span className="text-xs uppercase tracking-[0.2em]">{t("or")}</span>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <button
@@ -1088,14 +1094,14 @@ export const AuthComponent = ({
                   className="social-button inline-flex items-center justify-center gap-2 px-3 py-2 text-sm"
                   onClick={() => onGoogle?.()}
                 >
-                  <GoogleIcon /> Google
+                  <GoogleIcon /> {t("Continue with Google")}
                 </button>
                 <button
                   type="button"
                   className="social-button inline-flex items-center justify-center gap-2 px-3 py-2 text-sm"
                   onClick={() => onGitHub?.()}
                 >
-                  <GitHubIcon /> GitHub
+                  <GitHubIcon /> {t("Continue with GitHub")}
                 </button>
               </div>
             </BlurFade>

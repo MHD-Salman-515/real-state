@@ -226,6 +226,76 @@ body::after,
     color: rgb(var(--creos-text-rgb) / 0.56);
   }
 
+  .auth-shell {
+    @apply bg-luxury relative min-h-screen overflow-hidden text-[color:var(--creos-text)];
+  }
+
+  .auth-panel {
+    @apply card-glass relative mx-auto w-full max-w-md rounded-[2rem] p-5 sm:p-7;
+    background:
+      linear-gradient(180deg, rgb(var(--creos-surface-hi-rgb) / 0.9), rgb(var(--creos-surface-rgb) / 0.86)),
+      linear-gradient(140deg, rgb(var(--creos-accent-rgb) / 0.08), transparent 36%);
+  }
+
+  .auth-divider {
+    @apply flex items-center gap-3;
+    color: rgb(var(--creos-text-rgb) / 0.62);
+  }
+
+  .auth-divider::before,
+  .auth-divider::after {
+    content: "";
+    @apply h-px flex-1;
+    background: rgb(255 255 255 / 0.14);
+  }
+
+  .chat-shell {
+    @apply bg-luxury min-h-screen text-[color:var(--creos-text)];
+  }
+
+  .chat-panel {
+    @apply card-glass rounded-[2rem];
+  }
+
+  .chat-sidebar {
+    @apply panel-nav rounded-[1.75rem] p-3;
+    background:
+      linear-gradient(180deg, rgb(var(--creos-navy-rgb) / 0.94), rgb(var(--creos-surface-rgb) / 0.9)),
+      linear-gradient(145deg, rgb(var(--creos-accent-rgb) / 0.08), transparent 40%);
+  }
+
+  .chat-chip {
+    @apply inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition;
+    border-color: rgb(255 255 255 / 0.12);
+    background: rgb(var(--creos-surface-rgb) / 0.48);
+    color: rgb(var(--creos-text-rgb) / 0.72);
+  }
+
+  .chat-chip:hover {
+    background: rgb(var(--creos-surface-hi-rgb) / 0.72);
+    color: var(--creos-text);
+  }
+
+  .chat-message-user {
+    background: linear-gradient(135deg, var(--creos-accent-bright), var(--creos-accent));
+    border: 1px solid rgb(var(--creos-accent-rgb) / 0.35);
+    color: #3c2f00;
+  }
+
+  .chat-message-assistant {
+    background:
+      linear-gradient(180deg, rgb(var(--creos-surface-hi-rgb) / 0.84), rgb(var(--creos-surface-rgb) / 0.78)),
+      linear-gradient(135deg, rgb(var(--creos-accent-rgb) / 0.06), transparent 36%);
+    border: 1px solid var(--creos-border-soft);
+    color: var(--creos-text);
+  }
+
+  .chat-message-tool {
+    background: rgb(var(--creos-navy-rgb) / 0.72);
+    border: 1px solid rgb(var(--creos-accent-rgb) / 0.16);
+    color: var(--creos-text);
+  }
+
   .table-creos {
     @apply overflow-x-auto rounded-3xl shadow-glass backdrop-blur-glass;
     background: linear-gradient(180deg, rgb(var(--creos-surface-hi-rgb) / 0.86), rgb(var(--creos-surface-rgb) / 0.82));
