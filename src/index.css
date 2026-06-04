@@ -3,46 +3,58 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 0%;
-  --foreground: 0 0% 100%;
-  --card: 0 0% 0%;
-  --card-foreground: 0 0% 100%;
-  --popover: 0 0% 0%;
-  --popover-foreground: 0 0% 100%;
-  --primary: 0 0% 100%;
-  --primary-foreground: 0 0% 0%;
-  --secondary: 0 0% 12%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 0 0% 10%;
-  --muted-foreground: 0 0% 70%;
-  --accent: 0 0% 100%;
-  --accent-foreground: 0 0% 0%;
+  --background: 210 11% 7%;
+  --foreground: 200 9% 89%;
+  --card: 210 6% 12%;
+  --card-foreground: 200 9% 89%;
+  --popover: 210 6% 12%;
+  --popover-foreground: 200 9% 89%;
+  --primary: 43 63% 52%;
+  --primary-foreground: 41 100% 12%;
+  --secondary: 222 60% 10%;
+  --secondary-foreground: 200 9% 89%;
+  --muted: 40 24% 82%;
+  --muted-foreground: 40 24% 72%;
+  --accent: 46 86% 63%;
+  --accent-foreground: 41 100% 12%;
   --destructive: 0 85% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 0 0% 20%;
-  --input: 0 0% 20%;
-  --ring: 0 0% 100%;
+  --border: 44 14% 54%;
+  --input: 210 6% 12%;
+  --ring: 43 63% 52%;
 
-  --creos-bg: #000000;
-  --creos-surface: #000000;
-  --creos-text: #ffffff;
-  --creos-muted: #b3b3b3;
-  --creos-accent: #ffffff;
-  --creos-surface-rgb: 0 0 0;
-  --creos-accent-rgb: 255 255 255;
-  --creos-text-rgb: 255 255 255;
+  --creos-bg: #111415;
+  --creos-navy: #0a1128;
+  --creos-surface: #1d2021;
+  --creos-surface-hi: #282a2b;
+  --creos-surface-max: #323536;
+  --creos-text: #e1e3e4;
+  --creos-muted: #d0c5af;
+  --creos-accent: #d4af37;
+  --creos-accent-bright: #f2ca50;
+  --creos-border: #99907c;
+  --creos-border-soft: rgba(255, 255, 255, 0.1);
+  --creos-bg-rgb: 17 20 21;
+  --creos-navy-rgb: 10 17 40;
+  --creos-surface-rgb: 29 32 33;
+  --creos-surface-hi-rgb: 40 42 43;
+  --creos-surface-max-rgb: 50 53 54;
+  --creos-accent-rgb: 212 175 55;
+  --creos-accent-bright-rgb: 242 202 80;
+  --creos-text-rgb: 225 227 228;
 }
 
 html,
 body {
-  background: #000 !important;
-  color: #fff !important;
+  background: var(--creos-bg) !important;
+  color: var(--creos-text) !important;
+  font-family: Inter, "IBM Plex Sans Arabic", "Noto Sans Arabic", system-ui, sans-serif;
 }
 
 #root {
   min-height: 100vh;
-  background: #000 !important;
-  color: #fff !important;
+  background: var(--creos-bg) !important;
+  color: var(--creos-text) !important;
 }
 
 .bubbles,
@@ -68,67 +80,120 @@ body::after,
 }
 
 @layer components {
-  /* الحاوية الأساسية */
-  .section { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+  .section,
+  .section-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
 
-  /* أزرار */
   .btn { @apply inline-flex items-center justify-center rounded-xl font-medium transition; }
-  .btn-primary { @apply btn bg-white/10 text-white px-4 py-2 shadow-sm hover:bg-white/20; }
-  .btn-ghost { @apply btn border border-white/15 bg-black/60 hover:bg-white/10 px-4 py-2 text-white; }
-  .btn-gold  { @apply btn bg-white/10 text-white px-4 py-2 hover:bg-white/20; }
+  .btn-primary {
+    @apply btn px-4 py-2 text-[color:var(--creos-text)] shadow-glass;
+    background: linear-gradient(135deg, rgb(var(--creos-surface-hi-rgb) / 0.96), rgb(var(--creos-surface-rgb) / 0.92));
+    border: 1px solid var(--creos-border-soft);
+  }
+  .btn-gold {
+    @apply btn rounded-full px-4 py-2 font-semibold shadow-gold;
+    background: linear-gradient(135deg, var(--creos-accent), var(--creos-accent-bright));
+    border: 1px solid rgb(var(--creos-accent-rgb) / 0.35);
+    color: #3c2f00;
+  }
+  .btn-gold:hover {
+    background: linear-gradient(135deg, var(--creos-accent-bright), var(--creos-accent));
+  }
+  .btn-ghost,
+  .btn-glass {
+    @apply btn rounded-full px-4 py-2 text-[color:var(--creos-text)] backdrop-blur-glass;
+    background: linear-gradient(180deg, rgb(var(--creos-surface-hi-rgb) / 0.68), rgb(var(--creos-navy-rgb) / 0.52));
+    border: 1px solid var(--creos-border-soft);
+  }
+  .btn-ghost:hover,
+  .btn-glass:hover {
+    background: linear-gradient(180deg, rgb(var(--creos-surface-max-rgb) / 0.78), rgb(var(--creos-navy-rgb) / 0.62));
+  }
 
-  /* بطاقة عامة */
-  .card { @apply rounded-2xl bg-black/60 border border-white/15 shadow-soft text-white; }
+  .card,
+  .card-glass {
+    @apply rounded-3xl text-[color:var(--creos-text)] shadow-glass backdrop-blur-glass;
+    background:
+      linear-gradient(180deg, rgb(var(--creos-surface-hi-rgb) / 0.88), rgb(var(--creos-surface-rgb) / 0.82)),
+      linear-gradient(135deg, rgb(var(--creos-accent-rgb) / 0.07), transparent 40%);
+    border: 1px solid var(--creos-border-soft);
+  }
 
-  /* الإدخال */
-  .input {
-    @apply w-full rounded-xl bg-black/60 border border-white/15 px-3 py-2 text-white
-           placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent;
+  .input,
+  .input-creos {
+    @apply w-full rounded-2xl px-3 py-2 text-[color:var(--creos-text)] outline-none backdrop-blur-glass transition;
+    background: linear-gradient(180deg, rgb(var(--creos-surface-rgb) / 0.94), rgb(var(--creos-navy-rgb) / 0.88));
+    border: 1px solid var(--creos-border-soft);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03);
+  }
+  .input::placeholder,
+  .input-creos::placeholder {
+    color: rgb(var(--creos-text-rgb) / 0.45);
+  }
+  .input:focus,
+  .input-creos:focus {
+    border-color: rgb(var(--creos-accent-rgb) / 0.55);
+    box-shadow:
+      0 0 0 1px rgb(var(--creos-accent-rgb) / 0.3),
+      0 0 0 4px rgb(var(--creos-accent-rgb) / 0.12);
   }
   .select {
-    @apply input bg-[right_.75rem_center] bg-no-repeat pr-10;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='black'%3E%3Cpath d='M5 7l5 5 5-5'/%3E%3C/svg%3E");
+    @apply input-creos bg-[right_.75rem_center] bg-no-repeat pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%23D0C5AF'%3E%3Cpath d='M5 7l5 5 5-5'/%3E%3C/svg%3E");
   }
 
-  /* شارة */
-  .badge {
-    @apply inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm text-white;
+  .badge,
+  .badge-creos {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm;
+    background: rgb(var(--creos-accent-rgb) / 0.12);
+    border: 1px solid rgb(var(--creos-accent-rgb) / 0.22);
+    color: var(--creos-muted);
   }
 
-  /* رأس الصفحة */
   .page-header {
-    @apply flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-black/50 py-4;
+    @apply flex flex-wrap items-center justify-between gap-3 py-4;
+    border-bottom: 1px solid var(--creos-border-soft);
+    background: rgb(var(--creos-bg-rgb) / 0.52);
+  }
+
+  .panel-nav {
+    @apply backdrop-blur-glass;
+    background:
+      linear-gradient(180deg, rgb(var(--creos-navy-rgb) / 0.96), rgb(var(--creos-surface-rgb) / 0.94));
+    border: 1px solid var(--creos-border-soft);
+    box-shadow: inset 1px 0 0 rgb(255 255 255 / 0.04);
+  }
+
+  .table-creos {
+    @apply overflow-x-auto rounded-3xl shadow-glass backdrop-blur-glass;
+    background: linear-gradient(180deg, rgb(var(--creos-surface-hi-rgb) / 0.86), rgb(var(--creos-surface-rgb) / 0.82));
+    border: 1px solid var(--creos-border-soft);
+  }
+  .table-creos table {
+    @apply min-w-full text-sm leading-5 text-[color:var(--creos-text)];
+  }
+  .table-creos thead {
+    background: rgb(var(--creos-navy-rgb) / 0.7);
+  }
+  .table-creos th {
+    @apply text-[11px] font-semibold uppercase tracking-[0.16em];
+    color: rgb(var(--creos-text-rgb) / 0.72);
+  }
+  .table-creos tbody tr {
+    border-top: 1px solid rgb(255 255 255 / 0.06);
+  }
+  .table-creos tbody tr:nth-child(even) {
+    background: rgb(255 255 255 / 0.02);
   }
 }
 @layer utilities {
-  /* خلفية فاخرة غامقة */
   .bg-luxury {
-    @apply bg-gradient-to-br from-slate-950 via-slate-900 to-black;
+    background:
+      radial-gradient(circle at top, rgb(var(--creos-accent-rgb) / 0.12), transparent 32%),
+      linear-gradient(135deg, var(--creos-navy), var(--creos-bg) 52%, #0b0f10);
   }
 
-  /* كرت زجاجي فخم */
-  .card-glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl;
-  }
-
-  /* زر أساسي */
-  .btn-gold {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-full
-           bg-white/10 text-white font-semibold border border-white/15
-           shadow-lg shadow-black/40
-           hover:bg-white/20 hover:-translate-y-0.5
-           transition duration-300;
-  }
-
-  /* زر شفاف بإطار أبيض */
-  .btn-ghost-gold {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-full
-           border border-white/20 text-white/85
-           hover:bg-white/10 hover:-translate-y-0.5
-           transition duration-300;
-  }
-
-  /* أنيميشن طفو */
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-12px); }
@@ -137,16 +202,14 @@ body::after,
     animation: float 7s ease-in-out infinite;
   }
 
-  /* أنيميشن Glow للصناديق/الأزرار */
   @keyframes glow {
-    0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0); }
-    50%      { box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+    0%, 100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0); }
+    50%      { box-shadow: 0 0 30px rgba(212, 175, 55, 0.22); }
   }
   .animate-glow {
     animation: glow 3s ease-in-out infinite;
   }
 
-  /* دخول من تحت + Fade */
   @keyframes slide-up-fade {
     0%   { opacity: 0; transform: translateY(24px); }
     100% { opacity: 1; transform: translateY(0); }
@@ -157,7 +220,6 @@ body::after,
 }
 
 @layer utilities {
-  /* طفو ناعم للكروت / العناصر */
   @keyframes float-soft {
     0%, 100% { transform: translateY(0); }
     50%      { transform: translateY(-8px); }
@@ -166,7 +228,6 @@ body::after,
     animation: float-soft 6s ease-in-out infinite;
   }
 
-  /* نبض خفيف للخلفيات الدائرية */
   @keyframes pulse-soft {
     0%, 100% { opacity: 0.6; transform: scale(1); }
     50%      { opacity: 1;   transform: scale(1.06); }
@@ -175,7 +236,6 @@ body::after,
     animation: pulse-soft 5s ease-in-out infinite;
   }
 
-  /* دخول من الأسفل + Fade */
   @keyframes rise-fade {
     0%   { opacity: 0; transform: translateY(24px); }
     100% { opacity: 1; transform: translateY(0); }
@@ -184,12 +244,12 @@ body::after,
     animation: rise-fade 0.9s ease-out both;
   }
 
-  /* حركة Pop للكروت على الهوفر */
   .hover-card-pop {
-    @apply transition duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-white/10;
+    @apply transition duration-500 hover:-translate-y-1;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28), 0 0 0 1px rgb(var(--creos-accent-rgb) / 0.08);
   }
 }
-/* حركة بطيئة للصورة الخلفية */
+
 @keyframes pan-slow {
   0% {
     transform: scale(1.1) translateX(0);

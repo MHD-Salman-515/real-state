@@ -10,14 +10,14 @@ export default function Table({ columns, rows, emptyText = "No data available" }
   };
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
-      <table className="min-w-[900px] text-sm leading-5 text-slate-100">
-        <thead className="sticky top-0 z-10 bg-black/40 backdrop-blur-xl">
+    <div className="table-creos">
+      <table className="min-w-[900px]">
+        <thead className="sticky top-0 z-10 backdrop-blur-glass">
           <tr className="border-b border-white/10">
             {columns.map((c) => (
               <th
                 key={c.key}
-                className={`px-4 py-3 align-middle text-left text-[11px] font-semibold uppercase tracking-wide text-slate-300 ${classForKey(c.key)}`}
+                className={`px-4 py-3 align-middle text-left ${classForKey(c.key)}`}
               >
                 {c.header}
               </th>
@@ -28,16 +28,16 @@ export default function Table({ columns, rows, emptyText = "No data available" }
         <tbody className="divide-y divide-white/10">
           {rows.length === 0 && (
             <tr>
-              <td className="px-4 py-6 text-center text-sm text-slate-400" colSpan={columns.length}>
+              <td className="px-4 py-6 text-center text-sm text-[color:rgb(var(--creos-text-rgb)/0.52)]" colSpan={columns.length}>
                 {emptyText}
               </td>
             </tr>
           )}
 
           {rows.map((r, i) => (
-            <tr key={r.id ?? i} className="transition-colors odd:bg-transparent even:bg-white/[0.02] hover:bg-white/5">
+            <tr key={r.id ?? i} className="transition-colors hover:bg-white/[0.04]">
               {columns.map((c) => (
-                <td key={c.key} className={`px-4 py-3 align-middle text-left text-sm leading-5 text-slate-100 ${classForKey(c.key)}`}>
+                <td key={c.key} className={`px-4 py-3 align-middle text-left text-sm leading-5 text-[color:var(--creos-text)] ${classForKey(c.key)}`}>
                   {typeof c.render === "function" ? c.render(r) : r[c.key]}
                 </td>
               ))}
