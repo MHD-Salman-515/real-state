@@ -86,13 +86,11 @@ export default function HeroShowcase({
   };
 
   const showPosterOnly = activeSlide.type === "video" && videoError;
-  const inputMini =
-    "h-11 w-full rounded-xl bg-black/30 backdrop-blur-xl border border-white/20 text-white placeholder-slate-300/70 shadow-inner shadow-black/40 focus:outline-none focus:border-white/15 focus:ring-2 focus:ring-white/30 transition duration-300";
-  const selectMini =
-    "h-11 w-full rounded-xl bg-black/30 backdrop-blur-xl border border-white/20 text-white shadow-lg shadow-black/25 hover:border-white/15 focus:outline-none focus:border-white/15 focus:ring-2 focus:ring-white/30 transition duration-300";
+  const inputMini = "input-creos h-11 rounded-2xl";
+  const selectMini = "input-creos h-11 rounded-2xl";
 
   return (
-    <section className="relative left-1/2 right-1/2 -mx-[50vw] min-h-screen w-screen overflow-hidden bg-[#070b11] text-white">
+    <section className="bg-luxury relative left-1/2 right-1/2 -mx-[50vw] min-h-screen w-screen overflow-hidden text-white">
       <div className="absolute inset-0">
         {activeSlide.type === "video" && !showPosterOnly ? (
           <video
@@ -117,21 +115,21 @@ export default function HeroShowcase({
         )}
       </div>
 
-      <div className="absolute inset-0 bg-black/55" />
-      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/35 to-[#0a2233]/65" />
+      <div className="absolute inset-0 bg-[rgb(var(--creos-bg-rgb)/0.42)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(212,175,55,0.16),_transparent_28%),linear-gradient(135deg,rgba(10,17,40,0.82),rgba(17,20,21,0.58),rgba(10,17,40,0.88))]" />
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-5 pb-24 pt-20 sm:px-8 lg:px-12">
         <div className="max-w-2xl">
-          <p className="mb-4 inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs tracking-[0.2em] text-slate-100">
+          <p className="badge-creos mb-4 inline-flex border border-[rgb(var(--creos-accent-rgb)/0.24)] bg-[rgb(var(--creos-accent-rgb)/0.10)] px-3 py-1 text-xs tracking-[0.2em] text-[color:var(--creos-text)]">
             {t(activeSlide.badge)}
           </p>
           <h1
-            className={`text-4xl font-black leading-tight sm:text-5xl lg:text-6xl transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+            className={`text-4xl font-black leading-tight text-[color:var(--creos-text)] sm:text-5xl lg:text-6xl transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
           >
             {t(activeSlide.title)}
           </h1>
           <p
-            className={`mt-5 max-w-xl text-sm text-slate-200 sm:text-base transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+            className={`mt-5 max-w-xl text-sm text-[color:rgb(var(--creos-text-rgb)/0.82)] sm:text-base transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
           >
             {t(activeSlide.description)}
           </p>
@@ -139,26 +137,26 @@ export default function HeroShowcase({
             <button
               type="button"
               onClick={onPrimaryCta}
-              className="rounded-xl bg-white/10 px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/10"
+              className="btn-gold px-6 py-3 text-sm"
             >
               {t(activeSlide.primaryLabel)}
             </button>
             <button
               type="button"
               onClick={onSecondaryCta}
-              className="rounded-xl border border-white/40 bg-black/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              className="btn-glass px-6 py-3 text-sm"
             >
               {t(activeSlide.secondaryLabel)}
             </button>
           </div>
         </div>
 
-        <div className="mt-8 max-w-3xl rounded-2xl border border-white/20 bg-black/40 p-4 backdrop-blur-xl sm:p-5">
+        <div className="card-glass mt-8 max-w-3xl rounded-3xl p-4 sm:p-5">
           {lastSearch && (
-            <div className="mb-4 flex flex-col gap-3 rounded-xl border border-white/15 bg-black/35 p-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-slate-100">
+            <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.6)] p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm text-[color:var(--creos-text)]">
                 {t("Last saved search:")}
-                <span className="ms-2 font-mono text-white/90">
+                <span className="ms-2 font-mono text-[color:rgb(var(--creos-text-rgb)/0.86)]">
                   {Object.entries(lastSearch)
                     .map(([k, v]) => `${k}:${v}`)
                     .join(" • ")}
@@ -167,14 +165,14 @@ export default function HeroShowcase({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/90 transition hover:bg-white/10"
+                  className="btn-glass px-3 py-1.5 text-xs"
                   onClick={applyLastSearch}
                 >
                   {t("Apply")}
                 </button>
                 <button
                   type="button"
-                  className="rounded-lg border border-white/30 px-3 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
+                  className="btn-glass px-3 py-1.5 text-xs"
                   onClick={clearLastSearch}
                 >
                   {t("Clear")}
@@ -225,14 +223,14 @@ export default function HeroShowcase({
             <div className="sm:col-span-2 flex justify-end gap-2">
               <button
                 type="button"
-                className="rounded-lg border border-white/30 px-3 py-2 text-sm transition hover:bg-white/10"
+                className="btn-glass px-3 py-2 text-sm"
                 onClick={resetForm}
               >
                 {t("Reset")}
               </button>
               <button
                 type="submit"
-                className="rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold text-black transition hover:bg-white/10"
+                className="btn-gold px-4 py-2 text-sm"
               >
                 {t("Quick Search")}
               </button>
@@ -240,13 +238,13 @@ export default function HeroShowcase({
           </form>
 
           {hasDraft && (
-            <div className="mt-4 flex flex-col gap-3 rounded-xl border border-white/15 bg-black/35 p-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-slate-100">
+            <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.6)] p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm text-[color:var(--creos-text)]">
                 {t("You have an unfinished booking draft.")}
               </div>
               <button
                 type="button"
-                className="rounded-lg border border-white/15 px-3 py-2 text-sm text-white/80 transition hover:bg-white/10"
+                className="btn-glass px-3 py-2 text-sm"
                 onClick={onContinueDraft}
               >
                 {t("Continue Draft")}

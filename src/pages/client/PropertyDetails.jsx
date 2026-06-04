@@ -114,7 +114,7 @@ export default function PropertyDetails() {
   // === شاشة التحميل ===
   if (!item) {
     return (
-      <div className="text-center text-slate-300 py-20">
+      <div className="creos-theme bg-luxury py-20 text-center text-[color:rgb(var(--creos-text-rgb)/0.72)]">
         جارِ تحميل تفاصيل العقار...
       </div>
     );
@@ -165,25 +165,26 @@ export default function PropertyDetails() {
   ].filter((x) => x.value);
 
   return (
-    <section className="relative z-10 max-w-6xl mx-auto px-4 lg:px-0 py-10">
+    <section className="creos-theme bg-luxury relative z-10 min-h-screen">
+      <div className="section-shell max-w-6xl py-10">
       {/* Breadcrumb */}
-      <div className="mb-3 text-[11px] text-slate-400 flex items-center gap-2">
-        <Link to="/" className="hover:text-white/90 transition">
+      <div className="mb-3 flex items-center gap-2 text-[11px] text-[color:var(--creos-muted)]">
+        <Link to="/" className="transition hover:text-[color:var(--creos-text)]">
           الواجهة الرئيسية ⟵
         </Link>
         <span className="opacity-40">/</span>
-        <Link to="/search" className="hover:text-white/90 transition">
+        <Link to="/search" className="transition hover:text-[color:var(--creos-text)]">
           نتائج البحث
         </Link>
         <span className="opacity-40">/</span>
         <span>تفاصيل العقار #{item.id}</span>
       </div>
 
-      <div className="card-glass border border-white/15 rounded-2xl p-5 md:p-6 shadow-soft space-y-6 bg-black/30 backdrop-blur-xl">
+      <div className="card-glass space-y-6 rounded-3xl p-5 md:p-6">
         <div className="grid gap-6 lg:grid-cols-[1.6fr_minmax(0,1.05fr)]">
           {/* معرض الصور */}
           <div className="space-y-3 lg:col-span-2">
-            <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-slate-900/60">
+            <div className="relative overflow-hidden rounded-3xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-navy-rgb)/0.6)]">
               <img
                 src={heroImage}
                 alt={item.title}
@@ -200,7 +201,7 @@ export default function PropertyDetails() {
               <button
                 type="button"
                 onClick={toggleFav}
-                className="absolute top-4 right-4 h-10 w-10 rounded-2xl border border-white/15 bg-black/35 backdrop-blur-xl shadow hover:scale-105 transition"
+                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.58)] backdrop-blur-glass shadow-glass transition hover:scale-105"
                 aria-label={t("Favorite")}
               >
                 <span className="text-lg">{isFav ? "💚" : "🤍"}</span>
@@ -208,17 +209,17 @@ export default function PropertyDetails() {
 
               <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div className="space-y-1">
-                  <div className="text-[11px] text-slate-300">{item.city}</div>
+                  <div className="text-[11px] text-[color:var(--creos-muted)]">{item.city}</div>
                 <h1 className="text-2xl md:text-3xl font-black tracking-tight">
                   {item.title}
                 </h1>
                 </div>
 
                 <div className="md:text-right">
-                  <div className="text-[11px] text-slate-300">
+                  <div className="text-[11px] text-[color:var(--creos-muted)]">
                     السعر التقريبي
                   </div>
-                  <div className="text-3xl md:text-4xl font-extrabold text-white/90">
+                  <div className="text-3xl font-extrabold text-[color:var(--creos-accent-bright)] md:text-4xl">
                     {item.price?.toLocaleString()} $
                   </div>
                 </div>
@@ -226,7 +227,7 @@ export default function PropertyDetails() {
             </div>
 
             {roomImages.length > 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-black/35 p-3 space-y-3">
+              <div className="card-glass rounded-3xl p-3 space-y-3">
                 <div className="flex flex-wrap gap-2">
                   {roomTabs.map((tab) => (
                     <button
@@ -234,10 +235,10 @@ export default function PropertyDetails() {
                       type="button"
                       onClick={() => setActiveRoom(tab)}
                       className={
-                        "rounded-lg border px-3 py-1.5 text-xs transition " +
+                        "rounded-xl border px-3 py-1.5 text-xs transition " +
                         (activeRoom === tab
-                          ? "border-white/30 bg-white/10 text-white"
-                          : "border-white/10 bg-black/40 text-white/70 hover:text-white hover:bg-white/5")
+                          ? "border-[rgb(var(--creos-accent-rgb)/0.32)] bg-[rgb(var(--creos-accent-rgb)/0.14)] text-[color:var(--creos-text)]"
+                          : "border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.55)] text-[color:rgb(var(--creos-text-rgb)/0.7)] hover:bg-[rgb(var(--creos-surface-hi-rgb)/0.65)] hover:text-[color:var(--creos-text)]")
                       }
                     >
                       {roomLabel[tab] || tab}
@@ -251,7 +252,7 @@ export default function PropertyDetails() {
                       <img
                         src={normalizeImageUrl(img.url)}
                         alt={img.caption || `image-${idx + 1}`}
-                        className="h-20 w-full rounded-lg border border-white/10 object-cover bg-black/40"
+                        className="h-20 w-full rounded-xl border border-[var(--creos-border-soft)] object-cover bg-[rgb(var(--creos-surface-rgb)/0.55)]"
                         loading="lazy"
                         decoding="async"
                         onError={(e) => {
@@ -259,7 +260,7 @@ export default function PropertyDetails() {
                           e.currentTarget.src = placeholderSrc;
                         }}
                       />
-                      <p className="text-[10px] text-white/65 line-clamp-1">
+                      <p className="line-clamp-1 text-[10px] text-[color:rgb(var(--creos-text-rgb)/0.65)]">
                         {img.caption || "صورة"}
                       </p>
                     </div>
@@ -270,8 +271,8 @@ export default function PropertyDetails() {
           </div>
 
           {/* صندوق جانبي */}
-          <aside className="card-glass border border-white/15 rounded-2xl p-4 md:p-5 bg-black/40 backdrop-blur-xl space-y-4 lg:col-span-2">
-            <p className="text-xs text-slate-300">
+          <aside className="card-glass space-y-4 rounded-3xl p-4 md:p-5 lg:col-span-2">
+            <p className="text-xs text-[color:rgb(var(--creos-text-rgb)/0.74)]">
               أضف العقار إلى المفضلة أو احجز معاينة.
             </p>
 
@@ -279,10 +280,10 @@ export default function PropertyDetails() {
               <button
                 onClick={toggleFav}
                 className={
-                  "w-full px-4 py-2.5 rounded-xl text-sm font-semibold transition " +
+                  "w-full rounded-xl px-4 py-2.5 text-sm font-semibold transition " +
                   (isFav
-                    ? "bg-slate-950 border border-white/15 text-white/90"
-                    : "bg-white/10 text-black hover:bg-white/10")
+                    ? "border border-[rgb(var(--creos-accent-rgb)/0.3)] bg-[rgb(var(--creos-accent-rgb)/0.12)] text-[color:var(--creos-text)]"
+                    : "btn-gold")
                 }
               >
                 {isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
@@ -291,7 +292,7 @@ export default function PropertyDetails() {
               <Link
                 to="/client/book-visit"
                 onClick={startDraft}
-                className="text-center px-4 py-2.5 rounded-xl border border-slate-500/60 text-sm text-slate-100 hover:bg-white/5 transition"
+                className="btn-glass text-center px-4 py-2.5 text-sm"
               >
                 إنشاء حجز معاينة
               </Link>
@@ -311,14 +312,14 @@ export default function PropertyDetails() {
             </div>
 
             {/* معلومات سريعة */}
-            <div className="grid grid-cols-2 gap-2 text-xs text-slate-200 pt-2">
-              <div className="rounded-xl bg-black/40 border border-white/10 p-2">
-                <div className="text-[11px] text-slate-400">رقم العقار</div>
+            <div className="grid grid-cols-2 gap-2 pt-2 text-xs text-[color:rgb(var(--creos-text-rgb)/0.88)]">
+              <div className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.55)] p-2">
+                <div className="text-[11px] text-[color:var(--creos-muted)]">رقم العقار</div>
                 <div className="font-mono text-sm">#{item.id}</div>
               </div>
 
-              <div className="rounded-xl bg-black/40 border border-white/10 p-2">
-                <div className="text-[11px] text-slate-400">المدينة</div>
+              <div className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.55)] p-2">
+                <div className="text-[11px] text-[color:var(--creos-muted)]">المدينة</div>
                 <div className="font-semibold">{item.city}</div>
               </div>
             </div>
@@ -327,10 +328,10 @@ export default function PropertyDetails() {
 
         {/* الوصف */}
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-100">
+          <h2 className="text-sm font-semibold text-[color:var(--creos-text)]">
             وصف العقار
           </h2>
-          <p className="text-sm md:text-base text-slate-200 leading-relaxed">
+          <p className="text-sm leading-relaxed text-[color:rgb(var(--creos-text-rgb)/0.82)] md:text-base">
             {item.description}
           </p>
         </div>
@@ -338,15 +339,15 @@ export default function PropertyDetails() {
         {/* رجوع */}
         {/* Details */}
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-slate-100">{t("Details")}</h2>
+          <h2 className="text-sm font-semibold text-[color:var(--creos-text)]">{t("Details")}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             {detailsPairs.map((d) => (
               <div
                 key={d.label}
-                className="rounded-2xl bg-white/5 border border-white/10 p-3"
+                className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.58)] p-3"
               >
-                <div className="text-[11px] text-slate-400">{d.label}</div>
-                <div className="mt-0.5 font-semibold text-slate-100 break-words">
+                <div className="text-[11px] text-[color:var(--creos-muted)]">{d.label}</div>
+                <div className="mt-0.5 break-words font-semibold text-[color:var(--creos-text)]">
                   {d.value}
                 </div>
               </div>
@@ -357,12 +358,13 @@ export default function PropertyDetails() {
         <div className="pt-2">
           <Link
             to="/search"
-            className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-white/90 transition"
+            className="inline-flex items-center gap-2 text-xs text-[color:var(--creos-muted)] transition hover:text-[color:var(--creos-text)]"
           >
             <span>⟵</span>
             <span>العودة إلى نتائج البحث</span>
           </Link>
         </div>
+      </div>
       </div>
     </section>
   );

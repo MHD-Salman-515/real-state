@@ -97,21 +97,20 @@ export default function Profile() {
   };
 
   const inputCls =
-    "w-full rounded-xl bg-slate-950/70 border border-white/15 " +
-    "px-3 py-2.5 text-sm text-slate-100 placeholder-slate-500 " +
-    "focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent";
+    "input-creos text-sm";
 
   return (
-    <section className="relative z-10 max-w-3xl mx-auto px-4 lg:px-0 py-10">
-      <div className="card-glass border border-white/15 rounded-2xl p-5 md:p-6 shadow-soft space-y-5">
+    <section className="creos-theme bg-luxury relative z-10 min-h-screen">
+      <div className="section-shell max-w-3xl py-10">
+      <div className="card-glass space-y-5 rounded-3xl p-5 md:p-6">
         <div className="space-y-2">
           <h1 className="text-2xl md:text-3xl font-black tracking-tight">{t("Profile")}</h1>
-          <p className="text-sm text-slate-300">{t("Update your contact information and profile details.")}</p>
+          <p className="text-sm text-[color:rgb(var(--creos-text-rgb)/0.74)]">{t("Update your contact information and profile details.")}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4 md:gap-5">
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">{t("Full name")}</label>
+            <label className="mb-1.5 block text-xs text-[color:var(--creos-muted)]">{t("Full name")}</label>
             <input
               className={inputCls}
               placeholder={t("Example: Alex Morgan")}
@@ -121,7 +120,7 @@ export default function Profile() {
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">{t("Phone")}</label>
+            <label className="mb-1.5 block text-xs text-[color:var(--creos-muted)]">{t("Phone")}</label>
             <input
               className={inputCls}
               placeholder={t("Example: +1 555 123 4567")}
@@ -137,7 +136,7 @@ export default function Profile() {
         </div>
 
         {saveError ? (
-          <div className="rounded-xl border border-rose-400/35 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+          <div className="rounded-2xl border border-rose-400/35 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
             {saveError}
           </div>
         ) : null}
@@ -147,7 +146,7 @@ export default function Profile() {
             type="button"
             onClick={save}
             disabled={loading}
-            className="px-5 py-2.5 rounded-xl bg-white/10 text-sm font-semibold text-black shadow-lg shadow-white/10 hover:bg-white/10 transition disabled:opacity-50"
+            className="btn-gold px-5 py-2.5 text-sm disabled:opacity-50"
           >
             {loading ? t("Saving...") : t("Save")}
           </button>
@@ -155,15 +154,16 @@ export default function Profile() {
           <button
             type="button"
             onClick={reset}
-            className="px-4 py-2.5 rounded-xl border border-slate-500/60 text-sm text-slate-200 hover:bg-white/5 transition"
+            className="btn-glass px-4 py-2.5 text-sm"
           >
             {t("Reset")}
           </button>
 
           {(me.fullName || me.phone) && (
-            <span className="text-[11px] text-slate-400">{t("Your profile is saved to the server.")}</span>
+            <span className="text-[11px] text-[color:var(--creos-muted)]">{t("Your profile is saved to the server.")}</span>
           )}
         </div>
+      </div>
       </div>
     </section>
   );

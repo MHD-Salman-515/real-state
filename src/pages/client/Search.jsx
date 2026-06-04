@@ -247,23 +247,24 @@ export default function Search() {
   //               🟢 واجهة الصفحة (لم تتغيير)
   // ---------------------------------------------
   return (
-    <section className="relative z-10 mx-auto w-full max-w-6xl space-y-6 px-4 pb-12 pt-12 lg:px-0">
+    <section className="creos-theme bg-luxury relative z-10 min-h-screen">
+      <div className="section-shell max-w-6xl space-y-6 pb-12 pt-12">
       <div className="space-y-2">
         <h1 className="text-3xl md:text-4xl font-black tracking-tight">
           البحث المتقدم عن العقارات
         </h1>
-        <p className="text-sm text-slate-300">
+        <p className="text-sm text-[color:rgb(var(--creos-text-rgb)/0.74)]">
           استعرض العقارات المتاحة حسب المدينة، النوع، والسعر مع تفاصيل غنية
           تساعدك على اتخاذ القرار.
         </p>
       </div>
 
       {/* ملخص الفلاتر */}
-      <div className="card-glass rounded-2xl border border-white/10 p-4 md:p-5 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="card-glass grid grid-cols-1 gap-3 rounded-3xl p-4 md:grid-cols-3 md:p-5 lg:grid-cols-6">
         <select
           value={q.bedroomsMin || ""}
           onChange={(e) => setParam("bedroomsMin", e.target.value)}
-          className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white"
+          className="input-creos text-sm"
         >
           <option value="">{t("Bedrooms: Any")}</option>
           <option value="1">1+</option>
@@ -274,37 +275,37 @@ export default function Search() {
         <select
           value={sort}
           onChange={(e) => setParam("sort", e.target.value)}
-          className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white"
+          className="input-creos text-sm"
         >
           <option value="newest">{t("Sort: Newest")}</option>
           <option value="price_asc">{t("Price ↑")}</option>
           <option value="price_desc">{t("Price ↓")}</option>
           <option value="area_desc">{t("Area ↓")}</option>
         </select>
-        <label className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white/90">
+        <label className="inline-flex items-center gap-2 rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.65)] px-3 py-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.9)]">
           <input
             type="checkbox"
             checked={q.furnished === "1"}
             onChange={(e) => setParam("furnished", e.target.checked ? "1" : "")}
-            className="accent-white"
+            className="accent-[var(--creos-accent)]"
           />
           {t("Furnished")}
         </label>
-        <label className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white/90">
+        <label className="inline-flex items-center gap-2 rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.65)] px-3 py-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.9)]">
           <input
             type="checkbox"
             checked={q.parking === "1"}
             onChange={(e) => setParam("parking", e.target.checked ? "1" : "")}
-            className="accent-white"
+            className="accent-[var(--creos-accent)]"
           />
           {t("Parking")}
         </label>
-        <label className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white/90">
+        <label className="inline-flex items-center gap-2 rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.65)] px-3 py-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.9)]">
           <input
             type="checkbox"
             checked={q.elevator === "1"}
             onChange={(e) => setParam("elevator", e.target.checked ? "1" : "")}
-            className="accent-white"
+            className="accent-[var(--creos-accent)]"
           />
           {t("Elevator")}
         </label>
@@ -319,17 +320,17 @@ export default function Search() {
             next.delete("sort");
             navigate({ pathname: loc.pathname, search: next.toString() }, { replace: true });
           }}
-          className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/90"
+          className="btn-glass text-sm"
         >
           {t("Reset Extra Filters")}
         </button>
       </div>
 
       {/* ملخص الفلاتر */}
-      <div className="card-glass rounded-2xl border border-white/10 p-4 md:p-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="card-glass flex flex-col gap-3 rounded-3xl p-4 md:flex-row md:items-center md:justify-between md:p-5">
         <div className="space-y-1">
-          <div className="text-xs text-slate-400">ملخص النتائج</div>
-          <div className="text-sm text-white/90 font-medium">
+          <div className="text-xs uppercase tracking-[0.18em] text-[color:var(--creos-muted)]">ملخص النتائج</div>
+          <div className="text-sm font-medium text-[color:var(--creos-text)]">
             {resultCountLabel}
           </div>
         </div>
@@ -340,14 +341,14 @@ export default function Search() {
               activeFilterChips.map((chip, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] text-white/90"
+                  className="badge-creos text-[11px]"
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-white/10" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[rgb(var(--creos-accent-rgb)/0.72)]" />
                   {chip.label}
                 </span>
               ))
             ) : (
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-[color:rgb(var(--creos-text-rgb)/0.52)]">
                 لم تقم بتحديد أي مرشحات — يتم عرض بعض العقارات المقترحة.
               </span>
             )}
@@ -356,7 +357,7 @@ export default function Search() {
           <div className="flex gap-2 justify-end">
             <Link
               to="/"
-              className="px-4 py-2 rounded-xl border border-slate-500/50 text-slate-100 hover:bg-white/5 text-xs md:text-sm transition"
+              className="btn-glass px-4 py-2 text-xs md:text-sm"
             >
               تعديل المرشحات
             </Link>
@@ -369,7 +370,7 @@ export default function Search() {
         {items.map((p) => (
           <article
             key={p.id}
-            className="group card-glass rounded-xl border border-white/10 overflow-hidden shadow-sm shadow-black/20 transition duration-500 hover:-translate-y-1 hover:shadow-lg hover:shadow-white/10"
+            className="group card-glass hover-card-pop overflow-hidden rounded-3xl transition duration-500"
           >
             <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-900/60">
               <img
@@ -385,44 +386,44 @@ export default function Search() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-              <div className="absolute bottom-2 right-2 text-[11px] px-2.5 py-1 rounded-full bg-black/60 border border-white/20 text-slate-100">
+              <div className="badge-creos absolute bottom-2 right-2 text-[11px]">
                 {p.city} • {p.neighborhood}
               </div>
             </div>
 
             <div className="p-4 space-y-3">
               <div>
-                <h2 className="text-sm md:text-base font-semibold text-white/90 leading-snug">
+                <h2 className="text-sm md:text-base font-semibold text-[color:var(--creos-text)] leading-snug">
                   {p.title}
                 </h2>
-                <div className="text-[11px] text-slate-400 mt-0.5">
+                <div className="mt-0.5 text-[11px] text-[color:var(--creos-muted)]">
                   {p.status}
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-200">
-                <div className="rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5">
-                  <div className="text-[10px] text-slate-400 mb-0.5">
+              <div className="grid grid-cols-2 gap-2 text-[11px] text-[color:rgb(var(--creos-text-rgb)/0.88)]">
+                <div className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.62)] px-2.5 py-1.5">
+                  <div className="mb-0.5 text-[10px] text-[color:var(--creos-muted)]">
                     المساحة
                   </div>
                   <div className="font-semibold">{p.area} م²</div>
                 </div>
-                <div className="rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5">
-                  <div className="text-[10px] text-slate-400 mb-0.5">
+                <div className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.62)] px-2.5 py-1.5">
+                  <div className="mb-0.5 text-[10px] text-[color:var(--creos-muted)]">
                     الغرف / الحمامات
                   </div>
                   <div className="font-semibold">
                     {p.bedrooms} غرف • {p.bathrooms} حمام
                   </div>
                 </div>
-                <div className="rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5">
-                  <div className="text-[10px] text-slate-400 mb-0.5">
+                <div className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.62)] px-2.5 py-1.5">
+                  <div className="mb-0.5 text-[10px] text-[color:var(--creos-muted)]">
                     الفرش
                   </div>
                   <div className="font-semibold">{p.furnished}</div>
                 </div>
-                <div className="rounded-xl bg-white/5 border border-white/10 px-2.5 py-1.5">
-                  <div className="text-[10px] text-slate-400 mb-0.5">
+                <div className="rounded-2xl border border-[var(--creos-border-soft)] bg-[rgb(var(--creos-surface-rgb)/0.62)] px-2.5 py-1.5">
+                  <div className="mb-0.5 text-[10px] text-[color:var(--creos-muted)]">
                     الطابق
                   </div>
                   <div className="font-semibold">{p.level}</div>
@@ -431,10 +432,10 @@ export default function Search() {
 
               <div className="flex items-center justify-between mt-1">
                 <div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-[11px] text-[color:var(--creos-muted)]">
                     السعر التقديري
                   </div>
-                  <div className="text-lg font-extrabold text-white/90">
+                  <div className="text-lg font-extrabold text-[color:var(--creos-accent-bright)]">
                     {p.priceLabel || `${Number(p.price || 0).toLocaleString()} SYP`}
                   </div>
                 </div>
@@ -442,14 +443,14 @@ export default function Search() {
                 <div className="flex flex-col gap-1">
                   <Link
                     to={`/property/${p.id}`}
-                    className="px-3 py-1.5 rounded-xl border border-white/15 text-[11px] text-white/90 hover:bg-white/10 transition"
+                    className="btn-glass px-3 py-1.5 text-[11px]"
                   >
                     التفاصيل
                   </Link>
                   <button
                     type="button"
                     onClick={() => quickBook(p)}
-                    className="px-3 py-1.5 rounded-xl bg-white/10 text-[11px] font-semibold text-black hover:bg-white/10 shadow shadow-white/10 transition"
+                    className="btn-gold px-3 py-1.5 text-[11px]"
                   >
                     حجز معاينة سريع
                   </button>
@@ -460,11 +461,12 @@ export default function Search() {
         ))}
 
         {items.length === 0 && (
-          <div className="text-slate-400 text-center col-span-full py-10 text-sm">
+          <div className="col-span-full py-10 text-center text-sm text-[color:rgb(var(--creos-text-rgb)/0.56)]">
             لا يوجد نتائج مطابقة لمرشحاتك الحالية. جرّب توسيع نطاق البحث أو
             تعديل السعر.
           </div>
         )}
+      </div>
       </div>
     </section>
   );

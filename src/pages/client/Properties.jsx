@@ -92,11 +92,11 @@ export default function Properties() {
   const skeletons = Array.from({ length: 8 });
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <main className="mx-auto w-full px-4 pb-12 pt-12">
+    <div className="creos-theme bg-luxury min-h-screen text-[var(--creos-text)]">
+      <main className="section-shell w-full pb-12 pt-12">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-2xl font-bold md:text-3xl">{t("Properties")}</h1>
-          <Link to="/search" className="text-sm text-white/70 hover:text-white">
+          <Link to="/search" className="text-sm text-[color:var(--creos-muted)] transition hover:text-[color:var(--creos-text)]">
             {t("Open Advanced Search")}
           </Link>
         </div>
@@ -104,13 +104,13 @@ export default function Properties() {
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {skeletons.map((_, idx) => (
-              <div key={idx} className="overflow-hidden rounded-xl border border-white/10 bg-black">
-                <div className="h-56 w-full animate-pulse bg-white/10" />
+              <div key={idx} className="card-glass overflow-hidden rounded-3xl">
+                <div className="h-56 w-full animate-pulse bg-[rgb(var(--creos-surface-max-rgb)/0.8)]" />
                 <div className="space-y-3 p-4">
-                  <div className="h-5 w-3/4 animate-pulse rounded bg-white/10" />
-                  <div className="h-4 w-2/3 animate-pulse rounded bg-white/10" />
-                  <div className="h-4 w-1/2 animate-pulse rounded bg-white/10" />
-                  <div className="h-6 w-1/3 animate-pulse rounded bg-white/10" />
+                  <div className="h-5 w-3/4 animate-pulse rounded bg-[rgb(var(--creos-surface-max-rgb)/0.9)]" />
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-[rgb(var(--creos-surface-hi-rgb)/0.9)]" />
+                  <div className="h-4 w-1/2 animate-pulse rounded bg-[rgb(var(--creos-surface-hi-rgb)/0.9)]" />
+                  <div className="h-6 w-1/3 animate-pulse rounded bg-[rgb(var(--creos-accent-rgb)/0.22)]" />
                 </div>
               </div>
             ))}
@@ -122,7 +122,7 @@ export default function Properties() {
                 <Link
                   key={property.id}
                   to={`/property/${property.id}`}
-                  className="group overflow-hidden rounded-xl border border-white/10 bg-black transition hover:border-white/30"
+                  className="group card-glass hover-card-pop overflow-hidden rounded-3xl"
                 >
                   <img
                     src={property.image}
@@ -136,15 +136,16 @@ export default function Properties() {
                     className="h-56 w-full object-cover transition group-hover:scale-105"
                   />
 
-                  <div className="space-y-2 p-4">
-                    <h3 className="line-clamp-1 text-lg font-semibold text-white">{property.title}</h3>
-                    <p className="line-clamp-1 text-sm text-white/60">
+                  <div className="space-y-2 p-5">
+                    <div className="badge-creos w-fit">{t("Premium Listing")}</div>
+                    <h3 className="line-clamp-1 text-lg font-semibold text-[color:var(--creos-text)]">{property.title}</h3>
+                    <p className="line-clamp-1 text-sm text-[color:rgb(var(--creos-text-rgb)/0.64)]">
                       {property.city} • {property.district}
                     </p>
-                    <p className="text-sm text-white/70">
+                    <p className="text-sm text-[color:rgb(var(--creos-text-rgb)/0.72)]">
                       {t("{{area}} m² • {{bedrooms}} bedrooms", { area: property.area, bedrooms: property.bedrooms })}
                     </p>
-                    <p className="text-lg font-bold text-white">{property.priceLabel}</p>
+                    <p className="text-lg font-bold text-[color:var(--creos-accent-bright)]">{property.priceLabel}</p>
                   </div>
                 </Link>
               ))}
@@ -156,7 +157,7 @@ export default function Properties() {
                   type="button"
                   onClick={loadMore}
                   disabled={isLoadingMore}
-                  className="mt-10 rounded-lg border border-white/20 px-6 py-3 text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-60"
+                  className="btn-gold mt-10 px-6 py-3 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isLoadingMore ? t("Loading...") : t("Load More")}
                 </button>
