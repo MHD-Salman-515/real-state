@@ -1,31 +1,42 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowUpRight, MessageSquareDashed, Plus, Send } from "lucide-react";
+import {
+  BedDouble,
+  CircleUserRound,
+  Image as ImageIcon,
+  MapPin,
+  MoreVertical,
+  Paperclip,
+  Search,
+  Send,
+  Share2,
+  Sparkles,
+} from "lucide-react";
 import api from "../../api/axios";
 
 export default function BuyerChatPage() {
   const { sessionId } = useParams();
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const isRtl = i18n.dir() === "rtl";
   const [sessions, setSessions] = useState([]);
   const [activeSession, setActiveSession] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
-  const isRtl = i18n.dir() === "rtl";
 
   useEffect(() => {
     api.get("/buyer/chat/sessions").then((r) => {
       const list = r.data || [];
       setSessions(list);
       if (!activeSession && list.length > 0) {
-        const s = sessionId
-          ? list.find((x) => String(x.id) === String(sessionId)) || list[0]
+        const selected = sessionId
+          ? list.find((item) => String(item.id) === String(sessionId)) || list[0]
           : list[0];
-        setActiveSession(s);
-        loadMessages(s.id);
+        setActiveSession(selected);
+        loadMessages(selected.id);
       }
     }).catch(() => {});
   }, []);
@@ -38,27 +49,27 @@ export default function BuyerChatPage() {
 
   const createSession = async () => {
     try {
-      const r = await api.post("/buyer/chat/sessions", { title: t("New Search") });
-      setSessions((prev) => [r.data, ...prev]);
-      setActiveSession(r.data);
+      const response = await api.post("/buyer/chat/sessions", { title: t("New Search") });
+      setSessions((prev) => [response.data, ...prev]);
+      setActiveSession(response.data);
       setMessages([]);
-      nav(`/client/chat/${r.data.id}`);
+      navigate(`/client/chat/${response.data.id}`);
     } catch {}
   };
 
   const sendMessage = async () => {
     if (!input.trim() || !activeSession || sending) return;
-    const text = input;
+    const text = input.trim();
     setInput("");
     setSending(true);
     setMessages((prev) => [...prev, { id: Date.now(), role: "USER", content: text }]);
     try {
-      const r = await api.post(`/buyer/chat/sessions/${activeSession.id}/message`, { message: text });
-      const reply = r.data?.assistantMessage || r.data?.text_ar || r.data?.message || "";
-      const props = r.data?.payloadJson?.recommended_properties || [];
+      const response = await api.post(`/buyer/chat/sessions/${activeSession.id}/message`, { message: text });
+      const reply = response.data?.assistantMessage || response.data?.text_ar || response.data?.message || "";
+      const properties = response.data?.payloadJson?.recommended_properties || [];
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, role: "ASSISTANT", content: reply, properties: props },
+        { id: Date.now() + 1, role: "ASSISTANT", content: reply, properties },
       ]);
     } catch {
       setMessages((prev) => [
@@ -74,141 +85,211 @@ export default function BuyerChatPage() {
   }, [messages]);
 
   return (
-    <div dir={i18n.dir()} className="chat-shell flex min-h-screen flex-col gap-4 px-4 py-4 lg:flex-row lg:px-6">
-      <aside className="chat-sidebar flex w-full flex-col lg:h-[calc(100vh-2rem)] lg:w-80">
-        <div className="border-b border-[var(--creos-border-soft)] p-4">
-          <div className="mb-4 flex items-center gap-3">
-            <div className="badge-creos">
-              <MessageSquareDashed className="h-4 w-4" />
-              {t("AI Search")}
+    <div dir={i18n.dir()} className="stitch-ref-chat-shell min-h-screen">
+      <header className="stitch-ref-chat-topbar sticky top-0 z-30">
+        <div className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between px-5 lg:px-16">
+          <div className={`flex items-center gap-6 ${isRtl ? "lg:flex-row-reverse" : ""}`}>
+            <Link to="/" className="stitch-ref-brand text-[2rem]">
+              Creos
+            </Link>
+            <nav className="hidden items-center gap-8 lg:flex">
+              <Link to="/properties" className="text-[rgba(226,226,231,0.78)] transition hover:text-[var(--stitch-ref-gold)]">
+                {t("Properties")}
+              </Link>
+              <Link to="/services" className="text-[rgba(226,226,231,0.78)] transition hover:text-[var(--stitch-ref-gold)]">
+                {t("Services")}
+              </Link>
+              <Link to="/about" className="border-b-2 border-[var(--stitch-ref-gold)] pb-1 text-[var(--stitch-ref-gold)]">
+                {t("Insights")}
+              </Link>
+              <Link to="/client/profile" className="text-[rgba(226,226,231,0.78)] transition hover:text-[var(--stitch-ref-gold)]">
+                {t("Profile")}
+              </Link>
+            </nav>
+          </div>
+
+          <div className={`flex items-center gap-4 ${isRtl ? "lg:flex-row-reverse" : ""}`}>
+            <Link to="/client/profile" className="text-[var(--stitch-ref-gold)]">
+              <CircleUserRound className="h-7 w-7" />
+            </Link>
+            <Link to="/client/profile" className="stitch-ref-button-primary !min-h-0 !px-6 !py-3 !text-sm">
+              {t("Connect Wallet")}
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto flex max-w-[1440px] gap-8 px-5 py-6 lg:px-16">
+        <section className="stitch-ref-chat-panel flex min-h-[calc(100vh-8rem)] flex-1 flex-col overflow-hidden rounded-xl">
+          <div className="flex items-center justify-between border-b border-[rgba(154,143,128,0.1)] px-6 py-5">
+            <div className={`flex items-center gap-4 ${isRtl ? "flex-row-reverse" : ""}`}>
+              <button type="button" className="text-[rgba(154,143,128,0.85)]">
+                <MoreVertical className="h-5 w-5" />
+              </button>
+              <button type="button" className="text-[rgba(154,143,128,0.85)]">
+                <Share2 className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="text-right">
+              <div className={`flex items-center gap-3 ${isRtl ? "flex-row" : "flex-row-reverse"}`}>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[rgba(233,193,118,0.2)] bg-[rgba(233,193,118,0.08)] text-[var(--stitch-ref-gold)]">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-lg text-[var(--stitch-ref-gold)]">{t("CREOS AI Assistant")}</p>
+                  <p className="text-sm text-[rgba(226,226,231,0.76)]">
+                    {t("Connected now")} <span className="text-[var(--stitch-ref-gold)]">●</span>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-          <h2 className="text-lg font-semibold text-[color:var(--creos-text)]">
-            {t("Search Assistant")}
-          </h2>
-          <p className="mt-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.68)]">
-            {t("Start a conversation for area, budget, and unit type guidance.")}
-          </p>
-          <button onClick={createSession} className="btn-gold mt-4 w-full justify-center py-3 text-sm">
-            <Plus className="h-4 w-4" />
-            {t("New Search")}
-          </button>
-        </div>
 
-        <div className="flex-1 overflow-y-auto p-2">
-          {sessions.map((s) => (
+          <div className="flex-1 overflow-y-auto bg-[rgba(18,24,42,0.45)] px-6 py-8">
+            <div className="mx-auto flex max-w-4xl flex-col gap-7">
+              {messages.length === 0 ? (
+                <div className="mx-auto rounded-md bg-[rgba(30,32,35,0.82)] px-6 py-3 text-sm text-[rgba(226,226,231,0.68)]">
+                  {t("Conversation started today")}
+                </div>
+              ) : null}
+
+              {messages.map((message, index) => {
+                const assistant = String(message.role).toUpperCase() !== "USER";
+                return (
+                  <div key={message.id || index} className={`flex ${assistant ? "justify-start" : "justify-end"}`}>
+                    <div className={`max-w-[82%] rounded-2xl px-6 py-5 ${assistant ? "stitch-ref-chat-message-received" : "stitch-ref-chat-message-sent"}`}>
+                      <p className="whitespace-pre-wrap text-lg leading-9">{message.content}</p>
+
+                      {message.properties?.length ? (
+                        <div className="mt-6 rounded-md border border-[rgba(233,193,118,0.2)] bg-[rgba(17,19,23,0.22)] p-4">
+                          {message.properties.map((property) => (
+                            <Link
+                              key={property.id}
+                              to={`/property/${property.id}`}
+                              className="grid gap-4 md:grid-cols-[1.2fr_220px]"
+                            >
+                              <div className="space-y-3">
+                                <span className="inline-flex bg-[rgba(233,193,118,0.2)] px-3 py-1 text-xs text-[var(--stitch-ref-gold)]">
+                                  {t("Under Construction")}
+                                </span>
+                                <h3 className="stitch-ref-title text-2xl text-[var(--stitch-ref-gold)]">{property.title}</h3>
+                                <p className="text-base text-[rgba(226,226,231,0.8)]">
+                                  {property.description || t("Smart residential units with premium finishes and strong investment potential.")}
+                                </p>
+                                <div className={`flex flex-wrap gap-4 text-sm text-[rgba(226,226,231,0.7)] ${isRtl ? "" : ""}`}>
+                                  <span className="inline-flex items-center gap-1"><BedDouble className="h-4 w-4" />3</span>
+                                  <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{t("North Riyadh")}</span>
+                                </div>
+                                <span className="inline-flex border border-[rgba(233,193,118,0.35)] px-4 py-2 text-sm text-[var(--stitch-ref-gold)]">
+                                  {t("View Technical File")} PDF
+                                </span>
+                              </div>
+                              <img
+                                src={property.image || "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=900&q=80"}
+                                alt={property.title}
+                                className="h-full min-h-[180px] w-full object-cover"
+                              />
+                            </Link>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {sending ? (
+                <div className="text-sm text-[rgba(233,193,118,0.86)]">{t("Assistant is typing...")}</div>
+              ) : null}
+              <div ref={bottomRef} />
+            </div>
+          </div>
+
+          <div className="border-t border-[rgba(154,143,128,0.1)] bg-[rgba(23,27,39,0.95)] p-5">
+            <div className="rounded-xl border border-[rgba(154,143,128,0.18)] bg-[rgba(26,31,57,0.9)] px-4 py-4">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={sendMessage}
+                  disabled={!input.trim() || sending}
+                  className="flex h-12 w-12 items-center justify-center bg-[var(--stitch-ref-gold)] text-[#261900] disabled:opacity-40"
+                >
+                  <Send className={`h-5 w-5 ${isRtl ? "rotate-180" : ""}`} />
+                </button>
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                  placeholder={t("Write your inquiry here...")}
+                  className="min-h-[64px] flex-1 bg-transparent px-3 text-lg text-[var(--stitch-ref-text)] outline-none placeholder:text-[rgba(154,143,128,0.64)]"
+                />
+              </div>
+
+              <div className={`mt-4 flex items-center gap-4 text-[rgba(154,143,128,0.88)] ${isRtl ? "justify-end" : "justify-start"}`}>
+                <MapPin className="h-5 w-5" />
+                <ImageIcon className="h-5 w-5" />
+                <Paperclip className="h-5 w-5" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside className="stitch-ref-chat-panel hidden w-[410px] shrink-0 rounded-xl p-6 lg:block">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="stitch-ref-title text-2xl text-[var(--stitch-ref-gold)]">{t("Smart Conversations")}</h2>
+            <Search className="h-5 w-5 text-[rgba(154,143,128,0.82)]" />
+          </div>
+
+          <div className="space-y-4 overflow-y-auto">
+            {sessions.map((session) => {
+              const active = activeSession?.id === session.id;
+              return (
+                <button
+                  key={session.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveSession(session);
+                    loadMessages(session.id);
+                    navigate(`/client/chat/${session.id}`);
+                  }}
+                  className={`w-full border p-5 text-right transition ${
+                    active
+                      ? "border-[rgba(233,193,118,0.34)] bg-[rgba(30,32,35,0.45)]"
+                      : "border-[rgba(154,143,128,0.12)] bg-[rgba(30,32,35,0.35)] hover:border-[rgba(233,193,118,0.24)]"
+                  }`}
+                >
+                  <div className={`flex items-start gap-4 ${isRtl ? "flex-row" : "flex-row-reverse"}`}>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${active ? "border border-[rgba(233,193,118,0.3)] bg-[rgba(233,193,118,0.08)] text-[var(--stitch-ref-gold)]" : "bg-[rgba(255,255,255,0.06)] text-[rgba(226,226,231,0.74)]"}`}>
+                      {active ? <Sparkles className="h-5 w-5" /> : <CircleUserRound className="h-5 w-5" />}
+                    </div>
+                    <div className="flex-1">
+                      <div className={`flex items-center justify-between gap-4 ${isRtl ? "flex-row" : "flex-row-reverse"}`}>
+                        <span className={`stitch-ref-mono text-sm ${active ? "text-[var(--stitch-ref-gold)]" : "text-[rgba(226,226,231,0.86)]"}`}>
+                          {session.title || t("Conversation")}
+                        </span>
+                        <span className="text-xs text-[rgba(154,143,128,0.76)]">
+                          {active ? t("Now") : t("Previous")}
+                        </span>
+                      </div>
+                      <p className="mt-2 line-clamp-2 text-sm leading-7 text-[rgba(226,226,231,0.72)]">
+                        {session.preview || t("Open this conversation to continue your property discussion.")}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+
             <button
-              key={s.id}
-              onClick={() => {
-                setActiveSession(s);
-                loadMessages(s.id);
-                nav(`/client/chat/${s.id}`);
-              }}
-              className={`dashboard-nav-link mb-2 w-full px-3 py-2 text-sm ${activeSession?.id === s.id ? "dashboard-nav-link-active" : ""}`}
-              style={{ textAlign: isRtl ? "right" : "left" }}
+              type="button"
+              onClick={createSession}
+              className="w-full border border-dashed border-[rgba(233,193,118,0.28)] px-5 py-4 text-sm text-[var(--stitch-ref-gold)]"
             >
-              {s.title || t("Conversation")}
-            </button>
-          ))}
-          {!sessions.length ? (
-            <div className="dashboard-empty mt-2">
-              {t("No sessions yet. Start a new conversation.")}
-            </div>
-          ) : null}
-        </div>
-      </aside>
-
-      <section className="chat-panel flex min-h-[70vh] flex-1 flex-col overflow-hidden lg:h-[calc(100vh-2rem)]">
-        <div className="border-b border-[var(--creos-border-soft)] px-5 py-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h1 className="text-lg font-semibold text-[color:var(--creos-text)]">{t("AI Property Search Assistant")}</h1>
-              <p className="mt-1 text-sm text-[color:rgb(var(--creos-text-rgb)/0.64)]">{t("Tell me about the property you are looking for")}</p>
-            </div>
-            <div className="badge-creos hidden sm:inline-flex">{t("Conversation")}</div>
-          </div>
-        </div>
-
-        <div className="flex-1 space-y-4 overflow-y-auto p-4">
-          {messages.length === 0 && (
-            <div className="mx-auto mt-16 max-w-2xl text-center text-[color:rgb(var(--creos-text-rgb)/0.62)]">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-[rgb(var(--creos-accent-rgb)/0.22)] bg-[rgb(var(--creos-accent-rgb)/0.12)] text-[color:var(--creos-accent-bright)]">
-                <MessageSquareDashed className="h-7 w-7" />
-              </div>
-              <p className="text-lg font-medium text-[color:var(--creos-text)]">{t("Tell me about the property you are looking for")}</p>
-              <p className="mt-2 text-sm">{t("Ask about neighborhood price range, unit type, or investment fit.")}</p>
-              <div className="mt-6 space-y-2">
-                {[
-                  t("I need an apartment in Mazzeh with a 500 million budget"),
-                  t("I am looking for a house in Rural Damascus"),
-                  t("What is the price per meter in Malki?"),
-                ].map((hint) => (
-                  <button
-                    key={hint}
-                    onClick={() => setInput(hint)}
-                    className="btn-glass mx-auto block w-full max-w-sm px-4 py-2 text-sm"
-                    style={{ textAlign: isRtl ? "right" : "left" }}
-                  >
-                    {hint}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {messages.map((msg) => (
-            <div key={msg.id} className={`flex ${msg.role === "USER" ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`max-w-[85%] rounded-[1.4rem] px-4 py-3 text-sm leading-relaxed shadow-glass ${
-                  msg.role === "USER" ? "chat-message-user" : "chat-message-assistant"
-                }`}
-              >
-                {msg.content}
-                {msg.properties?.map((p) => (
-                  <a
-                    key={p.id}
-                    href={`/property/${p.id}`}
-                    className="mt-3 block rounded-2xl border border-[rgb(var(--creos-accent-rgb)/0.22)] bg-[rgb(var(--creos-accent-rgb)/0.1)] p-3 text-xs text-[#3c2f00]"
-                  >
-                    <span className="flex items-center gap-2 font-semibold">
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                      {t("Open Property")}
-                    </span>
-                    <span className="mt-1 block">
-                      {p.title} — {p.price?.toLocaleString(i18n.language === "ar" ? "ar-SY" : "en-US")} {t("SYP")}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          {sending ? (
-            <div className="flex justify-start">
-              <div className="px-4 py-2 text-sm text-[color:rgb(var(--creos-accent-rgb)/0.76)]">
-                {t("Assistant is typing...")}
-              </div>
-            </div>
-          ) : null}
-          <div ref={bottomRef} />
-        </div>
-
-        <div className="border-t border-[var(--creos-border-soft)] p-4">
-          <div className="flex gap-3">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-              placeholder={t("Type your property request here...")}
-              className="input-creos flex-1 px-4 py-3 text-sm"
-            />
-            <button onClick={sendMessage} disabled={!input.trim() || sending} className="btn-gold shrink-0 px-5 py-3 text-sm disabled:opacity-40">
-              <Send className="h-4 w-4" />
-              {t("Send")}
+              {t("Start New Conversation")}
             </button>
           </div>
-        </div>
-      </section>
+        </aside>
+      </main>
     </div>
   );
 }

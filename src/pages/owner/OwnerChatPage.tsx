@@ -1,23 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Command, MessageSquareDashed, Sparkles, Trash2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { Archive, DatabaseZap, MoreVertical, Search, Send, Share2, Sparkles, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-import ChatMessageList from "@/components/owner-chat/ChatMessageList";
-import ChatComposer from "@/components/owner-chat/ChatComposer";
-import ChatActionBar from "@/components/owner-chat/ChatActionBar";
 import { useOwnerChatUi } from "@/hooks/chat/useOwnerChatUi";
 import { useToast } from "@/components/ToastProvider.jsx";
 
+function formatTime(value?: string) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 export default function OwnerChatPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const params = useParams();
-  const sessionIdFromRoute = params.sessionId;
+  const { sessionId: sessionIdFromRoute } = useParams();
   const toast = useToast();
-  const [inputFocused, setInputFocused] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [composerText, setComposerText] = useState("");
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const isRtl = i18n.dir() === "rtl";
 
   const {
     sessions,
@@ -26,7 +28,6 @@ export default function OwnerChatPage() {
     setActiveSessionId,
     messages,
     loadingSessions,
-    loadingMessages,
     sending,
     error,
     createSession,
@@ -43,12 +44,10 @@ export default function OwnerChatPage() {
   }, [activeSessionId, navigate, sessionIdFromRoute]);
 
   useEffect(() => {
-    const onMouseMove = (e: MouseEvent) => setMousePosition({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", onMouseMove);
-    return () => window.removeEventListener("mousemove", onMouseMove);
-  }, []);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, sending]);
 
-  const selectSession = (id: string) => {
+  const openSession = (id: string) => {
     setActiveSessionId(id);
     navigate(`/owner/chat/${id}`);
   };
@@ -56,14 +55,9 @@ export default function OwnerChatPage() {
   const onNewSession = async () => {
     try {
       const created = await createSession();
-      if (created?.id) {
-        const target = "/owner/chat";
-        if (sessionIdFromRoute) navigate(target, { replace: true });
-        return;
-      }
-      toast.warning(t("Session created, but no session id was returned."));
+      if (created?.id && sessionIdFromRoute) navigate("/owner/chat", { replace: true });
+      if (!created?.id) toast.warning(t("Session created, but no session id was returned."));
     } catch (err: any) {
-      console.error("[OwnerChat] createSession failed", err?.response?.data || err);
       toast.error(err?.response?.data?.message || err?.message || t("Failed to start a new session."));
     }
   };
@@ -96,132 +90,178 @@ export default function OwnerChatPage() {
     }
   };
 
+  const onSend = async () => {
+    if (!composerText.trim() || sending) return;
+    const value = composerText;
+    setComposerText("");
+    await sendMessage(value);
+  };
+
   return (
-    <div className="chat-shell relative min-h-[calc(100vh-2rem)] w-full overflow-hidden px-4 py-6 md:px-6">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-[rgb(var(--creos-accent-rgb)/0.08)] blur-[128px]" />
-        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-[rgb(var(--creos-navy-rgb)/0.26)] blur-[128px]" />
-        <div className="absolute right-1/3 top-1/4 h-64 w-64 rounded-full bg-[rgb(var(--creos-text-rgb)/0.06)] blur-[96px]" />
-      </div>
+    <div dir={i18n.dir()} className="stitch-ref-chat-shell min-h-[calc(100vh-2rem)]">
+      <div className="mx-auto flex max-w-[1440px] gap-8 px-4 py-4 lg:px-6">
+        <section className="stitch-ref-chat-panel flex min-h-[calc(100vh-3rem)] flex-1 flex-col overflow-hidden rounded-xl">
+          <div className="flex items-center justify-between border-b border-[rgba(154,143,128,0.1)] px-6 py-5">
+            <div className={`flex items-center gap-4 ${isRtl ? "flex-row-reverse" : ""}`}>
+              <button type="button" className="text-[rgba(154,143,128,0.85)]">
+                <MoreVertical className="h-5 w-5" />
+              </button>
+              <button type="button" className="text-[rgba(154,143,128,0.85)]">
+                <Share2 className="h-5 w-5" />
+              </button>
+            </div>
 
-      <motion.div
-        className="relative z-10 mx-auto w-full max-w-4xl space-y-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <div className="text-center">
-          <div className="badge-creos text-xs backdrop-blur-xl">
-            <MessageSquareDashed className="h-3.5 w-3.5" />
-            {t("Owner Workspace")}
-          </div>
-          <h1 className="mt-4 bg-gradient-to-r from-[color:var(--creos-text)] to-[color:rgb(var(--creos-text-rgb)/0.48)] bg-clip-text pb-1 text-3xl font-medium tracking-tight text-transparent">
-            {t("How can I help today?")}
-          </h1>
-          <p className="mt-2 text-sm text-[color:rgb(var(--creos-text-rgb)/0.5)]">{t("Type a command or ask a question")}</p>
-        </div>
-
-        {error ? (
-          <div className="rounded-2xl border border-rose-300/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-200 backdrop-blur-xl">
-            {error}
-          </div>
-        ) : null}
-
-        <motion.div
-          className="chat-panel relative"
-          initial={{ scale: 0.98 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          <div className="border-b border-white/[0.05] p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-2">
-                <Sparkles className="h-4 w-4 text-white/70" />
-                <p className="truncate text-sm font-medium text-white/85">{activeSession?.title || t("Conversation")}</p>
+            <div className={`flex items-center gap-3 ${isRtl ? "flex-row" : "flex-row-reverse"}`}>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[rgba(233,193,118,0.2)] bg-[rgba(233,193,118,0.08)] text-[var(--stitch-ref-gold)]">
+                <Sparkles className="h-5 w-5" />
               </div>
-              <div className="flex items-center gap-2">
+              <div>
+                <p className="text-lg text-[var(--stitch-ref-gold)]">{t("CREOS AI Assistant")}</p>
+                <p className="text-sm text-[rgba(226,226,231,0.76)]">
+                  {activeSession?.title || t("Connected now")} <span className="text-[var(--stitch-ref-gold)]">●</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 border-b border-[rgba(154,143,128,0.08)] px-6 py-4">
+            <button type="button" onClick={onPatchContext} className="stitch-ref-button-secondary !min-h-0 !px-4 !py-2 !text-sm">
+              <DatabaseZap className="h-4 w-4" />
+              {t("Patch Context")}
+            </button>
+            <button type="button" onClick={onArchive} className="stitch-ref-button-secondary !min-h-0 !px-4 !py-2 !text-sm">
+              <Archive className="h-4 w-4" />
+              {t("Archive Session")}
+            </button>
+            {activeSessionId ? (
+              <button
+                type="button"
+                onClick={() => onDeleteSession(activeSessionId)}
+                className="inline-flex min-h-0 items-center gap-2 border border-[rgba(255,180,171,0.32)] px-4 py-2 text-sm text-[#ffdad6]"
+              >
+                <Trash2 className="h-4 w-4" />
+                {t("Delete")}
+              </button>
+            ) : null}
+          </div>
+
+          <div className="flex-1 overflow-y-auto bg-[rgba(18,24,42,0.45)] px-6 py-8">
+            <div className="mx-auto flex max-w-4xl flex-col gap-7">
+              {!messages.length ? (
+                <div className="mx-auto rounded-md bg-[rgba(30,32,35,0.82)] px-6 py-3 text-sm text-[rgba(226,226,231,0.68)]">
+                  {t("Conversation started today")}
+                </div>
+              ) : null}
+
+              {messages.map((message) => {
+                const user = message.role === "user";
+                return (
+                  <div key={message.id} className={`flex ${user ? "justify-end" : "justify-start"}`}>
+                    <article className={`max-w-[82%] rounded-2xl px-6 py-5 ${user ? "stitch-ref-chat-message-sent" : "stitch-ref-chat-message-received"}`}>
+                      <div className="mb-3 text-xs text-[rgba(154,143,128,0.78)]">
+                        {user ? t("You") : t("CREOS AI Assistant")} {formatTime(message.createdAt)}
+                      </div>
+                      <p className="whitespace-pre-wrap text-lg leading-9">{message.content}</p>
+                    </article>
+                  </div>
+                );
+              })}
+
+              {sending ? (
+                <div className="text-sm text-[rgba(233,193,118,0.86)]">{t("Assistant is typing...")}</div>
+              ) : null}
+
+              {error ? (
+                <div className="rounded-md border border-[rgba(255,180,171,0.3)] bg-[rgba(147,0,10,0.15)] px-4 py-3 text-sm text-[#ffdad6]">
+                  {error}
+                </div>
+              ) : null}
+
+              <div ref={bottomRef} />
+            </div>
+          </div>
+
+          <div className="border-t border-[rgba(154,143,128,0.1)] bg-[rgba(23,27,39,0.95)] p-5">
+            <div className="rounded-xl border border-[rgba(154,143,128,0.18)] bg-[rgba(26,31,57,0.9)] px-4 py-4">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={onNewSession}
-                  className="btn-gold px-3 py-1.5 text-xs"
+                  onClick={onSend}
+                  disabled={!composerText.trim() || sending}
+                  className="flex h-12 w-12 items-center justify-center bg-[var(--stitch-ref-gold)] text-[#261900] disabled:opacity-40"
                 >
-                  {t("New Session")}
+                  <Send className={`h-5 w-5 ${isRtl ? "rotate-180" : ""}`} />
                 </button>
-                {activeSessionId ? (
-                  <button
-                    type="button"
-                    onClick={() => onDeleteSession(activeSessionId)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-red-400/30 px-2.5 py-1.5 text-xs text-red-200 hover:bg-red-500/10"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    {t("Delete")}
-                  </button>
-                ) : null}
+                <input
+                  value={composerText}
+                  onChange={(e) => setComposerText(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && onSend()}
+                  placeholder={t("Write your inquiry here...")}
+                  className="min-h-[64px] flex-1 bg-transparent px-3 text-lg text-[var(--stitch-ref-text)] outline-none placeholder:text-[rgba(154,143,128,0.64)]"
+                />
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-              {loadingSessions ? (
-                Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-8 w-28 animate-pulse rounded-lg bg-white/10" />)
-              ) : sessions.length ? (
-                sessions.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => selectSession(s.id)}
-                    className={`whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-xs transition ${
-                      s.id === activeSessionId
-                        ? "border-[rgb(var(--creos-accent-rgb)/0.28)] bg-[rgb(var(--creos-accent-rgb)/0.14)] text-[color:var(--creos-text)]"
-                        : "border-white/10 bg-[rgb(var(--creos-surface-rgb)/0.42)] text-[color:rgb(var(--creos-text-rgb)/0.68)] hover:bg-white/5 hover:text-[color:var(--creos-text)]"
-                    }`}
-                  >
-                    {s.title || t("Session")}
-                  </button>
-                ))
-              ) : (
-                <p className="text-xs text-[color:rgb(var(--creos-text-rgb)/0.45)]">{t("No sessions yet")}</p>
-              )}
-            </div>
+        <aside className="stitch-ref-chat-panel hidden w-[390px] shrink-0 rounded-xl p-6 xl:block">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="stitch-ref-title text-2xl text-[var(--stitch-ref-gold)]">{t("Smart Conversations")}</h2>
+            <Search className="h-5 w-5 text-[rgba(154,143,128,0.82)]" />
           </div>
 
-          <ChatActionBar onArchive={onArchive} onPatchContext={onPatchContext} busy={sending} />
+          <div className="space-y-4 overflow-y-auto">
+            {loadingSessions ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="h-28 animate-pulse bg-[rgba(30,32,35,0.45)]" />
+              ))
+            ) : null}
 
-          <div className="min-h-[380px] max-h-[52vh] overflow-y-auto">
-            <ChatMessageList messages={messages} loading={loadingMessages || sending} />
-          </div>
+            {sessions.map((session) => {
+              const active = activeSessionId === session.id;
+              return (
+                <button
+                  key={session.id}
+                  type="button"
+                  onClick={() => openSession(session.id)}
+                  className={`w-full border p-5 text-right transition ${
+                    active
+                      ? "border-[rgba(233,193,118,0.34)] bg-[rgba(30,32,35,0.45)]"
+                      : "border-[rgba(154,143,128,0.12)] bg-[rgba(30,32,35,0.35)] hover:border-[rgba(233,193,118,0.24)]"
+                  }`}
+                >
+                  <div className={`flex items-start gap-4 ${isRtl ? "flex-row" : "flex-row-reverse"}`}>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${active ? "border border-[rgba(233,193,118,0.3)] bg-[rgba(233,193,118,0.08)] text-[var(--stitch-ref-gold)]" : "bg-[rgba(255,255,255,0.06)] text-[rgba(226,226,231,0.74)]"}`}>
+                      <Sparkles className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1">
+                      <div className={`flex items-center justify-between gap-4 ${isRtl ? "flex-row" : "flex-row-reverse"}`}>
+                        <span className={`stitch-ref-mono text-sm ${active ? "text-[var(--stitch-ref-gold)]" : "text-[rgba(226,226,231,0.86)]"}`}>
+                          {session.title || t("Session")}
+                        </span>
+                        <span className="text-xs text-[rgba(154,143,128,0.76)]">
+                          {formatTime(session.updatedAt || session.createdAt) || t("Now")}
+                        </span>
+                      </div>
+                      <p className="mt-2 line-clamp-2 text-sm leading-7 text-[rgba(226,226,231,0.72)]">
+                        {session.preview || t("Open this conversation to continue your property discussion.")}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
 
-          <ChatComposer sending={sending} onSend={sendMessage} onFocusChange={setInputFocused} />
-        </motion.div>
-
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {["/clone", "/figma", "/page", "/improve"].map((cmd) => (
             <button
-              key={cmd}
               type="button"
-            className="chat-chip text-sm"
+              onClick={onNewSession}
+              className="w-full border border-dashed border-[rgba(233,193,118,0.28)] px-5 py-4 text-sm text-[var(--stitch-ref-gold)]"
             >
-              <Command className="h-4 w-4" />
-              <span>{cmd}</span>
+              {t("Start New Conversation")}
             </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {inputFocused ? (
-        <motion.div
-          className="pointer-events-none fixed z-0 h-[50rem] w-[50rem] rounded-full bg-gradient-to-r from-[rgb(var(--creos-accent-rgb)/0.18)] via-[rgb(var(--creos-accent-bright-rgb)/0.12)] to-[rgb(var(--creos-navy-rgb)/0.18)] opacity-[0.08] blur-[96px]"
-          animate={{
-            x: mousePosition.x - 400,
-            y: mousePosition.y - 400,
-          }}
-          transition={{
-            type: "spring",
-            damping: 25,
-            stiffness: 150,
-            mass: 0.5,
-          }}
-        />
-      ) : null}
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
