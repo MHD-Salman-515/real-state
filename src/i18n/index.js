@@ -154,6 +154,7 @@ const ar = {
   // Notifications
   "Notifications": "الإشعارات",
   "No notifications": "لا توجد إشعارات",
+  "Loading conversations...": "جارٍ تحميل المحادثات...",
   "Clear": "مسح",
   "Open": "فتح",
   "New accounting notification": "إشعار محاسبي جديد",
@@ -473,6 +474,8 @@ const ar = {
   "The city where the property is located.": "المدينة التي يقع بها العقار.",
   "Detailed address": "العنوان التفصيلي",
   "Add a precise location description.": "أضف وصفًا دقيقًا للموقع.",
+  "Pick location from map": "اختر الموقع من الخريطة",
+  "Selected coordinates": "الإحداثيات المحددة",
   "Area (m2)": "المساحة (م²)",
   "Numbers only.": "أرقام فقط.",
   "Price (USD)": "السعر (USD)",

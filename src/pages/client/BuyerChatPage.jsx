@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -25,46 +25,96 @@ export default function BuyerChatPage() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [loadingSessions, setLoadingSessions] = useState(false);
   const bottomRef = useRef(null);
 
-  useEffect(() => {
-    api.get("/buyer/chat/sessions").then((r) => {
-      const list = r.data || [];
-      setSessions(list);
-      if (!activeSession && list.length > 0) {
-        const selected = sessionId
-          ? list.find((item) => String(item.id) === String(sessionId)) || list[0]
-          : list[0];
-        setActiveSession(selected);
-        loadMessages(selected.id);
-      }
-    }).catch(() => {});
-  }, []);
-
-  const loadMessages = (id) => {
+  const loadMessages = useCallback((id) => {
     api.get(`/buyer/chat/sessions/${id}/messages`)
       .then((r) => setMessages(r.data || []))
       .catch(() => setMessages([]));
-  };
+  }, []);
+
+  const syncActiveSession = useCallback((list) => {
+    if (!Array.isArray(list) || list.length === 0) {
+      setActiveSession(null);
+      setMessages([]);
+      return null;
+    }
+
+    const selected = sessionId
+      ? list.find((item) => String(item.id) === String(sessionId)) || null
+      : null;
+    const nextSession = selected || list[0];
+    setActiveSession(nextSession);
+    loadMessages(nextSession.id);
+    return nextSession;
+  }, [loadMessages, sessionId]);
+
+  const loadSessions = useCallback(async () => {
+    setLoadingSessions(true);
+    try {
+      const response = await api.get("/buyer/chat/sessions");
+      const list = response.data || [];
+      setSessions(list);
+      syncActiveSession(list);
+    } catch {
+      setSessions([]);
+      setActiveSession(null);
+      setMessages([]);
+    } finally {
+      setLoadingSessions(false);
+    }
+  }, [syncActiveSession]);
+
+  useEffect(() => {
+    loadSessions();
+  }, [loadSessions]);
+
+  useEffect(() => {
+    if (!sessions.length) {
+      if (!sessionId) return;
+      loadSessions();
+      return;
+    }
+
+    const selected = sessionId
+      ? sessions.find((item) => String(item.id) === String(sessionId)) || null
+      : sessions[0];
+
+    if (!selected) return;
+    if (activeSession?.id !== selected.id) {
+      setActiveSession(selected);
+      loadMessages(selected.id);
+    }
+  }, [activeSession?.id, loadMessages, loadSessions, sessionId, sessions]);
 
   const createSession = async () => {
     try {
       const response = await api.post("/buyer/chat/sessions", { title: t("New Search") });
-      setSessions((prev) => [response.data, ...prev]);
+      setSessions((prev) => [response.data, ...prev.filter((item) => item.id !== response.data?.id)]);
       setActiveSession(response.data);
       setMessages([]);
       navigate(`/client/chat/${response.data.id}`);
+      return response.data;
     } catch {}
+    return null;
   };
 
   const sendMessage = async () => {
-    if (!input.trim() || !activeSession || sending) return;
+    if (!input.trim() || sending) return;
     const text = input.trim();
+    let session = activeSession;
+
+    if (!session) {
+      session = await createSession();
+    }
+    if (!session?.id) return;
+
     setInput("");
     setSending(true);
     setMessages((prev) => [...prev, { id: Date.now(), role: "USER", content: text }]);
     try {
-      const response = await api.post(`/buyer/chat/sessions/${activeSession.id}/message`, { message: text });
+      const response = await api.post(`/buyer/chat/sessions/${session.id}/message`, { message: text });
       const reply = response.data?.assistantMessage || response.data?.text_ar || response.data?.message || "";
       const properties = response.data?.payloadJson?.recommended_properties || [];
       setMessages((prev) => [
@@ -76,8 +126,10 @@ export default function BuyerChatPage() {
         ...prev,
         { id: Date.now() + 1, role: "ASSISTANT", content: t("Something went wrong. Please try again.") },
       ]);
+    } finally {
+      setSending(false);
+      loadSessions();
     }
-    setSending(false);
   };
 
   useEffect(() => {
@@ -129,6 +181,13 @@ export default function BuyerChatPage() {
               <button type="button" className="text-[rgba(154,143,128,0.85)]">
                 <Share2 className="h-5 w-5" />
               </button>
+              <button
+                type="button"
+                onClick={createSession}
+                className="rounded-full border border-[rgba(233,193,118,0.28)] px-3 py-1 text-xs text-[var(--stitch-ref-gold)] transition hover:bg-[rgba(233,193,118,0.08)]"
+              >
+                {t("New Search")}
+              </button>
             </div>
             <div className="text-right">
               <div className={`flex items-center gap-3 ${isRtl ? "flex-row" : "flex-row-reverse"}`}>
@@ -149,7 +208,7 @@ export default function BuyerChatPage() {
             <div className="mx-auto flex max-w-4xl flex-col gap-7">
               {messages.length === 0 ? (
                 <div className="mx-auto rounded-md bg-[rgba(30,32,35,0.82)] px-6 py-3 text-sm text-[rgba(226,226,231,0.68)]">
-                  {t("Conversation started today")}
+                  {loadingSessions ? t("Loading conversations...") : t("Conversation started today")}
                 </div>
               ) : null}
 

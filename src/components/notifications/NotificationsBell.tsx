@@ -39,7 +39,7 @@ function splitByDate(items: NotificationItem[]): { today: NotificationItem[]; ea
 }
 
 export default function NotificationsBell() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, token } = useAuth();
   const isAuthenticated = Boolean(user || token);
   const navigate = useNavigate();
@@ -56,6 +56,7 @@ export default function NotificationsBell() {
 
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const isRtl = i18n.dir() === "rtl";
 
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
@@ -131,7 +132,10 @@ export default function NotificationsBell() {
       </button>
 
       {open ? (
-        <div className="absolute right-0 z-[90] mt-3 w-[92vw] max-w-[360px] overflow-hidden rounded-2xl border border-white/10 bg-black/70 shadow-2xl backdrop-blur-xl">
+        <div
+          className="absolute z-[90] mt-3 w-[92vw] max-w-[min(360px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-white/10 bg-black/70 shadow-2xl backdrop-blur-xl"
+          style={{ [isRtl ? "left" : "right"]: 0 }}
+        >
           {!isAuthenticated ? (
             <div className="p-5">
               <h3 className="text-sm font-semibold text-white">{t("Sign in to see notifications")}</h3>
@@ -195,7 +199,7 @@ export default function NotificationsBell() {
                 </div>
               </div>
 
-              <div className="max-h-[420px] overflow-y-auto px-3 py-2">
+              <div className="max-h-[min(70vh,420px)] overflow-y-auto overflow-x-hidden px-3 py-2">
                 {filtered.length === 0 ? (
                   <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5 text-center text-sm text-white/60">
                     {t("No notifications yet")}

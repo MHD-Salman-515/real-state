@@ -29,10 +29,11 @@ function formatTime(at) {
 export default function NotificationBell() {
   const { history, clearHistory } = useToast();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const panelRef = useRef(null);
+  const isRtl = i18n.dir() === "rtl";
 
   const notifications = useMemo(() => history || [], [history]);
 
@@ -101,7 +102,8 @@ export default function NotificationBell() {
         <div
           ref={panelRef}
           tabIndex={-1}
-          className="dashboard-dropdown absolute end-0 z-[9998] mt-2 w-[340px]"
+          className="dashboard-dropdown absolute z-[9998] mt-2 w-[min(340px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-hidden"
+          style={{ [isRtl ? "left" : "right"]: 0 }}
           role="dialog"
           aria-label={t("Notifications panel")}
         >
@@ -117,9 +119,9 @@ export default function NotificationBell() {
             </button>
           </div>
 
-          <div className="max-h-80 overflow-auto">
+          <div className="max-h-[min(70vh,20rem)] overflow-y-auto overflow-x-hidden">
             {notifications.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-[color:rgb(var(--creos-text-rgb)/0.56)]">لا توجد إشعارات</div>
+              <div className="px-4 py-8 text-center text-sm text-[color:rgb(var(--creos-text-rgb)/0.56)]">{t("No notifications")}</div>
             ) : (
               <ul className="divide-y divide-white/5">
                 {notifications.map((n) => {

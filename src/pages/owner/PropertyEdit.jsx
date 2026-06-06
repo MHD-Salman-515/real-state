@@ -13,6 +13,8 @@ const empty = {
   price: "",
   description: "",
   address: "",
+  lat: "",
+  lng: "",
 };
 
 function Field({ label, hint, children }) {
@@ -59,6 +61,8 @@ export default function OwnerPropertyEdit() {
         price: data?.price || "",
         description: data?.description || "",
         address: data?.address || "",
+        lat: data?.lat || data?.latitude || "",
+        lng: data?.lng || data?.lon || data?.longitude || "",
       });
       setExistingImage(data?.image || "");
       setLoading(false);
@@ -83,6 +87,30 @@ export default function OwnerPropertyEdit() {
       }
     };
   }, [model.imageFile, previewSrc]);
+
+  useEffect(() => {
+    const syncPickedLocation = () => {
+      try {
+        const raw = localStorage.getItem("creos_map_pick");
+        if (!raw) return;
+        const picked = JSON.parse(raw);
+        setModel((prev) => ({
+          ...prev,
+          address: picked?.address || prev.address,
+          city: picked?.city || prev.city,
+          lat: picked?.lat != null ? String(picked.lat) : prev.lat,
+          lng: picked?.lng != null ? String(picked.lng) : picked?.lon != null ? String(picked.lon) : prev.lng,
+        }));
+        localStorage.removeItem("creos_map_pick");
+      } catch {
+        // ignore storage parse errors
+      }
+    };
+
+    syncPickedLocation();
+    window.addEventListener("focus", syncPickedLocation);
+    return () => window.removeEventListener("focus", syncPickedLocation);
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -210,6 +238,21 @@ export default function OwnerPropertyEdit() {
                 onChange={(e) => setModel({ ...model, address: e.target.value })}
               />
             </Field>
+
+            <div className="flex flex-col gap-3 md:flex-row md:items-start">
+              <button
+                type="button"
+                onClick={() => nav("/owner/map-picker")}
+                className="rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-slate-100 transition duration-200 hover:bg-white/10"
+              >
+                {t("Pick location from map")}
+              </button>
+              {(model.lat || model.lng) ? (
+                <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs text-slate-300">
+                  {t("Selected coordinates")}: {model.lat || "-"}, {model.lng || "-"}
+                </div>
+              ) : null}
+            </div>
           </div>
         </Section>
 

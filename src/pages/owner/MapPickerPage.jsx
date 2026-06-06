@@ -15,15 +15,29 @@ export default function MapPickerPage() {
   const [manualLat, setManualLat] = useState("");
   const [manualLon, setManualLon] = useState("");
 
+  const extractCity = (data) =>
+    data?.address?.city ||
+    data?.address?.town ||
+    data?.address?.village ||
+    data?.address?.state_district ||
+    data?.address?.state ||
+    "";
+
   const reverseGeocode = useCallback(async (lat, lon) => {
     try {
       const r = await fetch(NOMINATIM_URL(lat, lon), {
         headers: { "Accept-Language": "ar" },
       });
       const data = await r.json();
-      setAddress(data.display_name || `${lat}, ${lon}`);
+      return {
+        address: data.display_name || `${lat}, ${lon}`,
+        city: extractCity(data),
+      };
     } catch {
-      setAddress(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
+      return {
+        address: `${lat.toFixed(5)}, ${lon.toFixed(5)}`,
+        city: "",
+      };
     }
   }, []);
 
@@ -41,7 +55,8 @@ export default function MapPickerPage() {
         setManualLat(String(lat));
         setManualLon(String(lon));
         setStatus("");
-        await reverseGeocode(lat, lon);
+        const next = await reverseGeocode(lat, lon);
+        setAddress(next.address);
       },
       () => setStatus("تعذّر الوصول إلى الموقع — تحقق من صلاحيات المتصفح"),
       { timeout: 10000 }
@@ -57,15 +72,23 @@ export default function MapPickerPage() {
     }
     setStatus("");
     setCoords({ lat, lon });
-    await reverseGeocode(lat, lon);
+    const next = await reverseGeocode(lat, lon);
+    setAddress(next.address);
   };
 
-  const confirm = () => {
+  const confirm = async () => {
     if (!coords) return;
+    const next = await reverseGeocode(coords.lat, coords.lon);
     try {
       localStorage.setItem(
         "creos_map_pick",
-        JSON.stringify({ lat: coords.lat, lon: coords.lon, address })
+        JSON.stringify({
+          lat: coords.lat,
+          lng: coords.lon,
+          lon: coords.lon,
+          address: next.address || address,
+          city: next.city || "",
+        })
       );
     } catch {}
     navigate(-1);
