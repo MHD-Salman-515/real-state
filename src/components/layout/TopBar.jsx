@@ -65,7 +65,6 @@ function profileLinksByRole(role, t) {
     ...base,
     { label: t('Favorites'), to: "/client/favorites" },
     { label: t('My Bookings'), to: "/client/appointments" },
-    { label: t('AI Search'), to: "/client/chat" },
     { label: t('Search History'), to: "/client/history" },
     { label: t('Saved Searches'), to: "/client/saved-searches" },
   ];
@@ -146,11 +145,6 @@ export default function TopBar() {
           <Link to="/search" className="text-sm text-white/70 transition hover:text-white">
             {t('Search')}
           </Link>
-          {roleKey === "client" && (
-            <Link to="/client/chat" className="text-sm text-white/70 transition hover:text-white">
-              {t('AI Search')}
-            </Link>
-          )}
           <Link to={dashboardPath} className="text-sm text-white/70 transition hover:text-white">
             {t('Dashboard')}
           </Link>

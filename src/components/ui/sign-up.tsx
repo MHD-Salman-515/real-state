@@ -251,104 +251,150 @@ export const AuthComponent = ({
 
   if (mode === "login") {
     return (
-      <div dir={i18n.dir()} className="stitch-ref-auth-login min-h-screen overflow-hidden">
-        <div className="stitch-ref-auth-login-bg" />
-        <div className="stitch-ref-auth-login-overlay" />
+      <div dir={i18n.dir()} className="stitch-ref-register-shell min-h-screen bg-[#121418] text-[#e2e2e7]">
+        <div className="grid min-h-screen lg:grid-cols-[1.02fr_1fr]">
+          <aside className="stitch-ref-register-visual relative hidden overflow-hidden lg:flex">
+            <img
+              src="https://images.unsplash.com/photo-1502672023488-70e25813eb80?auto=format&fit=crop&w=1600&q=80"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(18,20,24,0.16),rgba(18,20,24,0.28),rgba(18,20,24,0.76))]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(233,193,118,0.08),transparent_38%)]" />
 
-        <div className="relative z-10 flex min-h-screen items-center justify-center px-5 py-12">
-          <div className="stitch-ref-login-panel w-full max-w-[600px]">
-            <div className="mb-10 text-center">
-              <div className="mb-6 inline-flex items-center justify-center">{logo}</div>
-              <h1 className="stitch-ref-brand text-6xl leading-none">{brandName}</h1>
-              <p className="stitch-ref-mono mt-4 text-sm uppercase tracking-[0.38em] text-[rgba(154,143,128,0.92)]">
-                {t("Refined Sanctuary Intelligence")}
+            <div className="relative z-10 flex h-full w-full flex-col justify-between p-16">
+              <div className="max-w-md space-y-5 rounded-xl border border-[rgba(233,193,118,0.1)] bg-[rgba(22,28,54,0.78)] p-8 backdrop-blur-xl">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-[rgba(233,193,118,0.22)] bg-[rgba(233,193,118,0.08)] text-[var(--stitch-ref-gold)]">
+                    <ShieldCheck className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="stitch-ref-title-sm text-[var(--stitch-ref-gold)]">{t("Welcome back")}</h3>
+                    <p className="mt-2 text-base leading-7 text-[rgba(226,226,231,0.82)]">
+                      {t("Access your account securely.")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-[rgba(233,193,118,0.22)] bg-[rgba(233,193,118,0.08)] text-[var(--stitch-ref-gold)]">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="stitch-ref-title-sm text-[var(--stitch-ref-gold)]">{t("Smart Insights")}</h3>
+                    <p className="mt-2 text-base leading-7 text-[rgba(226,226,231,0.82)]">
+                      {t("Accurate signals and AI guidance help you act with confidence.")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="stitch-ref-mono text-xl text-[rgba(226,226,231,0.92)]">
+                <span className="text-[var(--stitch-ref-gold)]">●</span> {t("More than 5000 investors trust CREOS")}
               </p>
             </div>
+          </aside>
 
-            <AuthAlert message={loginError} />
+          <section className="flex items-center justify-center px-5 py-12 sm:px-8 lg:px-16">
+            <div className="w-full max-w-[600px]">
+              <div className="mb-10">
+                <div className="mb-5 flex items-center gap-4">
+                  {logo}
+                  <div>
+                    <h1 className="stitch-ref-brand text-5xl leading-none">{brandName}</h1>
+                  </div>
+                </div>
+                <h2 className="stitch-ref-title text-4xl">{t("Sign in")}</h2>
+                <p className="mt-4 text-xl leading-8 text-[rgba(226,226,231,0.78)]">
+                  {t("Access your account securely.")}
+                </p>
+              </div>
 
-            <div className="mt-8 space-y-7">
-              <AuthField id="signin-email" label={t("Email")} icon={<Mail className="h-5 w-5" />}>
-                <input
-                  id="signin-email"
-                  type="email"
-                  value={loginEmail}
-                  autoComplete="email"
-                  onChange={(e) => {
-                    setLoginEmail(e.target.value);
-                    onEmailChange?.(e.target.value);
-                  }}
-                  placeholder={t("name@creos.com")}
-                  className="stitch-ref-input"
-                />
-              </AuthField>
+              <AuthAlert message={loginError} />
 
-              <AuthField id="signin-password" label={t("Password")} icon={<Lock className="h-5 w-5" />}>
-                <input
-                  id="signin-password"
-                  type={loginShowPassword ? "text" : "password"}
-                  value={loginPassword}
-                  autoComplete="current-password"
-                  onChange={(e) => {
-                    setLoginPassword(e.target.value);
-                    onPasswordChange?.(e.target.value);
-                  }}
-                  placeholder={t("Password mask")}
-                  className="stitch-ref-input pe-14"
-                />
-                <button
-                  type="button"
-                  className="stitch-ref-input-action"
-                  onClick={() => setLoginShowPassword((value) => !value)}
-                  aria-label={t(loginShowPassword ? "Hide password" : "Show password")}
-                >
-                  {loginShowPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </AuthField>
+              <div className="mt-8 space-y-7">
+                <AuthField id="signin-email" label={t("Email")} icon={<Mail className="h-5 w-5" />}>
+                  <input
+                    id="signin-email"
+                    type="email"
+                    value={loginEmail}
+                    autoComplete="email"
+                    onChange={(e) => {
+                      setLoginEmail(e.target.value);
+                      onEmailChange?.(e.target.value);
+                    }}
+                    placeholder={t("name@creos.com")}
+                    className="stitch-ref-input"
+                  />
+                </AuthField>
+
+                <AuthField id="signin-password" label={t("Password")} icon={<Lock className="h-5 w-5" />}>
+                  <input
+                    id="signin-password"
+                    type={loginShowPassword ? "text" : "password"}
+                    value={loginPassword}
+                    autoComplete="current-password"
+                    onChange={(e) => {
+                      setLoginPassword(e.target.value);
+                      onPasswordChange?.(e.target.value);
+                    }}
+                    placeholder={t("Password mask")}
+                    className="stitch-ref-input pe-14"
+                  />
+                  <button
+                    type="button"
+                    className="stitch-ref-input-action"
+                    onClick={() => setLoginShowPassword((value) => !value)}
+                    aria-label={t(loginShowPassword ? "Hide password" : "Show password")}
+                  >
+                    {loginShowPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </AuthField>
+              </div>
+
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <label className="inline-flex items-center gap-3 text-sm text-[rgba(225,226,231,0.82)]">
+                  <input
+                    type="checkbox"
+                    checked={loginRemember}
+                    onChange={(e) => {
+                      setLoginRemember(e.target.checked);
+                      onRememberChange?.(e.target.checked);
+                    }}
+                    className="h-4 w-4 rounded-none border border-[rgba(154,143,128,0.35)] bg-transparent text-[var(--stitch-ref-gold)] focus:ring-0"
+                  />
+                  {t("Remember me")}
+                </label>
+                <span className="text-sm text-[var(--stitch-ref-gold)]">{t("Forgot password?")}</span>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLoginSubmit}
+                disabled={loginLoading}
+                className="stitch-ref-button-primary mt-8 w-full"
+              >
+                {loginLoading ? t("Signing in...") : t("Sign in")}
+              </button>
+
+              <div className="my-10 flex items-center gap-4 text-[rgba(154,143,128,0.45)]">
+                <span className="h-px flex-1 bg-[rgba(154,143,128,0.16)]" />
+                <span className="stitch-ref-mono text-xs">{t("or")}</span>
+                <span className="h-px flex-1 bg-[rgba(154,143,128,0.16)]" />
+              </div>
+
+              <Link to="/auth/register" className="stitch-ref-button-secondary w-full text-center">
+                {t("Create account")}
+              </Link>
+
+              <p className="mt-12 text-center text-sm text-[rgba(225,226,231,0.74)]">
+                {t("By signing in you agree to our")}{" "}
+                <span className="underline">{t("Terms of Service")}</span>{" "}
+                {t("and")}{" "}
+                <span className="underline">{t("Privacy Policy")}</span>
+              </p>
             </div>
-
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <label className="inline-flex items-center gap-3 text-sm text-[rgba(225,226,231,0.82)]">
-                <input
-                  type="checkbox"
-                  checked={loginRemember}
-                  onChange={(e) => {
-                    setLoginRemember(e.target.checked);
-                    onRememberChange?.(e.target.checked);
-                  }}
-                  className="h-4 w-4 rounded-none border border-[rgba(154,143,128,0.35)] bg-transparent text-[var(--stitch-ref-gold)] focus:ring-0"
-                />
-                {t("Remember me")}
-              </label>
-              <span className="text-sm text-[var(--stitch-ref-gold)]">{t("Forgot password?")}</span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleLoginSubmit}
-              disabled={loginLoading}
-              className="stitch-ref-button-primary mt-8 w-full"
-            >
-              {loginLoading ? t("Signing in...") : t("Sign in")}
-            </button>
-
-            <div className="my-10 flex items-center gap-4 text-[rgba(154,143,128,0.45)]">
-              <span className="h-px flex-1 bg-[rgba(154,143,128,0.16)]" />
-              <span className="stitch-ref-mono text-xs">{t("or")}</span>
-              <span className="h-px flex-1 bg-[rgba(154,143,128,0.16)]" />
-            </div>
-
-            <Link to="/auth/register" className="stitch-ref-button-secondary w-full text-center">
-              {t("Create account")}
-            </Link>
-
-            <p className="mt-12 text-center text-sm text-[rgba(225,226,231,0.74)]">
-              {t("By signing in you agree to our")}{" "}
-              <span className="underline">{t("Terms of Service")}</span>{" "}
-              {t("and")}{" "}
-              <span className="underline">{t("Privacy Policy")}</span>
-            </p>
-          </div>
+          </section>
         </div>
       </div>
     );

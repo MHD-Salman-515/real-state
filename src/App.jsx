@@ -79,8 +79,6 @@ const AgentLayout = lazy(() => import("./layouts/AgentLayout.jsx"));
 const AgentAppointments = lazy(() => import("./pages/agent/Appointments.jsx"));
 const AgentLinkOps = lazy(() => import("./pages/agent/LinkOps.jsx"));
 
-// ===== Buyer/Client AI pages =====
-import BuyerChatPage from "./pages/client/BuyerChatPage.jsx";
 import BuyerHistory from "./pages/client/BuyerHistory.jsx";
 import SavedSearches from "./pages/client/SavedSearches.jsx";
 
@@ -154,13 +152,12 @@ export default function App() {
                       <Route path="/client/favorites" element={<Favorites />} />
                       <Route path="/client/profile" element={<Profile />} />
 
-                      {/* Buyer AI assistant */}
-                      <Route path="/client/chat" element={<BuyerChatPage />} />
-                      <Route path="/client/chat/:sessionId" element={<BuyerChatPage />} />
-                      <Route path="/chat" element={<Navigate to="/client/chat" replace />} />
-                      <Route path="/chat/:sessionId" element={<Navigate to="/client/chat/:sessionId" replace />} />
-                      <Route path="/buyer/chat" element={<Navigate to="/client/chat" replace />} />
-                      <Route path="/buyer/chat/:sessionId" element={<Navigate to="/client/chat/:sessionId" replace />} />
+                      <Route path="/client/chat" element={<Navigate to="/properties" replace />} />
+                      <Route path="/client/chat/:sessionId" element={<Navigate to="/properties" replace />} />
+                      <Route path="/chat" element={<Navigate to="/properties" replace />} />
+                      <Route path="/chat/:sessionId" element={<Navigate to="/properties" replace />} />
+                      <Route path="/buyer/chat" element={<Navigate to="/properties" replace />} />
+                      <Route path="/buyer/chat/:sessionId" element={<Navigate to="/properties" replace />} />
                       <Route path="/client/history" element={<BuyerHistory />} />
                       <Route path="/client/saved-searches" element={<SavedSearches />} />
 
