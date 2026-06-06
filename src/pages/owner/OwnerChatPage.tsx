@@ -12,6 +12,19 @@ function formatTime(value?: string) {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+const MAP_PROMPT_PATTERNS = [
+  /حدد الموقع على الخريطة/i,
+  /الموقع على الخريطة/i,
+  /select location/i,
+  /pick location/i,
+  /\bmap\b/i,
+];
+
+function messageNeedsMapAction(content?: string) {
+  if (!content) return false;
+  return MAP_PROMPT_PATTERNS.some((pattern) => pattern.test(content));
+}
+
 export default function OwnerChatPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -131,6 +144,10 @@ export default function OwnerChatPage() {
     await sendMessage(value);
   };
 
+  const onPickLocation = () => {
+    navigate(`/owner/map-picker?returnTo=${encodeURIComponent("/owner/chat")}&mode=chat`);
+  };
+
   return (
     <div dir={i18n.dir()} className="stitch-ref-chat-shell h-[calc(100dvh-2rem)] min-h-[38rem] overflow-hidden lg:h-[calc(100dvh-3.5rem)]">
       <div className="mx-auto flex h-full max-w-[1440px] min-h-0 gap-6 px-4 py-4 lg:px-6">
@@ -161,7 +178,7 @@ export default function OwnerChatPage() {
           <div className="flex flex-wrap items-center gap-3 border-b border-[rgba(154,143,128,0.08)] px-6 py-4">
             <button
               type="button"
-              onClick={() => navigate(`/owner/map-picker?returnTo=${encodeURIComponent("/owner/chat")}&mode=chat`)}
+              onClick={onPickLocation}
               className="stitch-ref-button-secondary !min-h-0 !px-4 !py-2 !text-sm"
             >
               <MapPin className="h-4 w-4" />
@@ -197,14 +214,27 @@ export default function OwnerChatPage() {
 
               {messages.map((message) => {
                 const user = message.role === "user";
+                const showMapAction = !user && messageNeedsMapAction(message.content);
                 return (
                   <div key={message.id} className={`flex ${user ? "justify-end" : "justify-start"}`}>
-                    <article className={`max-w-[82%] rounded-2xl px-6 py-5 ${user ? "stitch-ref-chat-message-sent" : "stitch-ref-chat-message-received"}`}>
-                      <div className="mb-3 text-xs text-[rgba(154,143,128,0.78)]">
-                        {user ? t("You") : t("CREOS AI Assistant")} {formatTime(message.createdAt)}
-                      </div>
-                      <p className="whitespace-pre-wrap text-lg leading-9">{message.content}</p>
-                    </article>
+                    <div className="max-w-[82%]">
+                      <article className={`rounded-2xl px-6 py-5 ${user ? "stitch-ref-chat-message-sent" : "stitch-ref-chat-message-received"}`}>
+                        <div className="mb-3 text-xs text-[rgba(154,143,128,0.78)]">
+                          {user ? t("You") : t("CREOS AI Assistant")} {formatTime(message.createdAt)}
+                        </div>
+                        <p className="whitespace-pre-wrap text-lg leading-9">{message.content}</p>
+                      </article>
+                      {showMapAction ? (
+                        <button
+                          type="button"
+                          onClick={onPickLocation}
+                          className={`btn-gold mt-3 inline-flex min-h-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm ${isRtl ? "mr-2" : "ml-2"}`}
+                        >
+                          <MapPin className="h-4 w-4" />
+                          {t("📍 Pick location on map")}
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
                 );
               })}
@@ -225,8 +255,9 @@ export default function OwnerChatPage() {
 
           <div className="shrink-0 border-t border-[rgba(154,143,128,0.1)] bg-[rgba(23,27,39,0.95)] p-5">
             {locationPrefilled ? (
-              <div className="mb-4 rounded-xl border border-[rgba(233,193,118,0.24)] bg-[rgba(233,193,118,0.08)] px-4 py-3 text-sm text-[rgba(226,226,231,0.88)]">
-                {t("Location details were added to your draft message. Review and press Send when ready.")}
+              <div className="mb-4 flex items-center gap-2 rounded-full border border-[rgba(233,193,118,0.24)] bg-[rgba(233,193,118,0.08)] px-4 py-2 text-sm text-[rgba(226,226,231,0.88)]">
+                <MapPin className="h-4 w-4 text-[var(--stitch-ref-gold)]" />
+                {t("Location added to message")}
               </div>
             ) : null}
             <div className="rounded-xl border border-[rgba(154,143,128,0.18)] bg-[rgba(26,31,57,0.9)] px-4 py-4">

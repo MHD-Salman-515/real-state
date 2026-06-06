@@ -493,6 +493,8 @@ const ar = {
   "Pinned map location": "موقع محدد من الخريطة",
   "Selected location: {{address}}. Coordinates: {{lat}}, {{lng}}": "الموقع المحدد: {{address}}. الإحداثيات: {{lat}}، {{lng}}",
   "Location details were added to your draft message. Review and press Send when ready.": "تمت إضافة تفاصيل الموقع إلى رسالتك المبدئية. راجعها ثم اضغط إرسال عندما تكون جاهزًا.",
+  "📍 Pick location on map": "📍 حدد الموقع على الخريطة",
+  "Location added to message": "تمت إضافة الموقع إلى الرسالة",
   "Area (m2)": "المساحة (م²)",
   "Numbers only.": "أرقام فقط.",
   "Price (USD)": "السعر (USD)",
