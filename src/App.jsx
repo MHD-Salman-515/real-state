@@ -157,6 +157,8 @@ export default function App() {
                       {/* Buyer AI assistant */}
                       <Route path="/client/chat" element={<BuyerChatPage />} />
                       <Route path="/client/chat/:sessionId" element={<BuyerChatPage />} />
+                      <Route path="/chat" element={<Navigate to="/client/chat" replace />} />
+                      <Route path="/buyer/chat" element={<Navigate to="/client/chat" replace />} />
                       <Route path="/client/history" element={<BuyerHistory />} />
                       <Route path="/client/saved-searches" element={<SavedSearches />} />
 

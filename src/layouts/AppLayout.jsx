@@ -7,9 +7,6 @@ export default function AppLayout() {
   const pathname = location.pathname;
 
   const hideTopBar =
-    pathname === "/" ||
-    pathname === "/home" ||
-    pathname.startsWith("/client/chat") ||
     pathname.startsWith("/owner") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/agent") ||
