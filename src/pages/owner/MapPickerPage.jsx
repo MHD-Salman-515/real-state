@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const NOMINATIM_URL = (lat, lon) =>
   `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
@@ -8,12 +9,18 @@ const STATIC_MAP_URL = (lat, lon) =>
   `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lon}&zoom=15&size=600x300&markers=${lat},${lon},red-pushpin`;
 
 export default function MapPickerPage() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [coords, setCoords] = useState(null);
   const [address, setAddress] = useState("");
   const [status, setStatus] = useState("");
   const [manualLat, setManualLat] = useState("");
   const [manualLon, setManualLon] = useState("");
+  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const mode = searchParams.get("mode");
+  const returnTo = searchParams.get("returnTo");
+  const isChatMode = mode === "chat";
 
   const extractCity = (data) =>
     data?.address?.city ||
@@ -43,10 +50,10 @@ export default function MapPickerPage() {
 
   const useMyLocation = () => {
     if (!navigator.geolocation) {
-      setStatus("المتصفح لا يدعم تحديد الموقع");
+      setStatus(t("Browser does not support location detection."));
       return;
     }
-    setStatus("جاري تحديد موقعك...");
+    setStatus(t("Detecting your location..."));
     navigator.geolocation.getCurrentPosition(
       async pos => {
         const lat = pos.coords.latitude;
@@ -58,7 +65,7 @@ export default function MapPickerPage() {
         const next = await reverseGeocode(lat, lon);
         setAddress(next.address);
       },
-      () => setStatus("تعذّر الوصول إلى الموقع — تحقق من صلاحيات المتصفح"),
+      () => setStatus(t("Unable to access location. Check browser permissions.")),
       { timeout: 10000 }
     );
   };
@@ -67,7 +74,7 @@ export default function MapPickerPage() {
     const lat = parseFloat(manualLat);
     const lon = parseFloat(manualLon);
     if (isNaN(lat) || isNaN(lon)) {
-      setStatus("إحداثيات غير صالحة");
+      setStatus(t("Invalid coordinates."));
       return;
     }
     setStatus("");
@@ -79,23 +86,26 @@ export default function MapPickerPage() {
   const confirm = async () => {
     if (!coords) return;
     const next = await reverseGeocode(coords.lat, coords.lon);
+    const picked = {
+      lat: coords.lat,
+      lng: coords.lon,
+      lon: coords.lon,
+      address: next.address || address,
+      city: next.city || "",
+      text: `${next.address || address || `${coords.lat.toFixed(5)}, ${coords.lon.toFixed(5)}`} (${coords.lat.toFixed(5)}, ${coords.lon.toFixed(5)})`,
+    };
     try {
-      localStorage.setItem(
-        "creos_map_pick",
-        JSON.stringify({
-          lat: coords.lat,
-          lng: coords.lon,
-          lon: coords.lon,
-          address: next.address || address,
-          city: next.city || "",
-        })
-      );
+      localStorage.setItem(isChatMode ? "creos_chat_map_pick" : "creos_map_pick", JSON.stringify(picked));
     } catch {}
+    if (isChatMode) {
+      navigate(returnTo && returnTo.startsWith("/") ? returnTo : "/owner/chat");
+      return;
+    }
     navigate(-1);
   };
 
   return (
-    <div dir="rtl" className="flex min-h-screen flex-col bg-[#0d0d0d]">
+    <div dir={i18n.dir()} className="flex min-h-screen flex-col bg-[#0d0d0d] text-white">
       {/* Header */}
       <header
         className="flex items-center justify-between border-b border-white/10 bg-[#111] px-4 py-3"
@@ -104,13 +114,14 @@ export default function MapPickerPage() {
           onClick={() => navigate(-1)}
           className="text-sm text-white/60 transition hover:text-white"
         >
-          → رجوع
+          {i18n.dir() === "rtl" ? "← " : "→ "}
+          {t("Back")}
         </button>
         <h1
           className="font-bold text-[#D4AF37]"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
-          اختر الموقع
+          {isChatMode ? t("Choose location for chat") : t("Choose location")}
         </h1>
         <button
           onClick={confirm}
@@ -118,7 +129,7 @@ export default function MapPickerPage() {
           className="px-4 py-2 text-sm font-bold transition disabled:opacity-40"
           style={{ background: "#D4AF37", color: "#1b1c1c" }}
         >
-          تأكيد الموقع
+          {isChatMode ? t("Use this location") : t("Confirm location")}
         </button>
       </header>
 
@@ -129,7 +140,7 @@ export default function MapPickerPage() {
           className="w-full py-3 text-sm font-bold transition"
           style={{ border: "0.5px solid rgba(212,175,55,0.5)", color: "#D4AF37" }}
         >
-          📍 استخدم موقعي الحالي
+          {t("Use my current location")}
         </button>
 
         {status && (
@@ -138,12 +149,12 @@ export default function MapPickerPage() {
 
         {/* Manual coordinates */}
         <div className="space-y-2">
-          <p className="text-right text-xs text-white/50">أو أدخل الإحداثيات يدوياً</p>
+          <p className="text-right text-xs text-white/50">{t("Or enter coordinates manually")}</p>
           <div className="flex gap-2">
             <input
               value={manualLon}
               onChange={e => setManualLon(e.target.value)}
-              placeholder="خط الطول"
+              placeholder={t("Longitude")}
               className="flex-1 px-3 py-2 text-sm outline-none"
               style={{
                 background: "rgba(255,255,255,0.04)",
@@ -154,7 +165,7 @@ export default function MapPickerPage() {
             <input
               value={manualLat}
               onChange={e => setManualLat(e.target.value)}
-              placeholder="خط العرض"
+              placeholder={t("Latitude")}
               className="flex-1 px-3 py-2 text-sm outline-none"
               style={{
                 background: "rgba(255,255,255,0.04)",
@@ -172,7 +183,7 @@ export default function MapPickerPage() {
               color: "#fff",
             }}
           >
-            تطبيق الإحداثيات
+            {t("Apply coordinates")}
           </button>
         </div>
 
@@ -193,14 +204,14 @@ export default function MapPickerPage() {
                   border: "0.5px solid rgba(212,175,55,0.15)",
                 }}
               >
-                <p className="mb-1 text-xs text-[#D4AF37]">العنوان المحدد</p>
+                <p className="mb-1 text-xs text-[#D4AF37]">{t("Selected address")}</p>
                 {address}
               </div>
             )}
             <div className="flex gap-2 text-xs text-white/30">
-              <span>خط العرض: {coords.lat.toFixed(6)}</span>
+              <span>{t("Latitude")}: {coords.lat.toFixed(6)}</span>
               <span>·</span>
-              <span>خط الطول: {coords.lon.toFixed(6)}</span>
+              <span>{t("Longitude")}: {coords.lon.toFixed(6)}</span>
             </div>
           </div>
         )}
