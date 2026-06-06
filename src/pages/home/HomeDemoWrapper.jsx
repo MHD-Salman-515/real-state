@@ -1,4 +1,3 @@
-import HomeDemoFooter from "../../components/home/HomeDemoFooter.jsx";
 import HomeRadialProperties from "../../components/home/HomeRadialProperties";
 
 export default function HomeDemoWrapper() {
@@ -10,8 +9,6 @@ export default function HomeDemoWrapper() {
             <HomeRadialProperties />
           </section>
         </main>
-
-        <HomeDemoFooter />
       </div>
     </div>
   );
