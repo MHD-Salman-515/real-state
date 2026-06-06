@@ -70,7 +70,7 @@ function profileLinksByRole(role, t) {
   ];
 }
 
-export default function TopBar() {
+export default function TopBar({ overlay = false, visible = true }) {
   const { user, token, logout } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -124,8 +124,14 @@ export default function TopBar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 h-16 w-full transition-all duration-300 ${
-        scrolled ? "bg-black/35 backdrop-blur-xl" : "bg-transparent"
+      className={`${overlay ? "fixed inset-x-0 top-0" : "sticky top-0"} z-50 h-16 w-full transition-all duration-300 ${
+        scrolled || overlay ? "bg-black/35 backdrop-blur-xl" : "bg-transparent"
+      } ${
+        overlay
+          ? visible
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-full opacity-0"
+          : ""
       }`}
     >
       <div className="flex h-16 w-full items-center justify-between px-4">
