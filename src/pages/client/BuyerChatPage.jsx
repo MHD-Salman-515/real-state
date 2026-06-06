@@ -17,13 +17,19 @@ export default function BuyerChatPage() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [loadingSessions, setLoadingSessions] = useState(false);
+  const [sessionError, setSessionError] = useState("");
+  const [composerError, setComposerError] = useState("");
   const bottomRef = useRef(null);
 
   const loadMessages = useCallback((id) => {
+    setSessionError("");
     api.get(`/buyer/chat/sessions/${id}/messages`)
       .then((r) => setMessages(r.data || []))
-      .catch(() => setMessages([]));
-  }, []);
+      .catch((error) => {
+        setMessages([]);
+        setSessionError(error?.response?.data?.message || t("Unable to load chat messages right now."));
+      });
+  }, [t]);
 
   const syncActiveSession = useCallback((list) => {
     if (!Array.isArray(list) || list.length === 0) {
@@ -43,19 +49,21 @@ export default function BuyerChatPage() {
 
   const loadSessions = useCallback(async () => {
     setLoadingSessions(true);
+    setSessionError("");
     try {
       const response = await api.get("/buyer/chat/sessions");
       const list = response.data || [];
       setSessions(list);
       syncActiveSession(list);
-    } catch {
+    } catch (error) {
       setSessions([]);
       setActiveSession(null);
       setMessages([]);
+      setSessionError(error?.response?.data?.message || t("Unable to load your chat sessions right now."));
     } finally {
       setLoadingSessions(false);
     }
-  }, [syncActiveSession]);
+  }, [syncActiveSession, t]);
 
   useEffect(() => {
     loadSessions();
@@ -80,6 +88,7 @@ export default function BuyerChatPage() {
   }, [activeSession?.id, loadMessages, loadSessions, sessionId, sessions]);
 
   const createSession = async () => {
+    setComposerError("");
     try {
       const response = await api.post("/buyer/chat/sessions", { title: t("New Search") });
       setSessions((prev) => [response.data, ...prev.filter((item) => item.id !== response.data?.id)]);
@@ -87,13 +96,15 @@ export default function BuyerChatPage() {
       setMessages([]);
       navigate(`/client/chat/${response.data.id}`);
       return response.data;
-    } catch {
+    } catch (error) {
+      setComposerError(error?.response?.data?.message || t("Unable to start a new chat right now."));
       return null;
     }
   };
 
   const sendMessage = async () => {
     if (!input.trim() || sending) return;
+    setComposerError("");
     const text = input.trim();
     let session = activeSession;
 
@@ -114,10 +125,12 @@ export default function BuyerChatPage() {
         ...prev,
         { id: Date.now() + 1, role: "ASSISTANT", content: reply, properties },
       ]);
-    } catch {
+    } catch (error) {
+      const message = error?.response?.data?.message || t("Something went wrong. Please try again.");
+      setComposerError(message);
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, role: "ASSISTANT", content: t("Something went wrong. Please try again.") },
+        { id: Date.now() + 1, role: "ASSISTANT", content: message },
       ]);
     } finally {
       setSending(false);
@@ -154,6 +167,12 @@ export default function BuyerChatPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-2">
+          {sessionError ? (
+            <div className="mb-2 rounded-xl border border-rose-400/25 bg-rose-500/10 px-3 py-2 text-xs text-rose-100">
+              {sessionError}
+            </div>
+          ) : null}
+
           {sessions.map((session) => (
             <button
               key={session.id}
@@ -187,6 +206,12 @@ export default function BuyerChatPage() {
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="space-y-4">
+            {sessionError ? (
+              <div className="rounded-xl border border-rose-400/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+                {sessionError}
+              </div>
+            ) : null}
+
             {messages.length === 0 ? (
               <div className="dashboard-empty mt-10">
                 {loadingSessions
@@ -225,6 +250,12 @@ export default function BuyerChatPage() {
             {sending ? (
               <div className="text-sm text-[color:var(--creos-accent-bright)]">
                 {t("Assistant is typing...")}
+              </div>
+            ) : null}
+
+            {composerError ? (
+              <div className="rounded-xl border border-rose-400/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+                {composerError}
               </div>
             ) : null}
 

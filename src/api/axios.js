@@ -84,7 +84,7 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
+  const token = getStoredAccessToken();
 
   config.headers = config.headers || {};
 
@@ -153,9 +153,12 @@ api.interceptors.response.use(
         console.log("REFRESH FAILED (CREOS)");
 
         localStorage.clear();
+        sessionStorage.removeItem("auth_token_v1");
+        sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("token");
         delete api.defaults.headers.common.Authorization;
 
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
 
         return Promise.reject(refreshError);
       }
